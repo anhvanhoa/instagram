@@ -1,0 +1,12 @@
+import express from 'express';
+import Routers from './routers';
+import connectDataBase from './config/database';
+import morgan from 'morgan';
+const app = express();
+const port = 8008;
+app.use(express.json());
+app.use(morgan('tiny'));
+Routers(app);
+connectDataBase();
+const bootstrap = () => console.log(`server running port ${port}`);
+app.listen(port, bootstrap);
