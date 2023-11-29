@@ -26,6 +26,8 @@ class AuthController {
     }
     public async register(req: Request, res: Response) {
         try {
+            if (!req.body.email || !req.body.numberPhone)
+                return res.status(400).json(resError('Email or Tell not valid !'));
             await AuthService.register(req.body);
             return res.status(200).json(resSuccess('Sign success'));
         } catch (error) {
