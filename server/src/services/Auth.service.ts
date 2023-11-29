@@ -2,57 +2,57 @@ import { RegisterDto } from '~/services/types';
 import { CodeModel, UserModel } from '~/models/index.model';
 import { randomCode, sendMail } from '~/utils/Otp';
 import { Code, Info, User } from '~/types';
-import bcrypt from 'bcrypt';
+import { hash } from 'bcrypt';
 import isEmail from 'validator/lib/isEmail';
 import isTell from 'validator/lib/isMobilePhone';
+import { HttpStatus } from '~/http-status.enum';
+import { isNotEmptyObject } from '~/utils/Validate';
+import { httpResponse } from '~/utils/HandleRes';
 
-class AuthService {
+export class AuthService {
     //
-    public async infoUnique(data: Info) {
-        let isCheck: boolean = false;
+    async uniqueEmail(email: string): Promise<boolean> {
+        if (!isEmail(email)) throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Email not is valid' });
+        return Boolean(await UserModel.findOne({ email }, { email: 1 }));
+    }
+    //
+    async uniqueTell(tell: string): Promise<boolean> {
+        if (!isTell(tell, 'vi-VN')) throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Number phone not is valid' });
+        return Boolean(await UserModel.findOne({ tell }, { tell: 1 }));
+    }
+    //
+    async uniqueUsername(userName: string): Promise<boolean> {
+        if (!/^[^\s!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]+$/.test(userName))
+            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Username not is valid' });
+        return Boolean(await UserModel.findOne({ userName }, { userName: 1 }));
+    }
+    //
+    async infoUnique(data: Info) {
+        if (isNotEmptyObject(data)) throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' });
         if (data.email) {
-            if (isEmail(data.email)) {
-                const user = await UserModel.findOne({ email: data.email });
-                isCheck = Boolean(user) ? false : true;
-            }
-            return isCheck ? { type: 'email', unique: true } : { type: 'email', unique: false };
+            const unique = await this.uniqueEmail(data.email);
+            return httpResponse(HttpStatus.OK, { type: 'email', unique });
         }
         if (data.numberPhone) {
-            if (isTell(data.numberPhone)) {
-                const user = await UserModel.findOne({ numberPhone: data.numberPhone });
-                isCheck = Boolean(user) ? false : true;
-            }
-            return isCheck ? { type: 'tell', unique: true } : { type: 'tell', unique: false };
+            const unique = await this.uniqueTell(data.numberPhone);
+            return httpResponse(HttpStatus.OK, { type: 'tell', unique });
         }
-        const user = await UserModel.findOne({ userName: data.userName });
-        isCheck = Boolean(user) ? false : true;
-        return isCheck ? { type: 'userName', unique: true } : { type: 'userName', unique: false };
+        if (data.userName) {
+            const unique = await this.uniqueUsername(data.userName);
+            return httpResponse(HttpStatus.OK, { type: 'userName', unique });
+        }
+        throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, { msg: 'Server error' });
     }
     //
-    public async register(data: RegisterDto): Promise<User> {
-        data.password = this.hashPassword(data.password);
+    async register(data: RegisterDto) {
+        if (data.email && (await this.uniqueEmail(data.email)))
+            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Email not valid !' });
+        if (data.numberPhone && (await this.uniqueEmail(data.numberPhone)))
+            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Tell or Tell not valid !' });
+        data.password = await hash(data.password, 10);
         const user = await UserModel.create(data);
-        return user;
-    }
-    //
-    public async signCode(email: string) {
-        const code = randomCode(6);
-        await CodeModel.create({ email, otp: code });
-        this.deleteCode(code);
-        return await sendMail({ email, codeverify: code });
-    }
-    public async verifyCode(data: Omit<Code, '_id'>) {
-        return await CodeModel.findOneAndDelete(data);
-    }
-    private hashPassword(password: string): string {
-        const salt: number = 10;
-        return bcrypt.hashSync(password, salt);
-    }
-    private deleteCode(code: string) {
-        setTimeout(async () => {
-            await CodeModel.deleteOne({ otp: code });
-        }, 60000);
+        return httpResponse(HttpStatus.OK, { msg: 'Register success', userName: user.userName });
     }
 }
-
-export default new AuthService();
+const authProvider = new AuthService();
+export default authProvider;

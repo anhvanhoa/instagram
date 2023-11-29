@@ -9,6 +9,7 @@ const users = new Schema<User>(
             unique: true,
             required: true,
             lowercase: true,
+            validate: [(email: string) => /^[^\s!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]+$/.test(email), 'userName not valid'],
         },
         email: {
             type: String,

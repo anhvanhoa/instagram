@@ -30,8 +30,8 @@ export interface Code {
     otp: string;
 }
 
-export interface Info {
+export class Info {
     email?: string;
-    numberPhone: ?string;
+    numberPhone?: string;
     userName?: string;
 }
