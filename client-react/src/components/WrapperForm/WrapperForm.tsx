@@ -19,7 +19,6 @@ const WrapperForm: React.FC<Props> = ({ isLogo = true, children, isAccount, setI
                             </div>
                         </Link>
                     )}
-
                     {children}
                 </div>
                 <LoginSignup setIsAccount={setIsAccount} isAccount={isAccount} />
