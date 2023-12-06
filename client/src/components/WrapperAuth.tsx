@@ -6,20 +6,21 @@ import Button from '~/components/Button'
 interface Props {
     children: React.ReactNode
     isAccount?: boolean
+    isLogo?: boolean
 }
 const boxAccounts = {
     login: {
         content: 'Bạn đã có tài khoản ?',
         link: '/accounts/login',
-        button: 'Đăng nhập'
+        button: 'Đăng nhập',
     },
     register: {
         content: 'Bạn chưa có tài khoản ?',
         link: '/accounts/signup',
-        button: 'Đăng ký'
-    }
+        button: 'Đăng ký',
+    },
 }
-const WrapperAuth: React.FC<Props> = ({ children, isAccount }) => {
+const WrapperAuth: React.FC<Props> = ({ children, isAccount, isLogo }) => {
     const [account] = useState(() => (isAccount ? boxAccounts.login : boxAccounts.register))
     const switchLoginOrRegister = () => {
         const isLogin = Boolean(sessionStorage.getItem('loginOrRegister'))
@@ -30,7 +31,7 @@ const WrapperAuth: React.FC<Props> = ({ children, isAccount }) => {
             <section className='w-96 p-2'>
                 <div className='rounded-md sm:border'>
                     <div className='mt-8 mb-3'>
-                        <img className='mx-auto w-44 h-12' src={images.logoText} alt='logo' />
+                        {isLogo || <img className='mx-auto w-44 h-12' src={images.logoText} alt='logo' />}
                     </div>
                     <div className='mb-8'>{children}</div>
                 </div>

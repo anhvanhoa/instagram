@@ -6,26 +6,27 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:react-hooks/recommended',
         'eslint-config-prettier',
-        'prettier'
+        'prettier',
     ],
     ignorePatterns: ['dist', '.eslintrc.cjs', 'vite.config.ts'],
     parser: '@typescript-eslint/parser',
     plugins: ['react-refresh', 'prettier'],
     rules: {
+        '@typescript-eslint/ban-types': 'error',
         'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
         'prettier/prettier': [
             'warn',
             {
                 arrowParens: 'always',
                 semi: false,
-                trailingComma: 'none',
+                trailingComma: 'all',
                 tabWidth: 4,
                 endOfLine: 'auto',
                 useTabs: false,
                 singleQuote: true,
                 printWidth: 120,
-                jsxSingleQuote: true
-            }
-        ]
-    }
+                jsxSingleQuote: true,
+            },
+        ],
+    },
 }

@@ -7,8 +7,10 @@ interface Props {
     value?: string
     isSuccess?: boolean
     isError?: boolean
+    maxLength?: number
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
     onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void
+    onFocus?: (e: React.ChangeEvent<HTMLInputElement>) => void
 }
 const InputAuth: React.FC<Props> = ({
     children,
@@ -16,17 +18,21 @@ const InputAuth: React.FC<Props> = ({
     value = '',
     isSuccess,
     isError,
-    onChange = () => {},
-    onBlur
+    maxLength,
+    onChange,
+    onBlur,
+    onFocus
 }) => {
     return (
         <div className='mx-10 mb-2'>
             <label className={classnames('relative flex items-center h-10 overflow-hidden group', { isValue: value })}>
                 <input
+                    onFocus={onFocus}
                     onBlur={onBlur}
                     onChange={onChange}
                     value={value}
                     type={type}
+                    maxLength={maxLength}
                     className={classnames(
                         'w-full h-full border-[#d2d2d2] border-solid border rounded-md',
                         'py-2 px-2 text-sm outline-none focus:border-gray-400',

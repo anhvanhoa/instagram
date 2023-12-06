@@ -1,5 +1,6 @@
 import {
     IsEmail,
+    IsEmpty,
     IsMobilePhone,
     IsNotEmpty,
     IsOptional,
@@ -8,12 +9,12 @@ import {
 } from 'class-validator';
 
 export class SignDto {
-    @IsOptional()
-    @IsEmail()
-    @IsString()
+    // @IsOptional()
+    // @IsEmail()
+    // @IsString()
     email?: string;
-    @IsOptional()
-    @IsMobilePhone('vi-VN')
+    // @IsOptional()
+    // @IsMobilePhone('vi-VN')
     numberPhone?: string;
     @IsNotEmpty()
     password: string;

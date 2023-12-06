@@ -6,6 +6,7 @@ import screenshot1 from './screenshot1.png'
 import screenshot2 from './screenshot2.png'
 import screenshot3 from './screenshot3.png'
 import screenshot4 from './screenshot4.png'
+import synthetic from './synthetic.png'
 const images = {
     logoText,
     downloadMicrosoft,
@@ -14,7 +15,8 @@ const images = {
     screenshot1,
     screenshot2,
     screenshot3,
-    screenshot4
+    screenshot4,
+    synthetic
 }
 
 export default images

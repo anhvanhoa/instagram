@@ -6,7 +6,6 @@ class HandleRes {
         return { message, data };
     }
     public error(message: string, err?: any) {
-        console.log(err);
         return { message };
     }
     public httpResponse<T>(httpStatus: HttpStatus, data: T, isLogger: boolean = false) {

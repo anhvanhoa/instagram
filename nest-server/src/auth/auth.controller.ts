@@ -10,7 +10,12 @@ import { AuthService } from './auth.service';
 import { InfoDto } from './dto/info.dto';
 import { CreateCodeDto } from './dto/create-code.dto';
 import { SignDto } from './dto/sign.dto';
-import { isNotEmpty, isNotEmptyObject } from 'class-validator';
+import {
+    isEmail,
+    isMobilePhone,
+    isNotEmpty,
+    isNotEmptyObject,
+} from 'class-validator';
 import { OtpService } from 'src/otp/otp.service';
 
 @Controller('auth')
@@ -38,7 +43,11 @@ export class AuthController {
     async register(@Body() data: SignDto) {
         const { email, numberPhone } = data;
         if (isNotEmpty(email) && isNotEmpty(numberPhone))
-            throw new BadRequestException('Data not enough');
+            throw new BadRequestException('Data is not valid');
+        if (email && !isEmail(email))
+            throw new BadRequestException("This is'nt email");
+        if (numberPhone && !isMobilePhone(numberPhone, 'vi-VN'))
+            throw new BadRequestException("This is'nt tell");
         return this.authService.register(data);
     }
 }
