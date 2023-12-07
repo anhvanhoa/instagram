@@ -7,6 +7,7 @@ import { DataRegister, BirthdayType } from '~/types/register'
 import { MutateOptions, useMutation } from '@tanstack/react-query'
 import sendOtp, { SendOTP } from '~/apis/sendOtp'
 import isEmail from 'validator/lib/isEmail'
+import firebaseOtp from '~/apis/firebaseOtp'
 
 const initDataForm: DataRegister = {
     email: '',
@@ -26,6 +27,7 @@ const initBirthday: BirthdayType = {
 const Register = () => {
     const [dataForm, setDataFrom] = useState<DataRegister>(initDataForm)
     const [step, setStep] = useState(1)
+    const [verificationId, setVerificationId] = useState('')
     const [birthday, setBirthday] = useState<BirthdayType>(initBirthday)
     // Handle step
     const handleStep = (name: 'next' | 'prev') => () => {
@@ -37,6 +39,7 @@ const Register = () => {
         mutationFn: (body: SendOTP) => sendOtp(body),
     })
     // handle send otp
+    const otpFirebase = firebaseOtp()
     const handleSendOtp = async (type: string = '') => {
         const handle: MutateOptions<number, Error, SendOTP> = {
             onSuccess: () => {
@@ -44,7 +47,12 @@ const Register = () => {
             },
         }
         if (isEmail(dataForm.email)) mutate({ email: dataForm.email }, handle)
-        else mutate({ numberPhone: dataForm.email }, handle)
+        else {
+            otpFirebase.sendOtpFirebase(dataForm.email, 'verify').then((data) => {
+                setVerificationId(data)
+                type === 'next' && handleStep('next')()
+            })
+        }
     }
     return (
         <main>
@@ -61,6 +69,7 @@ const Register = () => {
                 )}
                 {step == 3 && (
                     <Otp
+                        verificationId={verificationId}
                         sendOtp={handleSendOtp}
                         dataForm={dataForm}
                         setDataFrom={setDataFrom}

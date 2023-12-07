@@ -3,7 +3,7 @@ import { User } from '~/types';
 
 const users = new Schema<User>(
     {
-        fbId: { type: String, default: null },
+        fbId: { type: String, default: '' },
         userName: {
             type: String,
             unique: true,

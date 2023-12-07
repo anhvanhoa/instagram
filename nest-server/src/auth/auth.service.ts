@@ -42,7 +42,7 @@ export class AuthService {
         try {
             const isDup = data.email
                 ? await this.uniqueEmail(data.email)
-                : await this.uniqueEmail(data.numberPhone);
+                : await this.uniqueTell(data.numberPhone);
             if (isDup)
                 return new HttpException('Duplicate', HttpStatus.BAD_REQUEST);
             data.password = await hash(data.password, 10);
@@ -50,7 +50,10 @@ export class AuthService {
             return { message: 'Register success' };
         } catch (error) {
             if (error.code === 11000)
-                throw new HttpException('Duplicate', HttpStatus.BAD_REQUEST);
+                throw new HttpException(
+                    'Duplicate data',
+                    HttpStatus.BAD_REQUEST,
+                );
             throw new InternalServerErrorException('server');
         }
     }

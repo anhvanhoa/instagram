@@ -47,12 +47,13 @@ export class AuthService {
     async register(data: RegisterDto) {
         if (data.email && (await this.uniqueEmail(data.email)))
             throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Email not valid !' });
-        if (data.numberPhone && (await this.uniqueEmail(data.numberPhone)))
+        if (data.numberPhone && (await this.uniqueTell(data.numberPhone)))
             throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Tell or Tell not valid !' });
         data.password = await hash(data.password, 10);
         const user = await UserModel.create(data);
         return httpResponse(HttpStatus.OK, { msg: 'Register success', userName: user.userName });
     }
+    //
 }
 const authProvider = new AuthService();
 export default authProvider;

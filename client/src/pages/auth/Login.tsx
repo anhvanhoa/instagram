@@ -3,12 +3,34 @@ import InputAuth from '~/components/InputAuth'
 import Button from '~/components/Button'
 import { Icon } from '@iconify/react'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
+interface FormData {
+    emailTellName: string
+    email: string
+    tell: string
+    userName: string
+    password: string
+}
 const Login = () => {
+    const [formData, setFormData] = useState<FormData>({
+        emailTellName: '',
+        email: '',
+        tell: '',
+        userName: '',
+        password: '',
+    })
+    const handleChange = (name: keyof FormData) => (event: React.ChangeEvent<HTMLInputElement>) =>
+        setFormData((prev) => ({ ...prev, [name]: event.target.value }))
     return (
         <WrapperAuth>
+            <div id='verify'></div>
             <form action='' className='mt-8'>
-                <InputAuth type='text'>Số di động, tên người dùng hoặc email</InputAuth>
-                <InputAuth type='password'>Mật khẩu</InputAuth>
+                <InputAuth value={formData.emailTellName} onChange={handleChange('emailTellName')} type='text'>
+                    Số di động, tên người dùng hoặc email
+                </InputAuth>
+                <InputAuth value={formData.password} onChange={handleChange('password')} type='password'>
+                    Mật khẩu
+                </InputAuth>
                 <Button disable className='mx-auto mt-4' size='extraLarge'>
                     Đăng nhập
                 </Button>

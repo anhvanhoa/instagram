@@ -8,16 +8,20 @@ import register from '~/apis/register'
 import { useNavigate } from 'react-router-dom'
 import { pathPublic } from '~/config/routes'
 import isEmail from 'validator/lib/isEmail'
+import firebaseOtp from '~/apis/firebaseOtp'
+import firebaseRegister from '~/apis/firebaseRegister'
 
 interface Props {
+    verificationId: string
     dataForm: DataRegister
     setDataFrom: (value: React.SetStateAction<DataRegister>) => void
     sendOtp: () => void
     handleStep: (type: 'next' | 'prev') => () => void // currying
 }
 // const timerCallApi = 5 * 60 * 1000
-const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp }) => {
+const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp, verificationId }) => {
     const [btnDisable, setBtnDisable] = useState(true)
+    const [error, setError] = useState(false)
     const navigate = useNavigate()
     // handle disable send otp 300s
     useEffect(() => {
@@ -30,20 +34,28 @@ const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp }) =>
     })
     // Handle success
     const handleSuccess = () => navigate(pathPublic.login)
+    // handle verify
+    const otpFirebase = firebaseOtp()
     // handle register
     const handleRegister = () => {
         setBtnDisable(true)
         if (!isEmail(dataForm.email)) {
             dataForm.numberPhone = dataForm.email
             dataForm.email = ''
+            otpFirebase
+                .verifyOtp(dataForm.otp, verificationId)
+                .then(() => firebaseRegister(dataForm).then(handleSuccess))
+                .catch(() => setError(true))
+        } else {
+            mutate(dataForm, {
+                onSuccess: handleSuccess,
+            })
         }
-        mutate(dataForm, {
-            onSuccess: handleSuccess,
-        })
     }
     return (
         <div>
             <div className='flex flex-col'>
+                <div id='verify'></div>
                 <div className='max-w-[350px] mx-auto flex flex-col items-center'>
                     <div
                         className='h-[76px] w-24 mt-3 bg-[-439px_1px]'
@@ -66,7 +78,7 @@ const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp }) =>
                 <Button onClick={handleRegister} className='mt-4 mx-auto'>
                     Xác nhận
                 </Button>
-                {isError && (
+                {(isError || error) && (
                     <p className='text-red-500 text-center px-9 pt-6 text-sm'>
                         Mã không hợp lệ. Bạn có thể yêu cầu mã mới.
                     </p>

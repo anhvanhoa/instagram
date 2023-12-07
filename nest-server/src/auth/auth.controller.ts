@@ -39,6 +39,7 @@ export class AuthController {
         return await this.otpService.signCode(email);
     }
 
+    @Post('firebase-register')
     @Post('register')
     async register(@Body() data: SignDto) {
         const { email, numberPhone } = data;

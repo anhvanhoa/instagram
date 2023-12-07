@@ -36,6 +36,7 @@ const Birthday: React.FC<Props> = ({ birthday, setBirthday, handleStep, dataForm
     return (
         <div>
             <div className='text-center px-10'>
+                <div id='verify'></div>
                 <div className='flex flex-col items-center text-center gap-1 text-sm leading-4'>
                     <div className='w-36 h-24 mt-3' style={{ background: `url(${images.synthetic})` }}></div>
                     <p className='font-medium py-2'>Thêm ngày sinh</p>

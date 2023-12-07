@@ -19,18 +19,23 @@ class AuthController {
             const response = await otpProvider.signCode(email);
             return res.status(response.httpStatus).json(response.data);
         } catch (error: any) {
+            console.log(error);
             if (!error.httpStatus) return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ msg: 'Server error' });
             return res.status(error.httpStatus).json(error.data);
         }
     }
     public async register({ body }: Request, res: Response) {
         try {
+            if (!body.email && !body.numberPhone) return res.status(400).json({ msg: 'Data is not valid' });
             const response = await authProvider.register(body);
             return res.status(response.httpStatus).json(response.data);
         } catch (error: any) {
             if (!error.httpStatus) return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ msg: 'Server error' });
             return res.status(error.httpStatus).json(error.data);
         }
+    }
+    public async login(req: Request, res: Response) {
+        return res.send('login');
     }
 }
 
