@@ -10,7 +10,7 @@ import { OtpDto } from '../dto';
 import { Code } from 'src/otp/schema/code.schema';
 
 @Injectable()
-export class verifyOtp implements NestMiddleware {
+export class VerifyOtp implements NestMiddleware {
     constructor(@InjectModel(Code.name) private codeModel: Model<Code>) {}
     async use(req: Request, _: Response, next: NextFunction) {
         const { otp, email }: OtpDto = req.body;

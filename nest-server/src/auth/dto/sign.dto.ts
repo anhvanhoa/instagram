@@ -1,12 +1,4 @@
-import {
-    IsEmail,
-    IsEmpty,
-    IsMobilePhone,
-    IsNotEmpty,
-    IsOptional,
-    IsString,
-    Matches,
-} from 'class-validator';
+import { IsNotEmpty, Matches } from 'class-validator';
 
 export class SignDto {
     // @IsOptional()

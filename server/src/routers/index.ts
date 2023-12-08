@@ -1,7 +1,7 @@
-import { Express } from 'express';
-import authRoute from './authRoute';
+import { Express } from 'express'
+import authRoute from './authRoute'
 function Routers(app: Express) {
-    app.use('/api/auth', authRoute);
+    app.use('/api/auth', authRoute)
 }
 
-export default Routers;
+export default Routers

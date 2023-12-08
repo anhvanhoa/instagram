@@ -8,6 +8,7 @@ import { OtpModule } from './otp/otp.module';
         ConfigModule.forRoot({
             envFilePath: ['.env'],
             isGlobal: true,
+            cache: true,
         }),
         DatabaseModule,
         AuthModule,

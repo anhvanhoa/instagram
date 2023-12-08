@@ -1,5 +1,5 @@
-import { model, Schema } from 'mongoose';
-import { Code } from '~/types';
+import { model, Schema } from 'mongoose'
+import { Code } from '~/types'
 
 const codes = new Schema<Code>(
     {
@@ -20,6 +20,6 @@ const codes = new Schema<Code>(
     {
         timestamps: true,
     },
-);
+)
 
-export default model('codes', codes);
+export default model('codes', codes)

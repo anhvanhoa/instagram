@@ -5,18 +5,23 @@ import {
     BadRequestException,
     HttpStatus,
     HttpCode,
+    Res,
+    UseGuards,
+    HttpException,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { InfoDto } from './dto/info.dto';
-import { CreateCodeDto } from './dto/create-code.dto';
-import { SignDto } from './dto/sign.dto';
 import {
     isEmail,
+    isJWT,
     isMobilePhone,
     isNotEmpty,
     isNotEmptyObject,
 } from 'class-validator';
+import { AuthService } from './auth.service';
+import { CreateCodeDto, InfoDto, LoginDto, SignDto } from './dto';
 import { OtpService } from 'src/otp/otp.service';
+import { Response } from 'express';
+import { AuthGuard } from './guard';
+import { Cookies } from './decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -50,5 +55,35 @@ export class AuthController {
         if (numberPhone && !isMobilePhone(numberPhone, 'vi-VN'))
             throw new BadRequestException("This is'nt tell");
         return this.authService.register(data);
+    }
+
+    @Post('login')
+    async login(
+        @Body() body: LoginDto,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        return this.authService.login(body, (token) => {
+            res.cookie('tokenRefresh', token, {
+                httpOnly: true,
+                sameSite: 'strict',
+            });
+        });
+    }
+
+    @UseGuards(AuthGuard)
+    @Post('logout')
+    @HttpCode(200)
+    async logout(
+        @Cookies('tokenRefresh') tokenRefresh: string,
+        @Res({ passthrough: true }) { clearCookie }: Response,
+    ) {
+        if (!tokenRefresh || !isJWT(tokenRefresh))
+            throw new HttpException(
+                { msg: 'Token not valid' },
+                HttpStatus.UNAUTHORIZED,
+            );
+        this.authService.logout(tokenRefresh);
+        clearCookie('tokenRefresh');
+        return tokenRefresh;
     }
 }

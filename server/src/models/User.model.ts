@@ -1,5 +1,5 @@
-import { model, Schema } from 'mongoose';
-import { User } from '~/types';
+import { model, Schema } from 'mongoose'
+import { User } from '~/types'
 
 const users = new Schema<User>(
     {
@@ -9,7 +9,7 @@ const users = new Schema<User>(
             unique: true,
             required: true,
             lowercase: true,
-            validate: [(email: string) => /^[^\s!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]+$/.test(email), 'userName not valid'],
+            validate: [(email: string) => /^[^\s!@#$%^&*()_+{}\\[\]:;<>,.?~\\/-]+$/.test(email), 'userName not valid'],
         },
         email: {
             type: String,
@@ -46,6 +46,6 @@ const users = new Schema<User>(
     {
         timestamps: true,
     },
-);
+)
 
-export default model('users', users);
+export default model<User>('users', users)
