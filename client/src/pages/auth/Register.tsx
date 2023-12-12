@@ -56,6 +56,7 @@ const Register = () => {
     }
     return (
         <main>
+            <a href='http://localhost:8008/api/auth/facebook'>sd</a>
             <WrapperAuth isLogo={step !== 1} isAccount>
                 {step === 1 && <FormRegister handleStep={handleStep} dataForm={dataForm} setDataFrom={setDataFrom} />}
                 {step === 2 && (

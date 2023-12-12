@@ -3,6 +3,9 @@ import authProvider from '~/services/Auth.service'
 import { HttpStatus } from '~/http-status.enum'
 import otpProvider from '~/services/Otp.service'
 import isJWT from 'validator/lib/isJWT'
+import { httpResponse } from '~/utils/HandleRes'
+import { UserFacebook } from '~/types'
+import slugify from 'slugify'
 
 class AuthController {
     public async isInfo({ body }: Request, res: Response) {
@@ -29,6 +32,18 @@ class AuthController {
         try {
             if (!body.email && !body.numberPhone) return res.status(400).json({ msg: 'Data is not valid' })
             const response = await authProvider.register(body)
+            return res.status(response.httpStatus).json(response.data)
+        } catch (error: any) {
+            if (!error.httpStatus) return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ msg: 'Server error' })
+            return res.status(error.httpStatus).json(error.data)
+        }
+    }
+    public async registerFacebook(req: Request, res: Response) {
+        try {
+            const fail = req.isUnauthenticated()
+            if (!req.user) httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login facebook fail' })
+            const dataUser = req.user as UserFacebook
+            const response = await authProvider.registerFacebook(dataUser, fail)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus) return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ msg: 'Server error' })

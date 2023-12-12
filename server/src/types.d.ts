@@ -41,3 +41,10 @@ export interface Info {
 export interface LoginType extends Info {
     password: string
 }
+
+export interface UserFacebook {
+    id: string
+    displayName: string
+    accessToken: string
+    photos: array
+}

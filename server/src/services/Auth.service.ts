@@ -1,6 +1,6 @@
 import { RegisterDto } from '~/services/types'
 import { UserModel } from '~/models/index.model'
-import { Info, LoginType, ResUser, User } from '~/types'
+import { Info, LoginType, ResUser, User, UserFacebook } from '~/types'
 import { hash, compare } from 'bcrypt'
 import isEmail from 'validator/lib/isEmail'
 import isTell from 'validator/lib/isMobilePhone'
@@ -9,6 +9,8 @@ import { isNotEmptyObject } from '~/utils/Validate'
 import { httpResponse } from '~/utils/HandleRes'
 import Token from '~/utils/Token'
 import { redis } from '~/config/dbRedis'
+import slugify from 'slugify'
+import otp from '~/utils/Otp'
 
 export class AuthService {
     //
@@ -53,6 +55,25 @@ export class AuthService {
         data.password = await hash(data.password, 10)
         const user = await UserModel.create(data)
         return httpResponse(HttpStatus.OK, { msg: 'Register success', userName: user.userName })
+    }
+    //
+    async registerFacebook(userFb: UserFacebook, fail: boolean) {
+        if (fail) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login facebook fail' })
+        let user = await UserModel.findOne({ fbId: userFb.id })
+        if (!user)
+            user = await UserModel.create({
+                fbId: userFb.id,
+                userName: `${slugify('Nguyễn Văn Ánh', {
+                    replacement: '',
+                    lower: true,
+                    trim: true,
+                })}${otp.randomCode(3)}`,
+                fullName: userFb.displayName,
+                birthday: '1-1-1999',
+                password: await hash('123456', 10),
+            })
+        const { password, ...dataUser } = user._doc
+        return httpResponse(HttpStatus.OK, { ...dataUser, accessToken: userFb.accessToken })
     }
     //
     async login(data: LoginType, setCookie: (token: string) => void) {
