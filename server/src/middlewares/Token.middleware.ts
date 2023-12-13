@@ -5,7 +5,7 @@ import passport from 'passport'
 
 class TokenMiddleware {
     accuracy(req: Request, res: Response, next: NextFunction) {
-        const { headers } = req
+        const { headers, cookies } = req
         const { authorization } = headers
         if (!authorization)
             return res.status(HttpStatus.UNAUTHORIZED).json({ msg: 'You are not authorized to access this resource.' })

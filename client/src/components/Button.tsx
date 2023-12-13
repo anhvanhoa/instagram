@@ -44,11 +44,14 @@ const Button: React.FC<Props> = ({
     const allClass: string = `text-sm flex items-center justify-center select-none py-1.5 rounded-md font-medium ${className} ${buttonSize[size]} ${buttonType[type]} ${disableCls}`
     return (
         <button onClick={onClick} type='button' className={allClass}>
-            <span>{iconL}</span>
-            <span className='mx-2'>
-                {loading ? <Icon className='animate-spin my-0.5' icon='nonicons:loading-16' /> : children}
-            </span>
-            <span>{iconR}</span>
+            {loading && <Icon className='w-3.5 h-3.5 animate-spin my-[3px]' icon='nonicons:loading-16' />}
+            {!loading && (
+                <>
+                    <span>{iconL}</span>
+                    <span className='mx-2'>{children}</span>
+                    <span>{iconR}</span>
+                </>
+            )}
         </button>
     )
 }

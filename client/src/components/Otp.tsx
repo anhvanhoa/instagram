@@ -1,7 +1,7 @@
 import Button from '~/components/Button'
 import InputAuth from '~/components/InputAuth'
 import images from '~/assets'
-import { DataRegister } from '~/types/register'
+import { DataRegister } from '~/types/auth'
 import { useEffect, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import register from '~/apis/register'

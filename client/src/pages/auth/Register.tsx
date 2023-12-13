@@ -3,11 +3,14 @@ import { useState } from 'react'
 import FormRegister from '~/components/Register'
 import Birthday from '~/components/Birthday'
 import Otp from '~/components/Otp'
-import { DataRegister, BirthdayType } from '~/types/register'
+import { DataRegister, BirthdayType } from '~/types/auth'
 import { MutateOptions, useMutation } from '@tanstack/react-query'
 import sendOtp, { SendOTP } from '~/apis/sendOtp'
 import isEmail from 'validator/lib/isEmail'
 import firebaseOtp from '~/apis/firebaseOtp'
+import registerFacebook from '~/apis/registerFacebook'
+import useContextUser from '~/store/hook'
+import { useNavigate } from 'react-router-dom'
 
 const initDataForm: DataRegister = {
     email: '',
@@ -25,6 +28,8 @@ const initBirthday: BirthdayType = {
     year: 2000,
 }
 const Register = () => {
+    const { dispatch } = useContextUser()
+    const navigation = useNavigate()
     const [dataForm, setDataFrom] = useState<DataRegister>(initDataForm)
     const [step, setStep] = useState(1)
     const [verificationId, setVerificationId] = useState('')
@@ -54,11 +59,26 @@ const Register = () => {
             })
         }
     }
+    const handleLoginFB = async () => {
+        try {
+            const user = await registerFacebook()
+            dispatch({ payload: user, type: 'LOGIN' })
+            navigation('/')
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <main>
-            <a href='http://localhost:8008/api/auth/facebook'>sd</a>
             <WrapperAuth isLogo={step !== 1} isAccount>
-                {step === 1 && <FormRegister handleStep={handleStep} dataForm={dataForm} setDataFrom={setDataFrom} />}
+                {step === 1 && (
+                    <FormRegister
+                        handleLoginFB={handleLoginFB}
+                        handleStep={handleStep}
+                        dataForm={dataForm}
+                        setDataFrom={setDataFrom}
+                    />
+                )}
                 {step === 2 && (
                     <Birthday
                         sendOtp={handleSendOtp}

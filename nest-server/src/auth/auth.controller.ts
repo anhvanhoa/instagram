@@ -70,6 +70,19 @@ export class AuthController {
         });
     }
 
+    // @Post('login-facebook')
+    // async loginFacbook(
+    //     @Body() body: LoginDto,
+    //     @Res({ passthrough: true }) res: Response,
+    // ) {
+    //     return this.authService.login(body, (token) => {
+    //         res.cookie('tokenRefresh', token, {
+    //             httpOnly: true,
+    //             sameSite: 'strict',
+    //         });
+    //     });
+    // }
+
     @UseGuards(AuthGuard)
     @Post('logout')
     @HttpCode(200)

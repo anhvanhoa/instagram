@@ -48,3 +48,11 @@ export interface UserFacebook {
     accessToken: string
     photos: array
 }
+
+export interface LoginFB {
+    displayName: string
+    email: string | null
+    phoneNumber: string | null
+    photoURL: string | null
+    uid: string
+}

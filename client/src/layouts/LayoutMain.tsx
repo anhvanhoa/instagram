@@ -1,8 +1,9 @@
 import { Outlet } from 'react-router-dom'
+import Sidebar from './components/Sidebar'
 const LayoutMain = () => {
     return (
-        <div>
-            <h1>Heder</h1>
+        <div className='flex'>
+            <Sidebar />
             <Outlet />
         </div>
     )

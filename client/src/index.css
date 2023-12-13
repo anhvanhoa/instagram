@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+svg {
+    color: inherit;
+    width: inherit;
+    height: inherit;
+}

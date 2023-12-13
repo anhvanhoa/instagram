@@ -11,3 +11,14 @@ export class LoginDto {
     email?: string;
     password: string;
 }
+// export class LoginFBDto {
+//     @IsOptional()
+//     userName?: string;
+//     @IsOptional()
+//     @IsMobilePhone('vi-VN')
+//     numberPhone?: string;
+//     @IsOptional()
+//     @IsEmail()
+//     email?: string;
+//     password: string;
+// }

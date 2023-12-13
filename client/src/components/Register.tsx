@@ -9,24 +9,23 @@ import isTell from 'validator/lib/isMobilePhone'
 import matches from 'validator/lib/matches'
 import uniqueUser, { TypeUniqueUser } from '~/apis/uniqueUser'
 import { useMutation } from '@tanstack/react-query'
-import { DataRegister, UniqueUser } from '~/types/register'
+import { DataRegister, UniqueUser } from '~/types/auth'
 
 type Validate = Record<keyof DataRegister, 'success' | 'error' | 'not'>
-
 const initValidate: Omit<Validate, 'numberPhone' | 'birthday' | 'otp'> = {
     email: 'not',
     fullName: 'not',
     userName: 'not',
     password: 'not',
 }
-
 interface Props {
     dataForm: DataRegister
     setDataFrom: (value: React.SetStateAction<DataRegister>) => void
     handleStep: (type: 'next' | 'prev') => () => void // currying
+    handleLoginFB: () => void
 }
 
-const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep }) => {
+const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLoginFB }) => {
     const [btnDisable, setBtnDisable] = useState(true)
     const [typePass, setTypePass] = useState<'text' | 'password'>('password')
     const [validate, setValidate] = useState<Omit<Validate, 'numberPhone' | 'birthday' | 'otp'>>(initValidate)
@@ -95,6 +94,7 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep }) => {
                     iconL={<Icon className='text-xl' icon='uil:facebook' />}
                     className='mx-auto mt-4'
                     size='extraLarge'
+                    onClick={handleLoginFB}
                 >
                     Đăng nhập bằng facebook
                 </Button>

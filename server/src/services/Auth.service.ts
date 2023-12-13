@@ -1,6 +1,6 @@
 import { RegisterDto } from '~/services/types'
 import { UserModel } from '~/models/index.model'
-import { Info, LoginType, ResUser, User, UserFacebook } from '~/types'
+import { Info, LoginFB, LoginType, ResUser, User, UserFacebook } from '~/types'
 import { hash, compare } from 'bcrypt'
 import isEmail from 'validator/lib/isEmail'
 import isTell from 'validator/lib/isMobilePhone'
@@ -19,9 +19,10 @@ export class AuthService {
         return Boolean(await UserModel.findOne({ email }, { email: 1 }))
     }
     //
-    async uniqueTell(tell: string): Promise<boolean> {
-        if (!isTell(tell, 'vi-VN')) throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Number phone not is valid' })
-        return Boolean(await UserModel.findOne({ tell }, { tell: 1 }))
+    async uniqueTell(numberPhone: string): Promise<boolean> {
+        if (!isTell(numberPhone, 'vi-VN'))
+            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Number phone not is valid' })
+        return Boolean(await UserModel.findOne({ numberPhone }, { numberPhone: 1 }))
     }
     //
     async uniqueUsername(userName: string): Promise<boolean> {
@@ -56,33 +57,71 @@ export class AuthService {
         const user = await UserModel.create(data)
         return httpResponse(HttpStatus.OK, { msg: 'Register success', userName: user.userName })
     }
+    // not use
+    // async registerFacebook(userFb: UserFacebook, fail: boolean) {
+    //     if (fail) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login facebook fail' })
+    //     let user = await UserModel.findOne({ fbId: userFb.id })
+    //     if (!user)
+    //         user = await UserModel.create({
+    //             fbId: userFb.id,
+    //             userName: `${slugify('Nguyễn Văn Ánh', {
+    //                 replacement: '',
+    //                 lower: true,
+    //                 trim: true,
+    //             })}${otp.randomCode(3)}`,
+    //             fullName: userFb.displayName,
+    //             birthday: '1-1-1999',
+    //             password: await hash('123456', 10),
+    //         })
+    //     const { password, ...dataUser } = user._doc
+    //     return httpResponse(HttpStatus.OK, { ...dataUser, accessToken: userFb.accessToken })
+    // }
     //
-    async registerFacebook(userFb: UserFacebook, fail: boolean) {
-        if (fail) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login facebook fail' })
-        let user = await UserModel.findOne({ fbId: userFb.id })
-        if (!user)
-            user = await UserModel.create({
-                fbId: userFb.id,
-                userName: `${slugify('Nguyễn Văn Ánh', {
+    async loginFacebook(data: LoginFB, setCookie: (token: string) => void) {
+        const { email, displayName, phoneNumber, photoURL, uid } = data
+        const isEmail = email && (await this.uniqueEmail(email))
+        const password = await hash(uid, 10)
+        if (!isEmail) {
+            const user = await UserModel.create({
+                userName: `${slugify(displayName, {
                     replacement: '',
                     lower: true,
                     trim: true,
                 })}${otp.randomCode(3)}`,
-                fullName: userFb.displayName,
-                birthday: '1-1-1999',
-                password: await hash('123456', 10),
+                email,
+                numberPhone: phoneNumber,
+                fullName: displayName,
+                avatar: photoURL,
+                fbId: uid,
+                password,
+                birthday: '1-1-1997',
             })
-        const { password, ...dataUser } = user._doc
-        return httpResponse(HttpStatus.OK, { ...dataUser, accessToken: userFb.accessToken })
+            const accessToken = Token.createToken({ userName: user.userName }, '120s')
+            const refreshToken = Token.createToken({ userName: user.userName }, '1h')
+            await redis.set(user.userName, refreshToken)
+            setCookie(refreshToken)
+            const { password: pass, ...newUser } = user._doc
+            const dataUser: ResUser = { ...newUser, accessToken }
+            return httpResponse(HttpStatus.OK, dataUser)
+        }
+        const user = await UserModel.findOne({ email })
+        if (!user) throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, { msg: 'Server error' })
+        const accessToken = Token.createToken({ userName: user.userName }, '120s')
+        const refreshToken = Token.createToken({ userName: user.userName }, '1h')
+        await redis.set(user.userName, refreshToken)
+        setCookie(refreshToken)
+        const { password: pass, ...newUser } = user._doc
+        const dataUser: ResUser = { ...newUser, accessToken }
+        return httpResponse(HttpStatus.OK, dataUser)
     }
     //
     async login(data: LoginType, setCookie: (token: string) => void) {
         const { email, password, numberPhone, userName } = data
         if (!email && !numberPhone && !userName) throw httpResponse(HttpStatus.BAD_GATEWAY, { msg: 'Data not valid !' })
-        const isEmail = email && !(await this.uniqueEmail(email))
-        const isTell = numberPhone && !(await this.uniqueTell(numberPhone))
-        const isUsername = userName && !(await this.uniqueUsername(userName))
-        if (isEmail && isTell && isUsername)
+        const isEmail = email && (await this.uniqueEmail(email))
+        const isTell = numberPhone && (await this.uniqueTell(numberPhone))
+        const isUsername = userName && (await this.uniqueUsername(userName))
+        if (!isEmail && !isTell && !isUsername)
             throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login information is incorrect' })
         const user = await UserModel.findOne<User>(
             { $or: [{ userName }, { email }, { numberPhone }] },

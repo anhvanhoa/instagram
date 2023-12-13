@@ -13,15 +13,16 @@ authRoute.post('/sign-otp', AuthController.signCode)
 authRoute.post('/register', verifyOtp, AuthController.register)
 authRoute.post('/firebase-register', acceptTell, AuthController.register)
 // register facebook
-authRoute.get('/facebook', passport.authenticate('facebook'))
-authRoute.get(
-    '/facebook/callback',
-    passport.authenticate('facebook', {
-        failureRedirect: '/api/auth/facebook/return',
-        successReturnToOrRedirect: '/api/auth/facebook/return',
-    }),
-)
-authRoute.get('/facebook/return', AuthController.registerFacebook)
+// authRoute.get('/facebook', passport.authenticate('facebook'))
+// authRoute.get(
+//     '/facebook/callback',
+//     passport.authenticate('facebook', {
+//         failureRedirect: '/api/auth/facebook/return',
+//         successReturnToOrRedirect: '/api/auth/facebook/return',
+//     }),
+// )
+// authRoute.get('/facebook/return', AuthController.registerFacebook)
+authRoute.post('/login-facebook', AuthController.loginFacebook)
 // login account
 authRoute.post('/login', AuthController.login)
 // logout account

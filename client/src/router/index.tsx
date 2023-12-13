@@ -3,7 +3,7 @@ import LayoutAuth from '~/layouts/LayoutAuth'
 import LayoutMain from '~/layouts/LayoutMain'
 import Home from '~/pages/Home'
 import Login from '~/pages/auth/Login'
-import { pathPublic } from '~/config/routes'
+import { pathPublic, pathPrivate } from '~/config/routes'
 import Register from '~/pages/auth/Register'
 import HomeNotAuth from '~/pages/HomeNotAuth'
 export const routersPublic = createBrowserRouter([
@@ -12,18 +12,18 @@ export const routersPublic = createBrowserRouter([
         children: [
             {
                 element: <HomeNotAuth />,
-                path: pathPublic.home
+                path: pathPublic.home,
             },
             {
                 element: <Login />,
-                path: pathPublic.login
+                path: pathPublic.login,
             },
             {
                 element: <Register />,
-                path: pathPublic.signup
-            }
-        ]
-    }
+                path: pathPublic.signup,
+            },
+        ],
+    },
 ])
 export const routersPrivate = createBrowserRouter([
     {
@@ -31,8 +31,20 @@ export const routersPrivate = createBrowserRouter([
         children: [
             {
                 element: <Home />,
-                path: pathPublic.home
-            }
-        ]
-    }
+                path: pathPrivate.home,
+            },
+            {
+                element: <Home />,
+                path: pathPrivate.explore,
+            },
+            {
+                element: <Home />,
+                path: pathPrivate.reels,
+            },
+            {
+                element: <Home />,
+                path: pathPrivate.inbox,
+            },
+        ],
+    },
 ])

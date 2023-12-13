@@ -1,8 +1,11 @@
 export const pathPrivate = {
-    home: '/'
+    home: '/',
+    reels: '/reels',
+    explore: '/explore',
+    inbox: '/inbox',
 }
 export const pathPublic = {
     home: '/',
     login: '/accounts/login',
-    signup: '/accounts/signup'
+    signup: '/accounts/signup',
 }

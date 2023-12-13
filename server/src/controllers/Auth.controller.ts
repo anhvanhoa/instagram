@@ -38,21 +38,21 @@ class AuthController {
             return res.status(error.httpStatus).json(error.data)
         }
     }
-    public async registerFacebook(req: Request, res: Response) {
+    // public async registerFacebook(req: Request, res: Response) {
+    //     try {
+    //         const fail = req.isUnauthenticated()
+    //         if (!req.user) httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login facebook fail' })
+    //         const dataUser = req.user as UserFacebook
+    //         const response = await authProvider.registerFacebook(dataUser, fail)
+    //         return res.status(response.httpStatus).json(response.data)
+    //     } catch (error: any) {
+    //         if (!error.httpStatus) return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ msg: 'Server error' })
+    //         return res.status(error.httpStatus).json(error.data)
+    //     }
+    // }
+    public async loginFacebook({ body }: Request, res: Response) {
         try {
-            const fail = req.isUnauthenticated()
-            if (!req.user) httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login facebook fail' })
-            const dataUser = req.user as UserFacebook
-            const response = await authProvider.registerFacebook(dataUser, fail)
-            return res.status(response.httpStatus).json(response.data)
-        } catch (error: any) {
-            if (!error.httpStatus) return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
-        }
-    }
-    public async login({ body }: Request, res: Response) {
-        try {
-            const response = await authProvider.login(body, (token) => {
+            const response = await authProvider.loginFacebook(body, (token) => {
                 res.cookie('tokenRefresh', token, { httpOnly: true, sameSite: 'strict' })
             })
             return res.status(response.httpStatus).json(response.data)
@@ -61,6 +61,19 @@ class AuthController {
             return res.status(error.httpStatus).json(error.data)
         }
     }
+    //
+    public async login({ body }: Request, res: Response) {
+        try {
+            const response = await authProvider.login(body, (token) => {
+                res.cookie('tokenRefresh', token, { httpOnly: true, sameSite: 'strict', path: '/' })
+            })
+            return res.status(response.httpStatus).json(response.data)
+        } catch (error: any) {
+            if (!error.httpStatus) return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ msg: 'Server error' })
+            return res.status(error.httpStatus).json(error.data)
+        }
+    }
+    //
     public async logout({ cookies }: Request, res: Response) {
         try {
             const { tokenRefresh }: { tokenRefresh: string } = cookies
@@ -70,6 +83,7 @@ class AuthController {
             res.clearCookie('tokenRefresh')
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
+            console.log(error)
             if (!error.httpStatus) return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ msg: 'Server error' })
             return res.status(error.httpStatus).json(error.data)
         }

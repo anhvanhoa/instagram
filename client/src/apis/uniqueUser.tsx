@@ -1,5 +1,5 @@
 import http from '~/config/httpAxios'
-import { UniqueUser } from '~/types/register'
+import { UniqueUser } from '~/types/auth'
 export type TypeUniqueUser = {
     type: 'email' | 'tell' | 'userName'
     unique: boolean

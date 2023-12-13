@@ -4,23 +4,55 @@ import Button from '~/components/Button'
 import { Icon } from '@iconify/react'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-interface FormData {
-    emailTellName: string
-    email: string
-    tell: string
-    userName: string
-    password: string
+import { LoginData } from '~/types/auth'
+import { useMutation } from '@tanstack/react-query'
+import login from '~/apis/login'
+import isEmail from 'validator/lib/isEmail'
+import isMobilePhone from 'validator/lib/isMobilePhone'
+import { useNavigate } from 'react-router-dom'
+import useContextUser from '~/store/hook'
+import registerFacebook from '~/apis/registerFacebook'
+const initData: LoginData = {
+    emailTellName: '',
+    email: null,
+    numberPhone: null,
+    userName: null,
+    password: '',
 }
 const Login = () => {
-    const [formData, setFormData] = useState<FormData>({
-        emailTellName: '',
-        email: '',
-        tell: '',
-        userName: '',
-        password: '',
-    })
-    const handleChange = (name: keyof FormData) => (event: React.ChangeEvent<HTMLInputElement>) =>
+    const navigation = useNavigate()
+    const { dispatch } = useContextUser()
+    const [formData, setFormData] = useState<LoginData>(initData)
+    // handle change input
+    const handleChange = (name: keyof LoginData) => (event: React.ChangeEvent<HTMLInputElement>) =>
         setFormData((prev) => ({ ...prev, [name]: event.target.value }))
+    // tanStack
+    const { mutate, isError, isPending } = useMutation({
+        mutationFn: (body: LoginData) => login(body),
+    })
+    // Handle login
+    const handleLogin = () => {
+        if (isEmail(formData.emailTellName)) formData.email = formData.emailTellName
+        if (isMobilePhone(formData.emailTellName)) formData.numberPhone = formData.emailTellName
+        const regex = new RegExp('!/^[^s!@#$%^&*()_+{}\\[]:;<>,.?~\\/-]+$/')
+        if (regex.test(formData.emailTellName)) formData.email = formData.emailTellName
+        mutate(formData, {
+            onSuccess: (user) => {
+                dispatch({ payload: user, type: 'LOGIN' })
+                navigation('/')
+            },
+        })
+    }
+    // handle login facebook
+    const handleLoginFB = async () => {
+        try {
+            const user = await registerFacebook()
+            dispatch({ payload: user, type: 'LOGIN' })
+            navigation('/')
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <WrapperAuth>
             <div id='verify'></div>
@@ -31,7 +63,7 @@ const Login = () => {
                 <InputAuth value={formData.password} onChange={handleChange('password')} type='password'>
                     Mật khẩu
                 </InputAuth>
-                <Button disable className='mx-auto mt-4' size='extraLarge'>
+                <Button loading={isPending} onClick={handleLogin} className='mx-auto mt-4' size='extraLarge'>
                     Đăng nhập
                 </Button>
             </form>
@@ -43,6 +75,7 @@ const Login = () => {
                 </div>
                 <div className='mx-11'>
                     <Button
+                        onClick={handleLoginFB}
                         iconL={<Icon icon='uiw:facebook' />}
                         size='custom'
                         type='custom'
@@ -51,7 +84,7 @@ const Login = () => {
                         Đăng nhập bằng Facebook
                     </Button>
                 </div>
-                {true && (
+                {isError && (
                     <p className='text-red-600 text-center text-sm px-10 pt-2'>
                         Rất tiếc, mật khẩu của bạn không đúng. Vui lòng kiểm tra lại mật khẩu.
                     </p>

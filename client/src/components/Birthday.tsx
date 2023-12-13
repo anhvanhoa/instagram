@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import images from '~/assets'
 import Select from '~/components/Select'
 import generateBirthday from '~/utils/generateBirthday'
-import { BirthdayType, DataRegister } from '~/types/register'
+import { BirthdayType, DataRegister } from '~/types/auth'
 
 interface Props {
     birthday: BirthdayType
