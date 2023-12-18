@@ -15,13 +15,16 @@ import otp from '~/utils/Otp'
 export class AuthService {
     //
     async uniqueEmail(email: string): Promise<boolean> {
-        if (!isEmail(email)) throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Email not is valid' })
+        if (!isEmail(email))
+            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Email not is valid' })
         return Boolean(await UserModel.findOne({ email }, { email: 1 }))
     }
     //
     async uniqueTell(numberPhone: string): Promise<boolean> {
         if (!isTell(numberPhone, 'vi-VN'))
-            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Number phone not is valid' })
+            throw httpResponse(HttpStatus.BAD_REQUEST, {
+                msg: 'Number phone not is valid',
+            })
         return Boolean(await UserModel.findOne({ numberPhone }, { numberPhone: 1 }))
     }
     //
@@ -32,7 +35,8 @@ export class AuthService {
     }
     //
     async infoUnique(data: Info) {
-        if (isNotEmptyObject(data)) throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
+        if (isNotEmptyObject(data))
+            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
         if (data.email) {
             const unique = await this.uniqueEmail(data.email)
             return httpResponse(HttpStatus.OK, { type: 'email', unique })
@@ -52,36 +56,27 @@ export class AuthService {
         if (data.email && (await this.uniqueEmail(data.email)))
             throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Email not valid !' })
         if (data.numberPhone && (await this.uniqueTell(data.numberPhone)))
-            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Tell or Tell not valid !' })
+            throw httpResponse(HttpStatus.BAD_REQUEST, {
+                msg: 'Tell or Tell not valid !',
+            })
         data.password = await hash(data.password, 10)
         const user = await UserModel.create(data)
-        return httpResponse(HttpStatus.OK, { msg: 'Register success', userName: user.userName })
+        return httpResponse(HttpStatus.OK, {
+            msg: 'Register success',
+            userName: user.userName,
+        })
     }
-    // not use
-    // async registerFacebook(userFb: UserFacebook, fail: boolean) {
-    //     if (fail) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login facebook fail' })
-    //     let user = await UserModel.findOne({ fbId: userFb.id })
-    //     if (!user)
-    //         user = await UserModel.create({
-    //             fbId: userFb.id,
-    //             userName: `${slugify('Nguyễn Văn Ánh', {
-    //                 replacement: '',
-    //                 lower: true,
-    //                 trim: true,
-    //             })}${otp.randomCode(3)}`,
-    //             fullName: userFb.displayName,
-    //             birthday: '1-1-1999',
-    //             password: await hash('123456', 10),
-    //         })
-    //     const { password, ...dataUser } = user._doc
-    //     return httpResponse(HttpStatus.OK, { ...dataUser, accessToken: userFb.accessToken })
-    // }
     //
     async loginFacebook(data: LoginFB, setCookie: (token: string) => void) {
         const { email, displayName, phoneNumber, photoURL, uid } = data
+        if ((!email && !phoneNumber) || !uid)
+            throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, {
+                msg: 'Data not valid',
+            })
         const isEmail = email && (await this.uniqueEmail(email))
+        const isTell = phoneNumber && (await this.uniqueTell(phoneNumber))
         const password = await hash(uid, 10)
-        if (!isEmail) {
+        if (!isEmail && !isTell) {
             const user = await UserModel.create({
                 userName: `${slugify(displayName, {
                     replacement: '',
@@ -104,8 +99,9 @@ export class AuthService {
             const dataUser: ResUser = { ...newUser, accessToken }
             return httpResponse(HttpStatus.OK, dataUser)
         }
-        const user = await UserModel.findOne({ email })
-        if (!user) throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, { msg: 'Server error' })
+        const user = await UserModel.findOne({ fbId: uid })
+        if (!user)
+            throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, { msg: 'Server error' })
         const accessToken = Token.createToken({ userName: user.userName }, '120s')
         const refreshToken = Token.createToken({ userName: user.userName }, '1h')
         await redis.set(user.userName, refreshToken)
@@ -117,19 +113,28 @@ export class AuthService {
     //
     async login(data: LoginType, setCookie: (token: string) => void) {
         const { email, password, numberPhone, userName } = data
-        if (!email && !numberPhone && !userName) throw httpResponse(HttpStatus.BAD_GATEWAY, { msg: 'Data not valid !' })
+        if (!email && !numberPhone && !userName)
+            throw httpResponse(HttpStatus.BAD_GATEWAY, { msg: 'Data not valid !' })
         const isEmail = email && (await this.uniqueEmail(email))
         const isTell = numberPhone && (await this.uniqueTell(numberPhone))
         const isUsername = userName && (await this.uniqueUsername(userName))
         if (!isEmail && !isTell && !isUsername)
-            throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login information is incorrect' })
+            throw httpResponse(HttpStatus.UNAUTHORIZED, {
+                msg: 'Login information is incorrect',
+            })
         const user = await UserModel.findOne<User>(
             { $or: [{ userName }, { email }, { numberPhone }] },
-            { _id: false, fbId: false, createdAt: false, updatedAt: false },
+            { createdAt: false, updatedAt: false },
         )
-        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login information is incorrect' })
+        if (!user)
+            throw httpResponse(HttpStatus.UNAUTHORIZED, {
+                msg: 'Login information is incorrect',
+            })
         const isPass = await compare(password, user.password)
-        if (!isPass) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Login information is incorrect' })
+        if (!isPass)
+            throw httpResponse(HttpStatus.UNAUTHORIZED, {
+                msg: 'Login information is incorrect',
+            })
         const accessToken = Token.createToken({ userName: user.userName }, '120s')
         const refreshToken = Token.createToken({ userName: user.userName }, '1h')
         await redis.set(user.userName, refreshToken)
@@ -142,7 +147,9 @@ export class AuthService {
     async logout(token: string) {
         Token.verifyToken(token, async (error, data) => {
             if (error)
-                throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'You are not authorized to access this resource.' })
+                throw httpResponse(HttpStatus.UNAUTHORIZED, {
+                    msg: 'You are not authorized to access this resource.',
+                })
             const { userName } = data
             await redis.del(userName)
         })

@@ -9,10 +9,13 @@ import { Model } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import { hash, compare } from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { InfoDto, LoginDto, SignDto } from './dto';
+import { InfoDto, LoginDto, LoginFBDto, SignDto } from './dto';
 import { JwtData, ResUser, TimeExpires } from './interface';
 import { InjectRedis, Redis } from '@nestjs-modules/ioredis';
 import { ConfigService } from '@nestjs/config';
+import { OtpService } from 'src/otp/otp.service';
+import slugify from 'slugify';
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -20,6 +23,7 @@ export class AuthService {
         @InjectRedis() private readonly redis: Redis,
         private configService: ConfigService,
         private jwt: JwtService,
+        private otpService: OtpService,
     ) {}
     private async uniqueEmail(email: string): Promise<boolean> {
         return Boolean(await this.userModel.findOne({ email }, { email }));
@@ -78,8 +82,6 @@ export class AuthService {
                 $or: [{ email }, { numberPhone }, { userName }],
             })
             .select({
-                _id: false,
-                fbId: false,
                 createdAt: false,
                 updatedAt: false,
             });
@@ -95,6 +97,55 @@ export class AuthService {
                 { msg: 'Login fail' },
                 HttpStatus.UNAUTHORIZED,
             );
+        const dataJwt = { userName: resUser.userName };
+        const accessToken = this.signToken(dataJwt, '120s');
+        const refreshToken = this.signToken(dataJwt, '7d');
+        await this.redis.set(resUser.userName, refreshToken);
+        setCookie(refreshToken);
+        resUser['accessToken'] = accessToken;
+        return resUser;
+    }
+    async loginFacebook(data: LoginFBDto, setCookie: (token: string) => void) {
+        const { email, phoneNumber, displayName, uid, photoURL } = data;
+        if (!email && !phoneNumber && !uid) {
+            throw new HttpException(
+                { msg: 'data not valid' },
+                HttpStatus.BAD_GATEWAY,
+            );
+        }
+        const isEmail = this.uniqueEmail(email);
+        const isTell = this.uniqueTell(phoneNumber);
+        const password = await hash(uid, 10);
+        if (!isEmail && !isTell) {
+            await this.userModel.create({
+                userName: `${slugify(displayName, {
+                    replacement: '',
+                    lower: true,
+                    trim: true,
+                })}${this.otpService.randomCode(3)}`,
+                email,
+                numberPhone: phoneNumber,
+                fullName: displayName,
+                avatar: photoURL,
+                fbId: uid,
+                password,
+                birthday: '1-1-1997',
+            });
+        }
+        const user = await this.userModel
+            .findOne<ResUser>({
+                fbId: uid,
+            })
+            .select({
+                createdAt: false,
+                updatedAt: false,
+            });
+        if (!user)
+            throw new HttpException(
+                { msg: 'Server error' },
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        const { password: passHash, ...resUser } = user._doc;
         const dataJwt = { userName: resUser.userName };
         const accessToken = this.signToken(dataJwt, '120s');
         const refreshToken = this.signToken(dataJwt, '7d');

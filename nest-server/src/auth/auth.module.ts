@@ -7,19 +7,19 @@ import { VerifyOtp } from './middlewares/verify-otp.middleware';
 import { OtpModule } from 'src/otp/otp.module';
 import { OtpService } from 'src/otp/otp.service';
 import { Code, CodeSchema } from 'src/otp/schema/code.schema';
-import { JwtModule } from '@nestjs/jwt';
 import { AcceptTell } from './middlewares/accept-tell.middleware';
+import { AuthGuard } from './guard';
 @Module({
     imports: [
         MongooseModule.forFeature([
             { name: User.name, schema: UserSchema },
             { name: Code.name, schema: CodeSchema },
         ]),
-        JwtModule.register({}),
         OtpModule,
     ],
     controllers: [AuthController],
-    providers: [AuthService, OtpService],
+    providers: [AuthService, OtpService, AuthGuard],
+    exports: [AuthGuard],
 })
 export class AuthModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {

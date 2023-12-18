@@ -8,7 +8,7 @@ import { Template } from './mail.config';
 Injectable();
 export class OtpService {
     constructor(@InjectModel(Code.name) private codeModel: Model<Code>) {}
-    private randomCode(len: number) {
+    randomCode(len: number) {
         let code: string = '';
         for (let index = 0; index < len; index++) {
             code += Math.floor(Math.random() * 9);

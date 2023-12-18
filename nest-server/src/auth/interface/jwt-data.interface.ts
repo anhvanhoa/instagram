@@ -1,4 +1,6 @@
-export interface JwtData {
+import { JwtPayload } from 'jsonwebtoken';
+
+export interface JwtData extends JwtPayload {
     userName: string;
 }
 
