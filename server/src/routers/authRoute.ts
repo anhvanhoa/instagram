@@ -16,4 +16,6 @@ authRoute.post('/login-facebook', AuthController.loginFacebook)
 authRoute.post('/login', AuthController.login)
 // logout account
 authRoute.post('/logout', accuracy, AuthController.logout)
+// refresh
+authRoute.post('/refresh', AuthController.refreshJwt)
 export default authRoute

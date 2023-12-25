@@ -16,8 +16,10 @@ class TokenMiddleware {
                 return res
                     .status(HttpStatus.UNAUTHORIZED)
                     .json({ msg: 'You did not authenticate successfully' })
-            req.user = data
-            next()
+            else {
+                req.user = data
+                next()
+            }
         })
     }
 }

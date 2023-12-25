@@ -161,10 +161,41 @@ export class AuthService {
         });
     }
     async logout(token: string) {
-        const data = this.jwt.verify<JwtData>(token, {
-            secret: this.configService.get('KEY_JWT'),
-        });
-        await this.redis.del(data.userName);
-        return { msg: 'Logout success' };
+        try {
+            const data = await this.jwt.verifyAsync<JwtData>(token, {
+                secret: this.configService.get('KEY_JWT'),
+            });
+            await this.redis.del(data.userName);
+            return { msg: 'Logout success' };
+        } catch (error) {
+            throw new HttpException(
+                { msg: 'You are not authorized to access this resource.' },
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
+    }
+    async refreshJwt(token: string, setCookie: (token: string) => void) {
+        try {
+            const data = await this.jwt.verifyAsync<JwtData>(token, {
+                secret: this.configService.get('KEY_JWT'),
+            });
+            const tokenDb = await this.redis.get(data.userName);
+            if (!tokenDb || token !== tokenDb)
+                throw new HttpException(
+                    { msg: 'Login please !' },
+                    HttpStatus.UNAUTHORIZED,
+                );
+            const dataJwt: JwtData = { userName: data.userName };
+            const accessToken = this.signToken(dataJwt, '120s');
+            const refreshToken = this.signToken(dataJwt, '7d');
+            await this.redis.set(data.userName, refreshToken);
+            setCookie(refreshToken);
+            return { accessToken };
+        } catch (error) {
+            throw new HttpException(
+                { msg: 'Login please !' },
+                HttpStatus.UNAUTHORIZED,
+            );
+        }
     }
 }

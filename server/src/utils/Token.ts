@@ -11,7 +11,10 @@ class Token {
             expiresIn,
         })
     }
-    verifyToken(token: string, cb: (error: JsonWebTokenError | null, data: JwtData) => void) {
+    verifyToken(
+        token: string,
+        cb: (error: JsonWebTokenError | null, data: JwtData) => void,
+    ) {
         const key = process.env.JWT_KEY
         if (!key) throw Error('Hash key error')
         verify(token, key, (error, data) => cb(error, data as JwtData))

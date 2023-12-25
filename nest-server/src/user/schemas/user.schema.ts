@@ -33,7 +33,7 @@ export class User {
     posts: [];
     @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }] })
     followers: [User];
-    @Prop()
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }] })
     following: [];
     @Prop()
     stories: [];

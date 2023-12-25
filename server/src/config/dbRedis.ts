@@ -6,7 +6,7 @@ const dbRedis = () => {
         host: process.env.HOST_REDIS,
         port: Number(process.env.PORT_REDIS),
     })
-    redisConnect.on('error', () => {
+    redisConnect.on('error', (error) => {
         console.log('Connect redis fail!')
         redisConnect.quit()
     })

@@ -9,7 +9,10 @@ const users = new Schema<User>(
             unique: true,
             required: true,
             lowercase: true,
-            validate: [(email: string) => /^[^\s!@#$%^&*()_+{}\\[\]:;<>,.?~\\/-]+$/.test(email), 'userName not valid'],
+            validate: [
+                (email: string) => /^[^\s!@#$%^&*()_+{}\\[\]:;<>,.?~\\/-]+$/.test(email),
+                'userName not valid',
+            ],
         },
         email: {
             type: String,
@@ -39,8 +42,8 @@ const users = new Schema<User>(
         posts: { type: [] },
         stories: { type: [] },
         verify: { type: Boolean },
-        followers: { type: [] },
-        following: { type: [] },
+        followers: { type: [{ ref: 'users', type: Schema.Types.ObjectId }] },
+        following: { type: [{ ref: 'users', type: Schema.Types.ObjectId }] },
         avatar: { type: String },
     },
     {

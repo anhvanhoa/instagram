@@ -150,10 +150,35 @@ export class AuthService {
                 throw httpResponse(HttpStatus.UNAUTHORIZED, {
                     msg: 'You are not authorized to access this resource.',
                 })
-            const { userName } = data
-            await redis.del(userName)
+            else {
+                const { userName } = data
+                await redis.del(userName)
+            }
         })
         return httpResponse(HttpStatus.OK, { msg: 'Logout success' })
+    }
+    //
+    async refreshJwt(token: string, setCookie: (token: string) => void) {
+        let userName = ''
+        Token.verifyToken(token, (error, data) => {
+            if (error) {
+                throw httpResponse(HttpStatus.UNAUTHORIZED, {
+                    msg: 'Login please !',
+                })
+            } else {
+                userName = data.userName
+            }
+        })
+        const tokenDb = await redis.get(userName)
+        if (!tokenDb || token !== tokenDb)
+            throw httpResponse(HttpStatus.UNAUTHORIZED, {
+                msg: 'Login please !',
+            })
+        const accessToken = Token.createToken({ userName }, '120s')
+        const refreshToken = Token.createToken({ userName }, '7d')
+        await redis.set(userName, refreshToken)
+        setCookie(refreshToken)
+        return httpResponse(HttpStatus.OK, { accessToken })
     }
 }
 const authProvider = new AuthService()

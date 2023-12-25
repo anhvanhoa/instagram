@@ -22,7 +22,6 @@ class AuthController {
             const response = await otpProvider.signCode(email)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
-            console.log(error)
             if (!error.httpStatus)
                 return res
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -90,7 +89,23 @@ class AuthController {
             res.clearCookie('tokenRefresh')
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
-            console.log(error)
+            if (!error.httpStatus)
+                return res
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .json({ msg: 'Server error' })
+            return res.status(error.httpStatus).json(error.data)
+        }
+    }
+    async refreshJwt({ cookies }: Request, res: Response) {
+        try {
+            const { tokenRefresh }: { tokenRefresh: string } = cookies
+            if (!tokenRefresh || !isJWT(tokenRefresh))
+                return res.status(HttpStatus.UNAUTHORIZED).json({ msg: 'Login please !' })
+            const response = await authProvider.refreshJwt(tokenRefresh, (token) => {
+                res.cookie('tokenRefresh', token, { httpOnly: true, sameSite: 'strict' })
+            })
+            return res.status(response.httpStatus).json(response.data)
+        } catch (error: any) {
             if (!error.httpStatus)
                 return res
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

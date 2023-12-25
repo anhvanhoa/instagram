@@ -88,15 +88,33 @@ export class AuthController {
     @HttpCode(200)
     async logout(
         @Cookies('tokenRefresh') tokenRefresh: string,
-        @Res({ passthrough: true }) { clearCookie }: Response,
+        @Res({ passthrough: true }) res: Response,
     ) {
         if (!tokenRefresh || !isJWT(tokenRefresh))
             throw new HttpException(
                 { msg: 'Token not valid' },
                 HttpStatus.UNAUTHORIZED,
             );
-        this.authService.logout(tokenRefresh);
-        clearCookie('tokenRefresh');
-        return tokenRefresh;
+        res.clearCookie('tokenRefresh');
+        return await this.authService.logout(tokenRefresh);
+    }
+
+    @Post('refresh')
+    @HttpCode(200)
+    async refreshJwt(
+        @Cookies('tokenRefresh') tokenRefresh: string,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        if (!tokenRefresh || !isJWT(tokenRefresh))
+            throw new HttpException(
+                { msg: 'Login please !' },
+                HttpStatus.UNAUTHORIZED,
+            );
+        return this.authService.refreshJwt(tokenRefresh, (token) => {
+            res.cookie('tokenRefresh', token, {
+                httpOnly: true,
+                sameSite: 'strict',
+            });
+        });
     }
 }
