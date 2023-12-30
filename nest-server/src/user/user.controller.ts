@@ -12,6 +12,7 @@ import { AuthGuard } from 'src/auth/guard';
 import { User } from './decorators/user.decorator';
 import { UserService } from './user.service';
 import { IdsDto } from './dto/ids.dto';
+import { JwtData } from 'src/auth/interface';
 
 @UseGuards(AuthGuard)
 @Controller('user')
@@ -27,12 +28,12 @@ export class UserController {
     }
     @Post('follow')
     @HttpCode(200)
-    follow(@Body() ids: IdsDto) {
-        return this.userService.follow(ids);
+    follow(@Body() ids: IdsDto, @User() user: JwtData) {
+        return this.userService.follow(ids, user.userName);
     }
     @HttpCode(200)
     @Post('unfollow')
-    unfollow(@Body() ids: IdsDto) {
-        return this.userService.unfollow(ids);
+    unfollow(@Body() ids: IdsDto, @User() user: JwtData) {
+        return this.userService.unfollow(ids, user.userName);
     }
 }

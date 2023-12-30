@@ -8,7 +8,8 @@ import { HttpStatus } from '~/http-status.enum'
 export class OtpService extends AuthService {
     //
     public async signCode(email: string) {
-        if (await this.uniqueEmail(email)) throw httpResponse(HttpStatus.CONFLICT, { msg: 'Email not valid!' })
+        if (await this.uniqueEmail(email))
+            throw httpResponse(HttpStatus.CONFLICT, { msg: 'Email not valid!' })
         const code = randomCode(6)
         await CodeModel.create({ email, otp: code })
         this.deleteCode(code)

@@ -1,5 +1,6 @@
 import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
+import { Posts } from 'src/posts/schema/posts.schema';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -29,12 +30,12 @@ export class User {
     avatar: string;
     @Prop()
     verify: boolean;
-    @Prop()
-    posts: [];
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }] })
-    followers: [User];
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }] })
-    following: [];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'posts' }] })
+    posts: Posts[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }] })
+    followers: ObjectId[];
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }] })
+    following: ObjectId[];
     @Prop()
     stories: [];
     @Prop()

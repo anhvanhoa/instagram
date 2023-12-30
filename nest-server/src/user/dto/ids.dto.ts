@@ -4,7 +4,4 @@ export class IdsDto {
     @IsNotEmpty()
     @IsMongoId()
     idFollow: string;
-    @IsMongoId()
-    @IsNotEmpty()
-    idFollower: string;
 }

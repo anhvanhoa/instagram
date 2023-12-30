@@ -27,38 +27,38 @@ export class UserService {
         return user;
     }
 
-    async follow(ids: IdsDto) {
+    async follow(ids: IdsDto, userName: string) {
         const isFollow = await this.userModel.findById(ids.idFollow);
-        const isFollower = await this.userModel.findById(ids.idFollower);
+        const isFollower = await this.userModel.findOne({ userName });
         if (!isFollow || !isFollower)
             throw new HttpException(
                 { msg: 'Unauthorized' },
                 HttpStatus.UNAUTHORIZED,
             );
         await this.userModel.updateOne(
-            { _id: ids.idFollow, followers: { $nin: [ids.idFollower] } },
-            { $push: { followers: ids.idFollower } },
+            { _id: ids.idFollow, followers: { $nin: [isFollower._id] } },
+            { $push: { followers: isFollower._id } },
         );
         await this.userModel.updateOne(
-            { _id: ids.idFollower, following: { $nin: [ids.idFollow] } },
+            { _id: isFollower._id, following: { $nin: [ids.idFollow] } },
             { $push: { following: ids.idFollow } },
         );
         return { msg: 'Follow success !' };
     }
-    async unfollow(ids: IdsDto) {
+    async unfollow(ids: IdsDto, userName: string) {
         const isFollow = await this.userModel.findById(ids.idFollow);
-        const isFollower = await this.userModel.findById(ids.idFollower);
+        const isFollower = await this.userModel.findOne({ userName });
         if (!isFollow || !isFollower)
             throw new HttpException(
                 { msg: 'Unauthorized' },
                 HttpStatus.UNAUTHORIZED,
             );
         await this.userModel.updateOne(
-            { _id: ids.idFollow, followers: { $in: [ids.idFollower] } },
-            { $pull: { followers: ids.idFollower } },
+            { _id: ids.idFollow, followers: { $in: [isFollower._id] } },
+            { $pull: { followers: isFollower._id } },
         );
         await this.userModel.updateOne(
-            { _id: ids.idFollower, following: { $in: [ids.idFollow] } },
+            { _id: isFollower._id, following: { $in: [ids.idFollow] } },
             { $pull: { following: ids.idFollow } },
         );
         return { msg: 'Unfollow success !' };

@@ -1,5 +1,6 @@
 import { JwtPayload } from 'jsonwebtoken'
 import { DocumentModel } from './models/types'
+import { ObjectId } from 'mongoose'
 export type Gender = 'nam' | 'nữ' | 'khác'
 export interface User extends DocumentModel<User> {
     _id: string
@@ -13,12 +14,20 @@ export interface User extends DocumentModel<User> {
     birthday: string
     password: string
     bio: string
-    posts: Array
-    followers: Array
-    following: Array
-    stories: Array
+    posts: []
+    followers: []
+    following: []
+    stories: []
     verify: boolean
-    notifications: Array
+    notifications: []
+}
+export interface Posts extends DocumentModel<Posts> {
+    _id: string
+    title: string
+    likes: []
+    comments: []
+    author: ObjectId
+    contents: []
 }
 
 export interface ResUser extends Omit<User, 'password'> {
@@ -55,4 +64,8 @@ export interface LoginFB {
     phoneNumber: string | null
     photoURL: string | null
     uid: string
+}
+
+export interface JwtyData extends JwtPayload {
+    userName: string
 }

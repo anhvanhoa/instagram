@@ -39,7 +39,7 @@ const users = new Schema<User>(
         birthday: { type: String },
         gender: { type: String },
         notifications: { type: [] },
-        posts: { type: [] },
+        posts: { type: [{ ref: 'posts', type: Schema.Types.ObjectId }] },
         stories: { type: [] },
         verify: { type: Boolean },
         followers: { type: [{ ref: 'users', type: Schema.Types.ObjectId }] },

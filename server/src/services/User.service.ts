@@ -18,38 +18,38 @@ export class UserService {
         return httpResponse(HttpStatus.OK, user)
     }
     //
-    async follow(ids: { idFollow: string; idFollower: string }) {
-        if (!ids.idFollow || !ids.idFollower)
+    async follow(idFollow: string, userName: string) {
+        if (!idFollow || !userName)
             throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
-        const isFollow = await UserModel.findById(ids.idFollow)
-        const isFollower = await UserModel.findById(ids.idFollower)
+        const isFollow = await UserModel.findById(idFollow)
+        const isFollower = await UserModel.findOne({ userName })
         if (!isFollow || !isFollower)
             throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
         await UserModel.updateOne(
-            { _id: ids.idFollow, followers: { $nin: [ids.idFollower] } },
-            { $push: { followers: ids.idFollower } },
+            { _id: idFollow, followers: { $nin: [isFollower._id] } },
+            { $push: { followers: isFollower._id } },
         )
         await UserModel.updateOne(
-            { _id: ids.idFollower, following: { $nin: [ids.idFollow] } },
-            { $push: { following: ids.idFollow } },
+            { _id: isFollower._id, following: { $nin: [idFollow] } },
+            { $push: { following: idFollow } },
         )
         return httpResponse(HttpStatus.OK, { msg: 'Follow success !' })
     }
     //
-    async unfollow(ids: { idFollow: string; idFollower: string }) {
-        if (!ids.idFollow || !ids.idFollower)
+    async unfollow(idFollow: string, userName: string) {
+        if (!idFollow || !userName)
             throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
-        const isFollow = await UserModel.findById(ids.idFollow)
-        const isFollower = await UserModel.findById(ids.idFollower)
+        const isFollow = await UserModel.findById(idFollow)
+        const isFollower = await UserModel.findOne({ userName })
         if (!isFollow || !isFollower)
             throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
         await UserModel.updateOne(
-            { _id: ids.idFollow, followers: { $in: [ids.idFollower] } },
-            { $pull: { followers: ids.idFollower } },
+            { _id: idFollow, followers: { $in: [isFollower._id] } },
+            { $pull: { followers: isFollower._id } },
         )
         await UserModel.updateOne(
-            { _id: ids.idFollower, following: { $in: [ids.idFollow] } },
-            { $pull: { following: ids.idFollow } },
+            { _id: isFollower._id, following: { $in: [idFollow] } },
+            { $pull: { following: idFollow } },
         )
         return httpResponse(HttpStatus.OK, { msg: 'Unfollow success !' })
     }

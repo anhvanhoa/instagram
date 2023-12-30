@@ -1,6 +1,7 @@
 import { Request, Response } from 'express-serve-static-core'
 import { HttpStatus } from '~/http-status.enum'
 import userProvider from '~/services/User.service'
+import { JwtyData } from '~/types'
 
 class UserController {
     async search({ query, user }: Request, res: Response) {
@@ -33,9 +34,11 @@ class UserController {
             return res.status(error.httpStatus).json(error.data)
         }
     }
-    async follow({ body }: Request, res: Response) {
+    async follow({ body, user }: Request, res: Response) {
         try {
-            const response = await userProvider.follow(body)
+            const idFollow: string = body.idFollow
+            const { userName } = user as JwtyData
+            const response = await userProvider.follow(idFollow, userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus)
@@ -46,9 +49,11 @@ class UserController {
         }
     }
 
-    async unfollow({ body }: Request, res: Response) {
+    async unfollow({ body, user }: Request, res: Response) {
         try {
-            const response = await userProvider.unfollow(body)
+            const idFollow: string = body.idFollow
+            const { userName } = user as JwtyData
+            const response = await userProvider.unfollow(idFollow, userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus)

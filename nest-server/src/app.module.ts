@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { OtpModule } from './otp/otp.module';
 import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
+import { PostsModule } from './posts/posts.module';
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -19,6 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
         AuthModule,
         OtpModule,
         UserModule,
+        PostsModule,
     ],
     controllers: [],
     providers: [],
