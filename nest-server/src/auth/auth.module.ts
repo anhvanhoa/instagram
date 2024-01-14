@@ -13,13 +13,13 @@ import { AuthGuard } from './guard';
     imports: [
         MongooseModule.forFeature([
             { name: User.name, schema: UserSchema },
-            { name: Code.name, schema: CodeSchema },
+            { name: Code.name, schema: CodeSchema }
         ]),
-        OtpModule,
+        OtpModule
     ],
     controllers: [AuthController],
     providers: [AuthService, OtpService, AuthGuard],
-    exports: [AuthGuard],
+    exports: [AuthGuard]
 })
 export class AuthModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {

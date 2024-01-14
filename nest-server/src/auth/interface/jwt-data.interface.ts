@@ -1,6 +1,8 @@
+import { IsNotEmpty } from 'class-validator';
 import { JwtPayload } from 'jsonwebtoken';
 
-export interface JwtData extends JwtPayload {
+export class JwtData implements JwtPayload {
+    @IsNotEmpty()
     userName: string;
 }
 

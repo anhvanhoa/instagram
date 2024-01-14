@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 export type UserDocument = HydratedDocument<Code>;
 
 @Schema({
-    timestamps: true,
+    timestamps: true
 })
 export class Code {
     @Prop({ default: null, lowercase: true })

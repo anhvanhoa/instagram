@@ -3,7 +3,7 @@ import {
     IsMobilePhone,
     IsOptional,
     IsString,
-    Matches,
+    Matches
 } from 'class-validator';
 
 export class InfoDto {
@@ -18,7 +18,7 @@ export class InfoDto {
     @IsOptional()
     @IsString()
     @Matches(/^[^\s!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]+$/, {
-        message: 'username not valid',
+        message: 'username not valid'
     })
     userName: string;
 }

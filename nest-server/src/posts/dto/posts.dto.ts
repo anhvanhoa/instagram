@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class PostsDto {
     @IsOptional()
@@ -6,4 +6,10 @@ export class PostsDto {
     title: string;
     @IsNotEmpty()
     contents: string[];
+}
+
+export class IdPostsDto {
+    @IsNotEmpty()
+    @IsMongoId()
+    idPosts: string;
 }

@@ -21,13 +21,20 @@ export interface User extends DocumentModel<User> {
     verify: boolean
     notifications: []
 }
+
+export interface Comment extends DocumentModel<Comment> {
+    _id: string
+    content: string
+    userId: ObjectId
+}
 export interface Posts extends DocumentModel<Posts> {
     _id: string
     title: string
     likes: []
-    comments: []
+    comments: ObjectId[]
     author: ObjectId
     contents: []
+    typeAspect: string
 }
 
 export interface ResUser extends Omit<User, 'password'> {
@@ -39,6 +46,45 @@ export interface Code {
     email?: string
     numberPhone?: string
     otp: string
+}
+export interface RoomChat {
+    _id: string
+    notification: boolean
+    name: string
+    members: {
+        idUser: string
+        joinTime: Date
+        outTime: Date
+        isOut: boolean
+    }[]
+}
+export interface BoxChat {
+    _id: string
+    idRoom: ObjectId
+    idUser: ObjectId
+    idUserChat: ObjectId
+    nickname: string
+    contentChat: ContentChat[]
+    isDelete: boolean
+}
+export interface ContentChat extends DocumentModel<ContentChat> {
+    _id: string
+    idBoxChat: ObjectId
+    idUser: ObjectId | string
+    message: string
+    image: string
+    isDeleteSend: boolean
+    isDeleteReceive: boolean
+    isSeen: boolean
+    createdAt: Date
+}
+export interface ContentChatIO extends ContentChat {
+    idUserChat: string
+}
+export interface DetailChat {
+    idUser: string
+    idUserChat: string
+    message: string
 }
 
 export interface Info {
@@ -66,6 +112,72 @@ export interface LoginFB {
     uid: string
 }
 
-export interface JwtyData extends JwtPayload {
+export interface JwtData extends JwtPayload {
     userName: string
+}
+
+export interface SizeCrop {
+    height: number
+    width: number
+    x: number
+    y: number
+}
+
+export interface UserChat extends User {
+    chat: ContentChat
+}
+
+export interface SeenChat {
+    idUser: string
+    idContentChat: string
+}
+export interface DeleteChat extends SeenChat {
+    idUserisDeleteReceive: boolean
+    isDeleteSend: boolean
+}
+
+export interface Notification extends DocumentModel<Notification> {
+    _id: string
+    fromUser: ObjectId
+    toUser: ObjectId
+    idPosts: ObjectId
+    content: string
+    createdAt: string
+}
+export interface NotificationEmit {
+    fromUser: string
+    toUser: string
+    idPosts: string
+}
+
+export interface ServerToClientEvents {
+    joinRoom: (idUser: string) => void
+    leaveRoom: (idUser: string) => void
+    chat: (data: DetailChat) => void
+    seen: (data: SeenChat) => void
+    like: (data: NotificationEmit) => void
+    comment: (data: NotificationEmit) => void
+    delete: (data: DeleteChat) => void
+}
+
+export interface ClientToServerEvents {
+    sendMessage: (data: ContentChatIO) => void
+    notifyMessage: (data: UserChat) => void
+    notifyDelete: (data: UserChat) => void
+    newMessage: (data: DetailChat) => void
+    connect_server: (id: string) => void
+    notify_error: (message: string) => void
+    notification: (data: Notification) => void
+}
+
+export interface InterServerEvents {
+    ping: () => void
+}
+
+interface SocketData {
+    userName: string
+}
+
+export interface UserChat extends User {
+    chat: ContentChat
 }

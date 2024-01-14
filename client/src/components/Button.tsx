@@ -1,5 +1,6 @@
 import React from 'react'
 import { Icon } from '@iconify/react'
+import classNames from 'classnames'
 
 type ButtonSize = 'custom' | 'small' | 'large' | 'medium' | 'extraLarge'
 type ButtonType = 'custom' | 'primary' | 'text' | 'second'
@@ -14,6 +15,7 @@ interface Props {
     className?: string
     loading?: boolean
     onClick?: () => void
+    onKeyDown?: () => void
 }
 const Button: React.FC<Props> = ({
     children,
@@ -35,15 +37,15 @@ const Button: React.FC<Props> = ({
     }
     const buttonType: Record<ButtonType, string> = {
         custom: '',
-        primary: 'bg-primary text-white hover:bg-hover-btn-primary',
+        primary: 'bg-primary text-white hover:bg-hover-btn-primary rounded-md',
         text: 'text-primary hover:text-hover-button',
-        second: 'bg-second',
+        second: 'bg-second rounded-md',
     }
     if (type === 'text') size = 'custom'
     const disableCls = disable ? 'opacity-70 pointer-events-none' : ''
-    const allClass: string = `text-sm flex items-center justify-center select-none py-1.5 rounded-md font-medium ${className} ${buttonSize[size]} ${buttonType[type]} ${disableCls}`
+    const allClass: string = `text-sm flex items-center justify-center select-none py-1.5 font-medium ${className} ${buttonSize[size]} ${buttonType[type]} ${disableCls}`
     return (
-        <button onClick={onClick} type='button' className={allClass}>
+        <button onClick={onClick} type='button' className={classNames(allClass)}>
             {loading && <Icon className='w-3.5 h-3.5 animate-spin my-[3px]' icon='nonicons:loading-16' />}
             {!loading && (
                 <>

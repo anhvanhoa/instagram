@@ -17,19 +17,19 @@ export class OtpService {
     }
     private async sendMail(
         data: { codeverify: string; email: string },
-        template: string = Template.REGISTER,
+        template: string = Template.REGISTER
     ): Promise<void> {
         try {
             const { email, codeverify } = data;
             const courier = new CourierClient({
-                authorizationToken: process.env.KEY_SEND_MAIL,
+                authorizationToken: process.env.KEY_SEND_MAIL
             });
             await courier.send({
                 message: {
                     to: { email },
                     template,
-                    data: { codeverify },
-                },
+                    data: { codeverify }
+                }
             });
         } catch (error) {
             throw new InternalServerErrorException('server');

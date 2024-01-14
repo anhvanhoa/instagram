@@ -3,8 +3,8 @@ import { NavLink } from 'react-router-dom'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/themes/light.css'
 import classNames from 'classnames'
-import images from '~/assets'
 import useContextUser from '~/store/hook'
+import Img from '~/components/Img'
 
 interface Props {
     handleId: (id: number) => () => void
@@ -12,7 +12,7 @@ interface Props {
 const User: React.FC<Props> = memo(({ handleId }) => {
     const { state } = useContextUser()
     return (
-        <Tippy content={`Trang cá nhân`} placement='right' delay={[1000, 0]} theme='light' animation='scale'>
+        <Tippy content={`Profile`} placement='right' delay={[1000, 0]} theme='light' animation='scale'>
             <NavLink
                 to={state ? state.userName : ''}
                 className={({ isActive }) =>
@@ -27,14 +27,15 @@ const User: React.FC<Props> = memo(({ handleId }) => {
             >
                 <div
                     className={classNames(
-                        'rounded-circle overflow-hidden h-6 flex-shrink-0 group-hover:scale-105 transition-all',
+                        'rounded-circle overflow-hidden h-6 w-6 flex-shrink-0 group-hover:scale-105 transition-all',
                     )}
                 >
-                    <img
-                        src={state.avatar || images.noAvatar}
-                        alt='Trang cá nhân'
+                    <Img
+                        src={state.avatar}
+                        alt='Profile'
                         className={classNames(
-                            'border-[2px] border-solid group-[.active-avatar]:border-black border-transparent rounded-[50%]',
+                            'border-[2px] border-solid group-[.active-avatar]:border-black',
+                            ' border-transparent rounded-[50%] object-cover h-full w-full',
                         )}
                     />
                 </div>
@@ -44,7 +45,7 @@ const User: React.FC<Props> = memo(({ handleId }) => {
                         'group-[.is-cllapse]:hidden hidden lg:block',
                     )}
                 >
-                    Trang cá nhân
+                    Profile
                 </span>
             </NavLink>
         </Tippy>

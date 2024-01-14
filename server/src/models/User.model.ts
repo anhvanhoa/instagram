@@ -18,11 +18,9 @@ const users = new Schema<User>(
             type: String,
             default: null,
             lowercase: true,
-            unique: true,
         },
         numberPhone: {
             type: String,
-            unique: true,
             default: null,
         },
         password: {

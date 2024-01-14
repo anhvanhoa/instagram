@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
-import { JwtyData } from '~/types'
+import { JwtData } from '~/types'
 import Token from '~/utils/Token'
 
 class TokenMiddleware {
@@ -18,7 +18,7 @@ class TokenMiddleware {
                     .status(HttpStatus.UNAUTHORIZED)
                     .json({ msg: 'You did not authenticate successfully' })
             else {
-                req.user = data as JwtyData
+                req.user = data as JwtData
                 next()
             }
         })

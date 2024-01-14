@@ -125,7 +125,7 @@ export class AuthService {
         const user = await UserModel.findOne<User>(
             { $or: [{ userName }, { email }, { numberPhone }] },
             { createdAt: false, updatedAt: false },
-        )
+        ).populate('posts')
         if (!user)
             throw httpResponse(HttpStatus.UNAUTHORIZED, {
                 msg: 'Login information is incorrect',
@@ -170,7 +170,7 @@ export class AuthService {
             }
         })
         const tokenDb = await redis.get(userName)
-        if (!tokenDb || token !== tokenDb)
+        if (!tokenDb)
             throw httpResponse(HttpStatus.UNAUTHORIZED, {
                 msg: 'Login please !',
             })

@@ -10,14 +10,14 @@ interface Props {
 }
 const boxAccounts = {
     login: {
-        content: 'Bạn đã có tài khoản ?',
+        content: 'Do you already have an account ?',
         link: '/accounts/login',
-        button: 'Đăng nhập',
+        button: 'Login',
     },
     register: {
-        content: 'Bạn chưa có tài khoản ?',
+        content: 'Do not have an account ?',
         link: '/accounts/signup',
-        button: 'Đăng ký',
+        button: 'Register',
     },
 }
 const WrapperAuth: React.FC<Props> = ({ children, isAccount, isLogo }) => {
@@ -41,7 +41,7 @@ const WrapperAuth: React.FC<Props> = ({ children, isAccount, isLogo }) => {
                         <Button type='text'>{account.button}</Button>
                     </Link>
                 </div>
-                <p className='text-center text-sm mt-8'>Tải ứng dụng</p>
+                <p className='text-center text-sm mt-8'>Get the app</p>
                 <div className='flex justify-center mt-4 gap-x-3 pb-10'>
                     <img className='h-10' src={images.downloadChPlay} alt='Download ChPlay' />
                     <img className='h-10' src={images.downloadMicrosoft} alt='Download Microsoft' />

@@ -3,7 +3,7 @@ import {
     IsMobilePhone,
     IsNotEmpty,
     IsOptional,
-    IsString,
+    IsString
 } from 'class-validator';
 
 export class LoginDto {

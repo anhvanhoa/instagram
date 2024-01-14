@@ -1,141 +1,150 @@
-// import { Icon } from '@iconify/react';
-// // import CommentIcon from '~/components/Icon/CommentIcon';
-// // import HeartIcon from '~/components/Icon/HeartIcon';
-// // import ShareIcon from '~/components/Icon/ShareIcon';
-// // import SaveIcon from '~/components/Icon/SaveIcon';
-// // import SmileIcon from '~/components/Icon/SmileIcon';
-// import Button from '~/components/Button';
-// // import { Posts as TypePosts } from '~/types/posts';
-// // import HeartColor from '~/components/Icon/HeartColor';
-// import { useState } from 'react';
-// import AccountItem from '~/components/AccountItem';
-// // import OverLay from '../OverLay';
-// // import UserName from '~/components/UserName';
+import { Icon } from '@iconify/react'
+import React, { useEffect, useState } from 'react'
+import IconApp from '~/assets/icons/IconApp'
+import { User } from '~/types/auth'
+import UserName from './UserName'
+import { Posts as PostsType } from '~/types/posts'
+import { useMutation } from '@tanstack/react-query'
+import likePosts from '~/apis/likePosts'
+import dislikePosts from '~/apis/dislikePosts'
+import commentPosts from '~/apis/commentPosts'
+import Img from './Img'
+import Slider from './Slider'
+import classNames from 'classnames'
+import socket from '~/socketIo'
+import useContextUser from '~/store/hook'
+import { useNavigate } from 'react-router-dom'
+import OptionPost from './OptionPost'
+import AccountPosts from './AccountPosts'
+import InteractPosts from './InteractPosts'
+import InputComment from './InputComment'
+interface Props {
+    user: User
+    posts: PostsType
+}
+const Posts: React.FC<Props> = ({ user, posts }) => {
+    const { state } = useContextUser()
+    const navigate = useNavigate()
+    const [like, setLike] = useState<boolean>(false)
+    const [comment, setComment] = useState<string>('')
+    const [listComment, setListComment] = useState<string[]>([])
+    const { mutate } = useMutation({
+        mutationFn: (idPosts: string) => likePosts({ idPosts }),
+    })
+    const { mutate: mutateDis } = useMutation({
+        mutationFn: (idPosts: string) => dislikePosts({ idPosts }),
+    })
+    const { mutate: mutateComment } = useMutation({
+        mutationFn: (data: { idPosts: string; content: string }) => commentPosts(data),
+    })
+    const apiLike = (idPosts: string) => () => {
+        mutate(idPosts)
+        setLike(true)
+        socket.emit('like', { idPosts, fromUser: state._id, toUser: user._id })
+    }
+    const apiDislike = (idPosts: string) => () => {
+        mutateDis(idPosts)
+        setLike(false)
+    }
+    const apiComment = (idPosts: string, content: string) => () => {
+        mutateComment(
+            { content, idPosts },
+            {
+                onSuccess: () => {
+                    setComment('')
+                    setListComment((pre) => [...pre, comment])
+                },
+            },
+        )
+    }
+    const viewPosts = (link: string) => () =>
+        navigate('/p/' + link, {
+            preventScrollReset: true,
+        })
+    useEffect(() => {
+        socket.emit('joinRoom', user._id)
+        return () => {
+            socket.emit('leaveRoom', user._id)
+        }
+    })
+    return (
+        <div className='my-4 bg-white mb-6 pb-4 border-b border-[#ccc]/50 border-solid'>
+            <div className='px-1 pb-3 flex justify-between items-center'>
+                <AccountPosts time={posts.createdAt} user={user} />
+                <OptionPost viewPosts={viewPosts(posts._id)}>
+                    <Icon icon='solar:menu-dots-bold' className='cursor-pointer' />
+                </OptionPost>
+            </div>
+            <div className='relative'>
+                <IconApp
+                    type='heart-solid'
+                    className={classNames(
+                        'text-white w-20 absolute z-10 top-1/2 left-1/2',
+                        '-translate-x-1/2 -translate-y-1/2 pointer-events-none',
+                        { 'animate-show': like, hidden: !like },
+                    )}
+                />
+                <div className='rounded-md overflow-hidden' onDoubleClick={apiLike(posts._id)}>
+                    <Slider maxElemnt={posts.contents.length}>
+                        {posts.contents.map((element, index) => (
+                            <Img key={index} src={element} alt='' className='object-cover' />
+                        ))}
+                    </Slider>
+                </div>
+                <div className='absolute top-0 hidden'>
+                    <Icon icon='clarity:volume-mute-solid' />
+                    <Icon icon='clarity:volume-up-solid' />
+                </div>
+            </div>
+            <InteractPosts
+                like={like}
+                apiDislike={apiDislike(posts._id)}
+                apiLike={apiLike(posts._id)}
+                viewPosts={viewPosts(posts._id)}
+            />
+            <div className='mt-3'>
+                <div className='mb-2'>
+                    <p className='text-sm font-semibold'>{posts.likes.length + (like ? 1 : 0)} likes</p>
+                </div>
+                <div
+                    className={classNames('text-sm mb-2', {
+                        hidden: !posts.title,
+                    })}
+                >
+                    <div className='inline-block pr-1'>
+                        <UserName user={user} dropDow />
+                    </div>
+                    <span>{posts.title}</span>
+                </div>
+                <div
+                    className={classNames('mb-2', {
+                        hidden: !posts.comments.length,
+                    })}
+                >
+                    {listComment.map((item, i) => (
+                        <div className='text-sm py-1'>
+                            <span className='font-semibold mr-1'>{state.userName}</span>
+                            <span key={i} onClick={viewPosts(posts._id)}>
+                                {item}
+                            </span>
+                        </div>
+                    ))}
+                    <p
+                        className='text-[#737373] text-sm cursor-pointer hover:text-gray-600 inline-block'
+                        onClick={viewPosts(posts._id)}
+                    >
+                        View all {posts.comments.length + listComment.length} comments
+                    </p>
+                </div>
+            </div>
+            <InputComment
+                comment={comment}
+                setComment={setComment}
+                positionSmile='right'
+                apiComment={apiComment(posts._id, comment)}
+            />
+        </div>
+    )
+}
 
-// const Posts = ({ author, comments, contents, description, likes, tags }: TypePosts) => {
-//     const [like, setLike] = useState<boolean>(false);
-//     const [overlay, setOverlay] = useState<boolean>(false);
-
-//     return (
-//         <div className='my-4 bg-white mb-6 pb-4 border-b border-[#ccc]/50 border-solid'>
-//             {overlay && (
-//                 <OverLay onClose={() => setOverlay(false)}>
-//                     <div className='bg-white w-96 rounded-xl flex flex-col'>
-//                         <Button
-//                             text
-//                             className='font-bold text-red-500 py-4 hover:text-red-500'
-//                         >
-//                             Báo cáo
-//                         </Button>
-//                         <Button
-//                             text
-//                             className='font-normal text-black py-4 border-t border-[#ccc] border-solid rounded-none'
-//                         >
-//                             Sao chép liên kết
-//                         </Button>
-//                         <Button
-//                             text
-//                             className='font-normal text-black py-4 border-t border-[#ccc] border-solid rounded-none'
-//                         >
-//                             Nhúng
-//                         </Button>
-//                         <Button
-//                             text
-//                             className='font-normal text-black py-4 border-t border-[#ccc] border-solid rounded-none'
-//                         >
-//                             Hủy
-//                         </Button>
-//                     </div>
-//                 </OverLay>
-//             )}
-//             <div className='px-1 pb-3 flex justify-between items-center'>
-//                 <AccountItem
-//                     data={author}
-//                     sizeAvatar='small'
-//                     dropDow
-//                     description='5 minute'
-//                 />
-//                 <Icon
-//                     icon='solar:menu-dots-bold'
-//                     className='cursor-pointer'
-//                     onClick={() => setOverlay(true)}
-//                 />
-//             </div>
-//             <div className='relative'>
-//                 <div
-//                     className='rounded-md overflow-hidden'
-//                     onDoubleClick={() => {
-//                         setLike(true);
-//                     }}
-//                 >
-//                     {contents.map((element, index) => (
-//                         <img key={index} src={element} alt='' />
-//                     ))}
-//                 </div>
-//                 <div className='absolute top-0 hidden'>
-//                     <Icon icon='clarity:volume-mute-solid' />
-//                     <Icon icon='clarity:volume-up-solid' />
-//                 </div>
-//             </div>
-//             <div className='flex items-center justify-between mt-4'>
-//                 <div className='flex items-center gap-4'>
-//                     <span
-//                         className=''
-//                         onClick={() => {
-//                             setLike((pre) => (pre ? false : true));
-//                         }}
-//                     >
-//                         {like ? <HeartColor /> : <HeartIcon />}
-//                     </span>
-//                     <span className=''>
-//                         <CommentIcon />
-//                     </span>
-//                     <span className=''>
-//                         <ShareIcon />
-//                     </span>
-//                 </div>
-//                 <div className='flex items-center'>
-//                     <span className=''>
-//                         <SaveIcon />
-//                     </span>
-//                 </div>
-//             </div>
-//             <div className='mt-3'>
-//                 <div className='mb-2'>
-//                     <p className='text-sm font-semibold'>{likes.count} lượt thích</p>
-//                 </div>
-//                 <div className='text-sm mb-2'>
-//                     <div className='inline-block pr-1'>
-//                         <UserName data={author} dropDow to={author.userName} />
-//                     </div>
-//                     <span>{description}</span>
-//                     <p className='text-[#737373]'>xem thêm</p>
-//                 </div>
-//                 <div className='mb-2'>
-//                     <p className='text-[#737373] text-sm'>Xem tất cả 122 bình luận</p>
-//                 </div>
-//             </div>
-//             <div>
-//                 <div className='flex gap-x-3 items-center justify-between'>
-//                     <div className='flex-1'>
-//                         <input
-//                             className='text-sm w-full'
-//                             type='text'
-//                             placeholder='Thêm bình luận'
-//                         />
-//                     </div>
-//                     <div>
-//                         <span className='mt-[1px]'>
-//                             <SmileIcon className='w-3 h-3' color='gray' />
-//                         </span>
-//                         <Button disable text className='hidden'>
-//                             Đăng
-//                         </Button>
-//                     </div>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Posts;
+export default Posts

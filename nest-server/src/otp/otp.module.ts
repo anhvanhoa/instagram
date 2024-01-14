@@ -5,10 +5,10 @@ import { Code, CodeSchema } from './schema/code.schema';
 @Module({
     imports: [
         MongooseModule.forFeature([
-            { name: Code.name, schema: CodeSchema, collection: 'users' },
-        ]),
+            { name: Code.name, schema: CodeSchema, collection: 'users' }
+        ])
     ],
     providers: [OtpService],
-    exports: [OtpService],
+    exports: [OtpService]
 })
 export class OtpModule {}

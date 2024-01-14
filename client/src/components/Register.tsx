@@ -88,7 +88,7 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLo
         <div>
             <div>
                 <p className='text-center font-medium mt-3 text-gray-500 mx-10'>
-                    Đăng ký để xem ảnh và video từ bạn bè.
+                    Sign up to see photos and videos from friends.
                 </p>
                 <Button
                     iconL={<Icon className='text-xl' icon='uil:facebook' />}
@@ -96,11 +96,11 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLo
                     size='extraLarge'
                     onClick={handleLoginFB}
                 >
-                    Đăng nhập bằng facebook
+                    Login with facebook
                 </Button>
                 <div className='flex items-center mx-10 my-3'>
                     <div className='border-t border-[#ccc] flex-1'></div>
-                    <p className='mx-4 uppercase text-xs font-medium text-gray-500'>hoặc</p>
+                    <p className='mx-4 uppercase text-xs font-medium text-gray-500'>or</p>
                     <div className='border-t border-[#ccc] flex-1'></div>
                 </div>
                 <form className='mt-4'>
@@ -113,7 +113,7 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLo
                         isError={validate.email === 'error'}
                         type='text'
                     >
-                        Số di động hoặc email
+                        Mobile number or email
                     </InputAuth>
                     <InputAuth
                         onFocus={handleFocus('fullName')}
@@ -124,7 +124,7 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLo
                         isError={validate.fullName === 'error'}
                         type='text'
                     >
-                        Tên đầy đủ
+                        Fullname
                     </InputAuth>
                     <InputAuth
                         onFocus={handleFocus('userName')}
@@ -135,7 +135,7 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLo
                         isError={validate.userName === 'error'}
                         type='text'
                     >
-                        Tên người dùng
+                        Username
                     </InputAuth>
                     <div className='relative'>
                         <InputAuth
@@ -144,7 +144,7 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLo
                             value={dataForm.password}
                             type={typePass}
                         >
-                            Mật khẩu
+                            Password
                         </InputAuth>
                         <Button
                             onClick={handleHiddenOrShowPass}
@@ -158,22 +158,21 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLo
                     </div>
                     <div className='mx-12 text-xs text-center text-gray-500 leading-4'>
                         <p className='pt-1'>
-                            Những người dùng dịch vụ của chúng tôi có thể đã tải thông tin liên hệ của bạn lên
-                            Instagram.
+                            Users of our services may have uploaded your contact information Instagram.
                             <Link className='pl-1 text-hover-button' to=''>
-                                Tìm hiểu thêm
+                                Find out more
                             </Link>
                         </p>
                         <p className='pt-4'>
-                            Bằng cách đăng ký, bạn đồng ý với
+                            By registering, you agree to the
                             <Link className='text-hover-button px-1' to=''>
-                                Điều khoản, Chính sách quyền riêng tư
+                                Terms, Privacy Policy
                             </Link>
-                            và
+                            and
                             <Link className='text-hover-button px-1' to=''>
-                                Chính sách cookie
+                                Cookie policy
                             </Link>
-                            của chúng tôi.
+                            ours.
                         </p>
                     </div>
                     <Button
@@ -182,7 +181,7 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLo
                         className='mx-auto mt-4'
                         size='extraLarge'
                     >
-                        Đăng ký
+                        Register
                     </Button>
                 </form>
             </div>

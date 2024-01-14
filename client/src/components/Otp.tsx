@@ -61,10 +61,10 @@ const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp, veri
                         className='h-[76px] w-24 mt-3 bg-[-439px_1px]'
                         style={{ backgroundImage: `url(${images.synthetic})` }}
                     ></div>
-                    <p className='font-medium py-2'>Chỉ một bước nữa thôi</p>
+                    <p className='font-medium py-2'>Just one more step</p>
                     <p className='text-sm pb-4 pt-3 text-center px-9'>
-                        Nhập mã xác nhận mà chúng tôi đã gửi đến địa chỉ
-                        <span className='text-primary'>{}</span>
+                        Enter the confirmation code we sent you
+                        <span className='text-primary'></span>
                     </p>
                 </div>
                 <InputAuth
@@ -76,20 +76,20 @@ const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp, veri
                     ######
                 </InputAuth>
                 <Button onClick={handleRegister} className='mt-4 mx-auto'>
-                    Xác nhận
+                    Confirm
                 </Button>
                 {(isError || error) && (
                     <p className='text-red-500 text-center px-9 pt-6 text-sm'>
-                        Mã không hợp lệ. Bạn có thể yêu cầu mã mới.
+                        Invalid Code. You can request a new code.
                     </p>
                 )}
                 <div className='flex items-center justify-center py-6'>
                     <Button onClick={handleStep('prev')} type='text' className='px-0'>
-                        Quay lại
+                        Back
                     </Button>
                     |
                     <Button onClick={sendOtp} type='text' disable={btnDisable} className='px-0'>
-                        Yêu cầu mã mới
+                        Request new code
                     </Button>
                 </div>
             </div>

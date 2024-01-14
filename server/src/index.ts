@@ -1,25 +1,44 @@
 import express from 'express'
-import Routers from './routers'
+import Routers, { ioEvent } from './routers'
 import connectDataBase from './config/database'
 import cors from 'cors'
 import morgan from 'morgan'
 import { configDotenv } from 'dotenv'
 import dbRedis from './config/dbRedis'
 import cookieParser from 'cookie-parser'
+import { join } from 'path'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
+import {
+    ServerToClientEvents,
+    ClientToServerEvents,
+    InterServerEvents,
+    SocketData,
+} from './types'
 configDotenv({ path: '.env' })
 const app = express()
 const port = 8008
-app.use(
-    cors({
-        origin: process.env.URL_CLIENT,
-        credentials: true,
-    }),
-)
+const httpServer = createServer(app)
+const configCors = {
+    credentials: true,
+    origin: process.env.URL_CLIENT,
+}
+const io = new Server<
+    ServerToClientEvents,
+    ClientToServerEvents,
+    InterServerEvents,
+    SocketData
+>(httpServer, { cors: configCors })
+ioEvent(io)
+
+app.use(express.static(join(__dirname, '../public')))
+app.use(cors(configCors))
 app.use(express.json())
 app.use(morgan('tiny'))
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 Routers(app)
 connectDataBase()
 dbRedis()
 const bootstrap = () => console.log(`server running port ${port}`)
-app.listen(port, bootstrap)
+httpServer.listen(port, bootstrap)

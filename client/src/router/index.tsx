@@ -6,9 +6,17 @@ import Login from '~/pages/auth/Login'
 import { pathPublic, pathPrivate } from '~/config/routes'
 import Register from '~/pages/auth/Register'
 import HomeNotAuth from '~/pages/HomeNotAuth'
+import Profile from '~/pages/Profile'
+import EditProfile from '~/pages/EditProfile'
+import Explore from '~/pages/Explore'
+import Reels from '~/pages/Reels'
+import Message from '~/pages/Message'
+import LoadPage from '~/components/LoadPage'
+import Posts from '~/pages/Posts'
 export const routersPublic = createBrowserRouter([
     {
         element: <LayoutAuth />,
+        errorElement: <LoadPage />,
         children: [
             {
                 element: <HomeNotAuth />,
@@ -28,22 +36,39 @@ export const routersPublic = createBrowserRouter([
 export const routersPrivate = createBrowserRouter([
     {
         element: <LayoutMain />,
+        errorElement: <LoadPage />,
         children: [
             {
                 element: <Home />,
                 path: pathPrivate.home,
             },
             {
-                element: <Home />,
+                element: <Explore />,
                 path: pathPrivate.explore,
             },
             {
-                element: <Home />,
+                element: <Reels />,
                 path: pathPrivate.reels,
             },
             {
-                element: <Home />,
+                element: <Message />,
                 path: pathPrivate.inbox,
+            },
+            {
+                element: <Message />,
+                path: pathPrivate.chat,
+            },
+            {
+                element: <Posts />,
+                path: pathPrivate.posts,
+            },
+            {
+                element: <Profile />,
+                path: pathPrivate.profile,
+            },
+            {
+                element: <EditProfile />,
+                path: pathPrivate.editProfile,
             },
         ],
     },

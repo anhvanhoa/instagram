@@ -10,6 +10,13 @@ import screenshot3 from './screenshot3.png'
 import screenshot4 from './screenshot4.png'
 import synthetic from './synthetic.png'
 import noAvatar from './not-avatar.png'
+import checkBg from './check-bg.png'
+import normal from './normal.jpg'
+import aden from './aden.jpg'
+import clarendon from './clarendon.jpg'
+import crema from './crema.jpg'
+import moon from './moon.jpg'
+import slumber from './slumber.jpg'
 const images = {
     logoText,
     downloadMicrosoft,
@@ -23,6 +30,13 @@ const images = {
     logoIconRgb,
     noAvatar,
     logoIcon,
+    checkBg,
+    normal,
+    aden,
+    clarendon,
+    crema,
+    moon,
+    slumber,
 }
 
 export default images

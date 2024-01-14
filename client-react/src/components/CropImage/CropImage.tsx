@@ -22,7 +22,10 @@ const CropImage = ({ setImages, listImage, onStep }: Props) => {
     const [cancel, setCancel] = useState(false);
     const [indexSlide, setIndexSlide] = useState(0);
     const [sizeCrop, setSizeCrop] = useState({ height: 520, width: 520 });
-    const [positionClient, setPositionClient] = useState<{ x: number; y: number }>({ x: 0.5, y: 0.5 });
+    const [positionClient, setPositionClient] = useState<{ x: number; y: number }>({
+        x: 0.5,
+        y: 0.5
+    });
     const refImg = useRef<AvatarEditor>(null);
     const handlePosition = (position: Position) => {
         setPositionClient(position);
@@ -44,7 +47,7 @@ const CropImage = ({ setImages, listImage, onStep }: Props) => {
             const file = listImage[index];
             setPositionClient(file.clientSize);
         },
-        [listImage],
+        [listImage]
     );
     useEffect(() => {
         let width = 520;
@@ -87,17 +90,26 @@ const CropImage = ({ setImages, listImage, onStep }: Props) => {
                 return prev;
             });
         },
-        [setImages],
+        [setImages]
     );
     const handleNext = () => onStep(3);
     const handChangeIndex = useCallback((index: number) => setIndexSlide(index), []);
     return (
         <div>
-            {cancel && <Cancel handleBack={() => setCancel(false)} handleCancel={() => onStep(1)} />}
-            <HeadCreatePosts onPrev={() => setCancel(true)} onNext={handleNext} title="Cắt" />
-            <div className="flex relative">
-                <div className="w-[520px] h-[520px] bg-[#b4b4b4]">
-                    <div className="flex justify-center items-center h-full w-[520px] relative">
+            {cancel && (
+                <Cancel
+                    handleBack={() => setCancel(false)}
+                    handleCancel={() => onStep(1)}
+                />
+            )}
+            <HeadCreatePosts
+                onPrev={() => setCancel(true)}
+                onNext={handleNext}
+                title='Cắt'
+            />
+            <div className='flex relative'>
+                <div className='w-[520px] h-[520px] bg-white'>
+                    <div className='flex justify-center items-center h-full w-[520px] relative'>
                         <SliderPosts
                             getIndexImg={handChangeIndex}
                             net={net}
@@ -110,15 +122,23 @@ const CropImage = ({ setImages, listImage, onStep }: Props) => {
                                 scale: 1 + valueRag / 20,
                                 onPositionChange: handlePosition,
                                 onMouseUp: handleMouseUp,
-                                position: positionClient,
+                                position: positionClient
                             }}
                             refAvatarEdit={refImg}
                         />
                     </div>
                 </div>
-                <div className="absolute w-full bottom-4 px-4 flex items-center justify-between">
-                    <Tools onAspect={handleAspect} valueRange={valueRag} onRange={setValueRag} />
-                    <ManageImg listImage={listImage} onChooseImg={setIndexSlide} setImages={setImages} />
+                <div className='absolute w-full bottom-4 px-4 flex items-center justify-between'>
+                    <Tools
+                        onAspect={handleAspect}
+                        valueRange={valueRag}
+                        onRange={setValueRag}
+                    />
+                    <ManageImg
+                        listImage={listImage}
+                        onChooseImg={setIndexSlide}
+                        setImages={setImages}
+                    />
                 </div>
             </div>
         </div>

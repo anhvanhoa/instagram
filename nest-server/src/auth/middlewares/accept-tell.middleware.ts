@@ -2,7 +2,7 @@ import {
     HttpException,
     HttpStatus,
     Injectable,
-    NestMiddleware,
+    NestMiddleware
 } from '@nestjs/common';
 import { isMobilePhone } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';

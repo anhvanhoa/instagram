@@ -5,7 +5,7 @@ import { Posts } from 'src/posts/schema/posts.schema';
 export type UserDocument = HydratedDocument<User>;
 
 @Schema({
-    timestamps: true,
+    timestamps: true
 })
 export class User {
     @Prop()
@@ -30,11 +30,11 @@ export class User {
     avatar: string;
     @Prop()
     verify: boolean;
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'posts' }] })
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Posts' }] })
     posts: Posts[];
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }] })
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }] })
     followers: ObjectId[];
-    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'users' }] })
+    @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users' }] })
     following: ObjectId[];
     @Prop()
     stories: [];

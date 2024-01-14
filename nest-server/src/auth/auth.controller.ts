@@ -8,20 +8,21 @@ import {
     Res,
     UseGuards,
     HttpException,
-} from '@nestjs/common';
+    Get,
+} from '@nestjs/common'
 import {
     isEmail,
     isJWT,
     isMobilePhone,
     isNotEmpty,
     isNotEmptyObject,
-} from 'class-validator';
-import { AuthService } from './auth.service';
-import { CreateCodeDto, InfoDto, LoginDto, LoginFBDto, SignDto } from './dto';
-import { OtpService } from 'src/otp/otp.service';
-import { Response } from 'express';
-import { AuthGuard } from './guard';
-import { Cookies } from './decorators';
+} from 'class-validator'
+import { AuthService } from './auth.service'
+import { CreateCodeDto, InfoDto, LoginDto, LoginFBDto, SignDto } from './dto'
+import { OtpService } from 'src/otp/otp.service'
+import { Response } from 'express'
+import { AuthGuard } from './guard'
+import { Cookies } from './decorators'
 
 @Controller('auth')
 export class AuthController {
@@ -33,42 +34,37 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     @Post('unique-info')
     async isInfo(@Body() body: InfoDto) {
-        if (!isNotEmptyObject(body))
-            throw new BadRequestException('Data not valid !');
-        return await this.authService.infoUnique(body);
+        if (!isNotEmptyObject(body)) throw new BadRequestException('Data not valid !')
+        return await this.authService.infoUnique(body)
     }
 
     @HttpCode(HttpStatus.CREATED)
     @Post('sign-otp')
     async signCode(@Body() { email }: CreateCodeDto) {
-        return await this.otpService.signCode(email);
+        return await this.otpService.signCode(email)
     }
 
     @Post('firebase-register')
     @Post('register')
     async register(@Body() data: SignDto) {
-        const { email, numberPhone } = data;
+        const { email, numberPhone } = data
         if (isNotEmpty(email) && isNotEmpty(numberPhone))
-            throw new BadRequestException('Data is not valid');
-        if (email && !isEmail(email))
-            throw new BadRequestException("This is'nt email");
+            throw new BadRequestException('Data is not valid')
+        if (email && !isEmail(email)) throw new BadRequestException("This is'nt email")
         if (numberPhone && !isMobilePhone(numberPhone, 'vi-VN'))
-            throw new BadRequestException("This is'nt tell");
-        return this.authService.register(data);
+            throw new BadRequestException("This is'nt tell")
+        return this.authService.register(data)
     }
 
     @Post('login')
     @HttpCode(200)
-    async login(
-        @Body() body: LoginDto,
-        @Res({ passthrough: true }) res: Response,
-    ) {
+    async login(@Body() body: LoginDto, @Res({ passthrough: true }) res: Response) {
         return this.authService.login(body, (token) => {
             res.cookie('tokenRefresh', token, {
                 httpOnly: true,
                 sameSite: 'strict',
-            });
-        });
+            })
+        })
     }
     @Post('login-facebook')
     async loginFacebook(
@@ -79,8 +75,8 @@ export class AuthController {
             res.cookie('tokenRefresh', token, {
                 httpOnly: true,
                 sameSite: 'strict',
-            });
-        });
+            })
+        })
     }
 
     @UseGuards(AuthGuard)
@@ -91,30 +87,24 @@ export class AuthController {
         @Res({ passthrough: true }) res: Response,
     ) {
         if (!tokenRefresh || !isJWT(tokenRefresh))
-            throw new HttpException(
-                { msg: 'Token not valid' },
-                HttpStatus.UNAUTHORIZED,
-            );
-        res.clearCookie('tokenRefresh');
-        return await this.authService.logout(tokenRefresh);
+            throw new HttpException({ msg: 'Token not valid' }, HttpStatus.UNAUTHORIZED)
+        res.clearCookie('tokenRefresh')
+        return await this.authService.logout(tokenRefresh)
     }
 
-    @Post('refresh')
+    @Get('refresh')
     @HttpCode(200)
     async refreshJwt(
         @Cookies('tokenRefresh') tokenRefresh: string,
         @Res({ passthrough: true }) res: Response,
     ) {
         if (!tokenRefresh || !isJWT(tokenRefresh))
-            throw new HttpException(
-                { msg: 'Login please !' },
-                HttpStatus.UNAUTHORIZED,
-            );
+            throw new HttpException({ msg: 'Login please !' }, HttpStatus.UNAUTHORIZED)
         return this.authService.refreshJwt(tokenRefresh, (token) => {
             res.cookie('tokenRefresh', token, {
                 httpOnly: true,
                 sameSite: 'strict',
-            });
-        });
+            })
+        })
     }
 }

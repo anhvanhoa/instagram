@@ -5,5 +5,5 @@ export const User = createParamDecorator<keyof JwtData, ExecutionContext>(
     (data, ctx) => {
         const { user } = ctx.switchToHttp().getRequest<{ user: JwtData }>();
         return data ? user[data] : user;
-    },
+    }
 );

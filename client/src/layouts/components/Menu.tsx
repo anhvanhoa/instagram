@@ -27,7 +27,7 @@ const Menu = () => {
                 </Wrapper>
             )}
         >
-            <Tippy content='Xem thêm' placement='right' delay={[1000, 0]} theme='light' animation='scale'>
+            <Tippy content='More' placement='right' delay={[1000, 0]} theme='light' animation='scale'>
                 <div
                     className={classNames(
                         {
@@ -47,7 +47,7 @@ const Menu = () => {
                                 'hidden lg:block',
                             )}
                         >
-                            Xem thêm
+                            More
                         </p>
                     </div>
                 </div>

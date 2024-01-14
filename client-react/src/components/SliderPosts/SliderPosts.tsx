@@ -18,7 +18,7 @@ const SliderPosts = ({
     refAvatarEdit,
     net,
     getIndexImg = () => {},
-    indexImg = 0,
+    indexImg = 0
 }: Props) => {
     const lengthListImg = listImage.length;
     const [indexSlide, setIndexSlide] = useState(indexImg);
@@ -32,12 +32,12 @@ const SliderPosts = ({
     }, [indexImg]);
     return (
         <div>
-            <div className="flex relative">
-                <div className="w-[520px] h-[520px] bg-[#b4b4b4]">
-                    <div className="flex justify-center items-center h-full w-[520px] relative">
+            <div className='flex relative'>
+                <div className='w-[520px] h-[520px] bg-white'>
+                    <div className='flex justify-center items-center h-full w-[520px] relative'>
                         <AvatarEditor
                             ref={refAvatarEdit}
-                            className="transition-all"
+                            className='transition-all'
                             {...propsAvatarEditor}
                             image={listImage[indexSlide].fileCrop}
                             onLoadSuccess={() => getIndexImg(indexSlide)}
@@ -45,7 +45,10 @@ const SliderPosts = ({
                         {net && (
                             <div
                                 className={`pointer-events-none absolute before:absolute before:content-[''] before:w-full before:h-[1px] before:top-1/3 after:absolute after:content-[''] after:w-full after:h-[1px]  after:bottom-1/3 before:bg-white after:bg-white`}
-                                style={{ width: propsAvatarEditor.width, height: propsAvatarEditor.height }}
+                                style={{
+                                    width: propsAvatarEditor.width,
+                                    height: propsAvatarEditor.height
+                                }}
                             >
                                 <div className="absolute inset-0 before:absolute before:content-[''] before:h-full before:w-[1px] before:bg-white before:left-1/3 after:absolute after:content-[''] after:h-full after:w-[1px] after:bg-white after:right-1/3"></div>
                             </div>
@@ -53,13 +56,15 @@ const SliderPosts = ({
                     </div>
                 </div>
                 {lengthListImg > 1 && (
-                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-1">
+                    <div className='absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-1'>
                         {listImage.map((_, index) => {
                             return (
                                 <div
                                     key={index}
                                     className={`w-[7px] h-[7px] rounded-circle transition-all ${
-                                        index === indexSlide ? 'bg-primary' : 'bg-white/70'
+                                        index === indexSlide
+                                            ? 'bg-primary'
+                                            : 'bg-white/70'
                                     }`}
                                 ></div>
                             );
@@ -70,18 +75,18 @@ const SliderPosts = ({
                     <>
                         {indexSlide !== 0 && (
                             <Icon
-                                data-name="left"
+                                data-name='left'
                                 onClick={handleSlider}
-                                icon="formkit:left"
-                                className="absolute top-1/2 left-4 -translate-y-1/2 text-white bg-[#333232] hover:bg-[#333232]/80 p-1 w-8 h-8 rounded-circle cursor-pointer transition-all"
+                                icon='formkit:left'
+                                className='absolute top-1/2 left-4 -translate-y-1/2 text-white bg-[#333232] hover:bg-[#333232]/80 p-1 w-8 h-8 rounded-circle cursor-pointer transition-all'
                             />
                         )}
                         {indexSlide !== lengthListImg - 1 && (
                             <Icon
-                                data-name="right"
+                                data-name='right'
                                 onClick={handleSlider}
-                                icon="formkit:right"
-                                className="absolute top-1/2 right-4 -translate-y-1/2 text-white bg-[#333232] hover:bg-[#333232]/80 p-1 w-8 h-8 rounded-circle cursor-pointer transition-all"
+                                icon='formkit:right'
+                                className='absolute top-1/2 right-4 -translate-y-1/2 text-white bg-[#333232] hover:bg-[#333232]/80 p-1 w-8 h-8 rounded-circle cursor-pointer transition-all'
                             />
                         )}
                     </>

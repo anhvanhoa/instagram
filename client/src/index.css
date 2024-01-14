@@ -7,3 +7,16 @@ svg {
     width: inherit;
     height: inherit;
 }
+
+body {
+    max-height: 100vh;
+    overflow-y: scroll !important;
+    scroll-behavior: smooth;
+}
+
+.text-dot {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}

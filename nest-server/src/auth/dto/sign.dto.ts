@@ -12,7 +12,7 @@ export class SignDto {
     password: string;
     @IsNotEmpty()
     @Matches(/^[^\s!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]+$/, {
-        message: 'username not valid',
+        message: 'username not valid'
     })
     userName: string;
     @IsNotEmpty()

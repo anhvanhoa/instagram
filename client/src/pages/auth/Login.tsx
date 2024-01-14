@@ -34,21 +34,23 @@ const Login = () => {
     const handleLogin = () => {
         if (isEmail(formData.emailTellName)) formData.email = formData.emailTellName
         if (isMobilePhone(formData.emailTellName)) formData.numberPhone = formData.emailTellName
-        const regex = new RegExp('!/^[^s!@#$%^&*()_+{}\\[]:;<>,.?~\\/-]+$/')
-        if (regex.test(formData.emailTellName)) formData.email = formData.emailTellName
+        const regex = /^[^\s!@#$%^&*()_+{}[\]:;<>,.?~\\/-]+$/
+        if (!isMobilePhone(formData.emailTellName) && regex.test(formData.emailTellName))
+            formData.userName = formData.emailTellName
         mutate(formData, {
             onSuccess: (user) => {
                 dispatch({ payload: user, type: 'LOGIN' })
-                navigation('/')
+                setTimeout(() => navigation('/'), 2000)
             },
         })
+        setFormData((prev) => ({ ...initData, emailTellName: prev.emailTellName, password: prev.password }))
     }
     // handle login facebook
     const handleLoginFB = async () => {
         try {
             const user = await registerFacebook()
             dispatch({ payload: user, type: 'LOGIN' })
-            navigation('/')
+            setTimeout(() => navigation('/'), 2000)
         } catch (error) {
             console.log(error)
         }
@@ -58,19 +60,19 @@ const Login = () => {
             <div id='verify'></div>
             <form action='' className='mt-8'>
                 <InputAuth value={formData.emailTellName} onChange={handleChange('emailTellName')} type='text'>
-                    Số di động, tên người dùng hoặc email
+                    Mobile number, username or email
                 </InputAuth>
                 <InputAuth value={formData.password} onChange={handleChange('password')} type='password'>
-                    Mật khẩu
+                    Password
                 </InputAuth>
                 <Button loading={isPending} onClick={handleLogin} className='mx-auto mt-4' size='extraLarge'>
-                    Đăng nhập
+                    Login
                 </Button>
             </form>
             <div>
                 <div className='flex items-center mx-10 mt-3'>
                     <div className='h-[1px] bg-[#ccc] flex-1'></div>
-                    <p className='mx-4 uppercase text-xs font-medium text-gray-400'>hoặc</p>
+                    <p className='mx-4 uppercase text-xs font-medium text-gray-400'>or</p>
                     <div className='h-[1px] bg-[#ccc] flex-1'></div>
                 </div>
                 <div className='mx-11'>
@@ -81,17 +83,17 @@ const Login = () => {
                         type='custom'
                         className='mx-auto text-hover-button'
                     >
-                        Đăng nhập bằng Facebook
+                        Login with Facebook
                     </Button>
                 </div>
                 {isError && (
                     <p className='text-red-600 text-center text-sm px-10 pt-2'>
-                        Rất tiếc, mật khẩu của bạn không đúng. Vui lòng kiểm tra lại mật khẩu.
+                        Sorry, your password is incorrect. Please check your password again.
                     </p>
                 )}
                 <div className='cursor-pointer my-5'>
                     <Link to='/account/forgot-password' className='text-xs text-center block'>
-                        Quên mật khẩu?
+                        Forgot password?
                     </Link>
                 </div>
             </div>

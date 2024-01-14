@@ -4,9 +4,11 @@ import Navbar from './Navbar'
 import { NavbarItem } from '~/types/navbar'
 import User from './User'
 import Menu from './Menu'
-import { useState, useRef, useCallback, useMemo } from 'react'
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import Search from './Search'
+import CreatePosts from '~/components/CreatePosts'
+import Notify from './Notify'
 const dataNavbar: NavbarItem[] = [
     {
         id: 1,
@@ -40,7 +42,7 @@ const dataNavbar: NavbarItem[] = [
         id: 5,
         icon: 'meaagae-thin',
         iconActive: 'message-solid',
-        link: '/inbox',
+        link: '/message',
         name: 'Message',
     },
     {
@@ -55,13 +57,16 @@ const dataNavbar: NavbarItem[] = [
         icon: 'create-post-thin',
         iconActive: 'create-post-solid',
         link: '/#',
-        name: 'Create Post',
+        name: 'Create',
     },
 ]
 const Sidebar = () => {
     const location = useLocation()
     const [id, setId] = useState<number>(() => {
-        const isActive = dataNavbar.find((item) => item.link === location.pathname)
+        const isActive = dataNavbar.find((item) => {
+            if (location.pathname.startsWith('/message')) return item.id === 5
+            return item.link === location.pathname
+        })
         return isActive ? isActive.id : 0
     })
     //handle active by id
@@ -77,12 +82,14 @@ const Sidebar = () => {
         },
         [location.pathname],
     )
+    useEffect(() => {
+        if (location.pathname.startsWith('/message')) setId(5)
+    }, [location.pathname])
     const active = useMemo(() => ({ id, handleId }), [handleId, id])
     // handle click outside
     const refSide = useRef<HTMLDivElement>(null)
     const handleClickOutside = (event: MouseEvent) => {
         if (refSide.current && !refSide.current.contains(event.target as Node)) {
-            console.log('Clicked outside the div!')
             handleId(id)()
         }
     }
@@ -92,6 +99,7 @@ const Sidebar = () => {
             className={classNames('relative', {
                 'is-cllapse group': [2, 5, 6].includes(id),
                 'is-side group': [2, 6].includes(id),
+                'lg:w-60': id !== 5 && !location.pathname.startsWith('/message'),
             })}
         >
             <div
@@ -111,12 +119,14 @@ const Sidebar = () => {
             </div>
             <div
                 className={classNames(
-                    'absolute h-screen w-96 bg-white top-0 right-[120%] ml-px rounded-e-3xl',
-                    'shadow-sidebar group-[.is-side]:translate-x-[124%] duration-200 transition-transform z-50',
+                    'h-screen w-96 bg-white top-0 -left-full ml-px rounded-e-3xl fixed',
+                    'shadow-sidebar group-[.is-side]:left-[76px] duration-200 transition-all z-50',
                 )}
             >
-                {id === 2 && <Search handleClickOutside={handleClickOutside} />}
+                {id === 2 && <Search onHidden={handleId(2)} handleClickOutside={handleClickOutside} />}
+                {id === 6 && <Notify handleClickOutside={handleClickOutside} />}
             </div>
+            {id === 7 && <CreatePosts handleClose={handleId(7)} />}
         </section>
     )
 }

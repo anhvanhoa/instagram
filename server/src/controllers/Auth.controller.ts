@@ -36,6 +36,7 @@ class AuthController {
             const response = await authProvider.register(body)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
+            console.log(error)
             if (!error.httpStatus)
                 return res
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

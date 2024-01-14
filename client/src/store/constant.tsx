@@ -11,7 +11,7 @@ export const initializeUser: User = {
     fullName: '',
     gender: '',
     userName: '',
-    verify: true,
+    verify: false,
     followers: [],
     following: [],
     stories: [],
@@ -20,7 +20,8 @@ export const initializeUser: User = {
 }
 export type LOGIN = 'LOGIN'
 export type LOGOUT = 'LOGOUT'
-type Action = LOGIN | LOGOUT
+export type UPDATE = 'UPDATE'
+type Action = LOGIN | LOGOUT | UPDATE
 export interface ActionType {
     payload: User
     type: Action

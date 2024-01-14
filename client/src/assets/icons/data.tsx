@@ -2,11 +2,14 @@ import React from 'react'
 import { homeThin, homeSolid } from './home'
 import { exploreSolid, exploreThin } from './explore'
 import { searchSolid, searchThin } from './search'
-import { createPostSolid, createPostThin } from './create-post'
-import { heartSolid, heartThin } from './heart'
-import { messageSolid, messageThin } from './message'
+import { createPostSolid, createPostThin, photoClip } from './create-post'
+import { heartPosts, heartPostsRed, heartSolid, heartThin } from './heart'
+import { messageSolid, messageThin, message, messageChat } from './message'
 import { reelsSolid, reelsThin } from './reels'
 import { menuSolid, menuThin, setting, activity, mode, problem, saved } from './menu'
+import { comment, save, share, shareFail, smile } from './posts'
+import { ratioHorizontal, ratioSquare, ratioVertical, zoom } from './ratio'
+import { pen, call, callVideo, info, micro, picture } from './chat'
 export type NameIcon =
     | 'home-thin'
     | 'home-solid'
@@ -29,6 +32,26 @@ export type NameIcon =
     | 'mode'
     | 'saved'
     | 'problem'
+    | 'heart-posts'
+    | 'heart-posts-red'
+    | 'comment'
+    | 'share'
+    | 'smile'
+    | 'saved-posts'
+    | 'message'
+    | 'photo-clip'
+    | 'ratio-square'
+    | 'ratio-vertical'
+    | 'ratio-horizontal'
+    | 'zoom'
+    | 'share-fail'
+    | 'pen'
+    | 'call'
+    | 'call-video'
+    | 'info'
+    | 'micro'
+    | 'picture'
+    | 'message-chat'
 const Icons: Record<NameIcon, React.ReactNode> = {
     'home-thin': homeThin,
     'home-solid': homeSolid,
@@ -51,6 +74,26 @@ const Icons: Record<NameIcon, React.ReactNode> = {
     mode,
     problem,
     saved,
+    'heart-posts': heartPosts,
+    'heart-posts-red': heartPostsRed,
+    comment,
+    share,
+    smile,
+    'saved-posts': save,
+    message,
+    'photo-clip': photoClip,
+    'ratio-horizontal': ratioHorizontal,
+    'ratio-square': ratioSquare,
+    'ratio-vertical': ratioVertical,
+    zoom,
+    'share-fail': shareFail,
+    pen,
+    call,
+    'call-video': callVideo,
+    info,
+    micro,
+    picture,
+    'message-chat': messageChat,
 }
 
 export default Icons

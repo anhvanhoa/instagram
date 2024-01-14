@@ -1,3 +1,5 @@
+import { Posts } from './posts'
+
 export interface DataRegister {
     email: string
     numberPhone: string
@@ -38,11 +40,19 @@ export interface User {
     numberPhone: string
     birthday: string
     bio: string
-    posts: []
+    posts: Posts[]
     followers: []
     following: []
     stories: []
     verify: boolean
     notifications: []
     accessToken: string
+}
+
+export interface UserUpdate {
+    gender: Gender
+    fullName: string
+    avatar: string
+    birthday: string
+    bio: string
 }

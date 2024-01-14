@@ -1,7 +1,7 @@
 import {
     BadRequestException,
     Injectable,
-    NestMiddleware,
+    NestMiddleware
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request, Response, NextFunction } from 'express';

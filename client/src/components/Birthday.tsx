@@ -39,33 +39,33 @@ const Birthday: React.FC<Props> = ({ birthday, setBirthday, handleStep, dataForm
                 <div id='verify'></div>
                 <div className='flex flex-col items-center text-center gap-1 text-sm leading-4'>
                     <div className='w-36 h-24 mt-3' style={{ background: `url(${images.synthetic})` }}></div>
-                    <p className='font-medium py-2'>Thêm ngày sinh</p>
-                    <p className=''>Thông tin này sẽ không hiển thị trên trang cá nhân công khai của bạn.</p>
+                    <p className='font-medium py-2'>Add date of birth</p>
+                    <p className=''>This information will not appear on your public profile.</p>
                     <Link to='/' className='text-primary'>
-                        Tại sao tôi cần cung cấp ngày sinh của mình?
+                        Why do I need to provide my date of birth?
                     </Link>
                     <div className='flex items-center gap-4 my-3'>
                         <Select setValue={handleChangBirthday('month')} valueDefault={birthday.month} data={months}>
-                            Tháng
+                            Month
                         </Select>
                         <Select setValue={handleChangBirthday('day')} valueDefault={birthday.day} data={days}>
-                            Ngày
+                            Day
                         </Select>
                         <Select setValue={handleChangBirthday('year')} valueDefault={birthday.year} data={years}>
-                            Năm
+                            Years
                         </Select>
                     </div>
                 </div>
-                <p className='text-xs text-gray-600'>Bạn cần nhập ngày sinh của mình</p>
+                <p className='text-xs text-gray-600'>You need to enter your date of birth</p>
                 <p className='text-xs text-gray-600 py-4'>
-                    Hãy thêm ngày sinh của chính bạn, dù đây là tài khoản dành cho doanh nghiệp, thú cưng hay bất cứ
-                    điều gì khác
+                    Add your own birthday, whether this is for a business account, a pet account, or anything else
+                    something else
                 </p>
                 <Button disable={btnDisable} onClick={handleNextOtp} className='w-full'>
-                    Tiếp
+                    Next
                 </Button>
                 <Button onClick={handleStep('prev')} className='mb-2 mx-auto' type='text'>
-                    Quay lại
+                    Back
                 </Button>
             </div>
         </div>

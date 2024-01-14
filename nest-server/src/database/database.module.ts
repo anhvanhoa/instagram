@@ -10,16 +10,16 @@ import { MongooseModule } from '@nestjs/mongoose';
                 config: {
                     password: configService.get('PASS_REDIS'),
                     host: configService.get('HOST_REDIS'),
-                    port: configService.get('PORT_REDIS'),
-                },
-            }),
+                    port: configService.get('PORT_REDIS')
+                }
+            })
         }),
         MongooseModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (configService: ConfigService) => ({
-                uri: configService.get('URL_MONGODB'),
-            }),
-        }),
-    ],
+                uri: configService.get('URL_MONGODB')
+            })
+        })
+    ]
 })
 export class DatabaseModule {}

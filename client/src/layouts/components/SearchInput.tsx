@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Icon } from '@iconify/react'
 import useDebounce from '~/hooks/useDebounce'
-const SearchInput = () => {
+import { useQuery } from '@tanstack/react-query'
+import serachUser from '~/apis/serachUser'
+import { User } from '~/types/auth'
+const SearchInput = ({ setUsers }: { setUsers(value: React.SetStateAction<User[]>): void }) => {
     const [iconSearch, setIconSearch] = useState<boolean>(true)
-    const [hideIcon, setHideIcon] = useState<boolean>(false)
     const [value, setValue] = useState<string>('')
     const newValue = useDebounce(value, 500)
     const handleSearch = () => setIconSearch(false)
@@ -11,16 +13,15 @@ const SearchInput = () => {
         setValue('')
         setIconSearch(true)
     }
-    const handleApi = (value: string) => {
-        setHideIcon(true)
-        setTimeout(() => {
-            setHideIcon(false)
-            console.log(value)
-        }, 1000)
-    }
+    const { data, isFetching } = useQuery({
+        queryKey: ['search', newValue],
+        queryFn: () => serachUser(newValue),
+        initialData: [],
+        enabled: Boolean(newValue),
+    })
     useEffect(() => {
-        handleApi(newValue)
-    }, [newValue])
+        setUsers(data)
+    }, [data, setUsers])
     // set value search
     const handleValue = (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.target.value)
     return (
@@ -34,7 +35,9 @@ const SearchInput = () => {
                         placeholder='Tìm kiếm'
                         value={value}
                         onChange={handleValue}
-                        onBlur={() => setIconSearch(true)}
+                        onBlur={() => {
+                            setTimeout(() => setIconSearch(true), 300)
+                        }}
                     />
                 )}
                 {iconSearch && (
@@ -52,14 +55,14 @@ const SearchInput = () => {
                     </div>
                 )}
                 <div className='opacity-50 absolute right-4 top-1/2 w-4 h-4 -translate-y-1/2 block '>
-                    {!iconSearch && !hideIcon && (
+                    {!iconSearch && !isFetching && (
                         <Icon
                             onClick={handleClear}
                             className='text-gray-400 cursor-pointer'
                             icon='icon-park-solid:close-one'
                         />
                     )}
-                    {hideIcon && <Icon icon='nonicons:loading-16' />}
+                    {!newValue && isFetching && <Icon icon='nonicons:loading-16' />}
                 </div>
             </div>
         </div>

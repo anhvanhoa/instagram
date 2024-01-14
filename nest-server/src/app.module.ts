@@ -6,23 +6,25 @@ import { OtpModule } from './otp/otp.module';
 import { UserModule } from './user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PostsModule } from './posts/posts.module';
+import { ImagesModule } from './images/images.module';
 @Module({
     imports: [
         ConfigModule.forRoot({
             envFilePath: ['.env'],
             isGlobal: true,
-            cache: true,
+            cache: true
         }),
         JwtModule.register({
-            global: true,
+            global: true
         }),
         DatabaseModule,
         AuthModule,
         OtpModule,
         UserModule,
         PostsModule,
+        ImagesModule
     ],
     controllers: [],
-    providers: [],
+    providers: []
 })
 export class AppModule {}
