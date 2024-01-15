@@ -1,7 +1,7 @@
 import express from 'express'
 import Routers, { ioEvent } from './routers'
 import connectDataBase from './config/database'
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
 import morgan from 'morgan'
 import { configDotenv } from 'dotenv'
 import dbRedis from './config/dbRedis'
@@ -19,7 +19,7 @@ configDotenv({ path: '.env' })
 const app = express()
 const port = 8008
 const httpServer = createServer(app)
-const configCors = {
+const configCors: CorsOptions = {
     credentials: true,
     origin: process.env.URL_CLIENT,
 }

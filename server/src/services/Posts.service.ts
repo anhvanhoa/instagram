@@ -1,4 +1,5 @@
 import Jimp from 'jimp'
+import { PopulateOption } from 'mongoose'
 import { HttpStatus } from '~/http-status.enum'
 import CommentModel from '~/models/Comment.model'
 import PostsModel from '~/models/Posts.model'
@@ -32,7 +33,8 @@ export class PostsService {
             .sort({ createdAt: 'desc' })
         return httpResponse(HttpStatus.OK, posts)
     }
-    async getOnePosts(id: string) {
+    async getOnePosts(id: string, userName: string) {
+        const user = await this.checkLike(userName, id)
         const posts = await PostsModel.findOne({ _id: id })
             .populate({
                 path: 'comments',
@@ -55,7 +57,17 @@ export class PostsService {
                     model: 'posts', // Tên của mô hình Posts
                 },
             })
-        return httpResponse(HttpStatus.OK, posts)
+            .populate<PopulateOption>({
+                path: 'likes',
+                model: 'users',
+                select: { _id: true },
+                match: { _id: { $ne: user.data?._id } },
+            })
+        if (!posts) throw httpResponse(HttpStatus.NOT_FOUND, { msg: 'Not found' })
+        return httpResponse(HttpStatus.OK, {
+            ...posts._doc,
+            like: user.data,
+        })
     }
     async like(userName: string, { idPosts }: { idPosts: string }) {
         const author = await UserModel.findOne({ userName })
@@ -143,12 +155,24 @@ export class PostsService {
         const user = await UserModel.findOne({
             userName,
         })
+        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
         const posts = await PostsModel.find()
             .limit(limit)
             .ne('author', user?._id)
             .populate('author', { password: false })
             .sort({ createdAt: 'desc' })
         return httpResponse(HttpStatus.OK, posts)
+    }
+    async checkLike(userName: string, id: string) {
+        const user = await UserModel.findOne({
+            userName,
+        })
+        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        const posts = await PostsModel.findOne({
+            _id: id,
+            likes: { $in: user._id },
+        })
+        return httpResponse(HttpStatus.OK, posts ? user._doc : null)
     }
 }
 const postsProvider = new PostsService()

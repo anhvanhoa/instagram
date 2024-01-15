@@ -1,13 +1,11 @@
-// import Img from './Img'
-
 import { Icon } from '@iconify/react/dist/iconify.js'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { memo, useState } from 'react'
 interface Props {
     children: React.ReactNode
     maxElemnt: number
 }
-const Slider: React.FC<Props> = ({ children, maxElemnt }) => {
+const Slider: React.FC<Props> = memo(({ children, maxElemnt }) => {
     const dots: number[] = []
     for (let index = 0; index < maxElemnt; index++) {
         dots.push(index)
@@ -31,7 +29,7 @@ const Slider: React.FC<Props> = ({ children, maxElemnt }) => {
                     <div
                         key={index}
                         className={`w-[7px] h-[7px] rounded-[50%] transition-all ${
-                            index === position ? 'bg-primary' : 'bg-white/70'
+                            index === position ? 'bg-white' : 'bg-white/70'
                         }`}
                     ></div>
                 ))}
@@ -48,6 +46,6 @@ const Slider: React.FC<Props> = ({ children, maxElemnt }) => {
             )}
         </div>
     )
-}
+})
 
 export default Slider

@@ -11,12 +11,12 @@ import EditProfile from '~/pages/EditProfile'
 import Explore from '~/pages/Explore'
 import Reels from '~/pages/Reels'
 import Message from '~/pages/Message'
-import LoadPage from '~/components/LoadPage'
 import Posts from '~/pages/Posts'
+import NotFound from '~/pages/NotFound'
 export const routersPublic = createBrowserRouter([
     {
         element: <LayoutAuth />,
-        errorElement: <LoadPage />,
+        errorElement: <NotFound />,
         children: [
             {
                 element: <HomeNotAuth />,
@@ -36,7 +36,7 @@ export const routersPublic = createBrowserRouter([
 export const routersPrivate = createBrowserRouter([
     {
         element: <LayoutMain />,
-        errorElement: <LoadPage />,
+        errorElement: <NotFound />,
         children: [
             {
                 element: <Home />,

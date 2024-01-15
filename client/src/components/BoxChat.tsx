@@ -39,9 +39,10 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
             })
         })
         socket.on(`sendMessage`, (data) => {
-            if (data.idUser !== userChat._id) return
-            socket.emit(`seen`, { idUser: data.idUser, idContentChat: data._id })
-            setMessageNew((prev) => [...prev, data])
+            if (data.idUserChat === userChat._id || data.idUser === userChat._id) {
+                setMessageNew((prev) => [...prev, data])
+                if (data.idUser === userChat._id) socket.emit(`seen`, { idUser: data.idUser, idContentChat: data._id })
+            }
         })
         setMessageNew(dataChat)
         return () => {
@@ -49,7 +50,7 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
             socket.off('sendMessage')
             socket.off('notifyDelete')
         }
-    }, [dataChat, userChat._id])
+    }, [dataChat, idUser, userChat._id])
     return (
         <section className='h-screen flex flex-col justify-between'>
             <HeaderChat user={userChat} />

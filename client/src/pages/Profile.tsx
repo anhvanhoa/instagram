@@ -12,6 +12,7 @@ import { initializeUser } from '~/store/constant'
 import follow from '~/apis/follow'
 import unfollow from '~/apis/unfollow'
 import SkeletonExploreItem from '~/components/SkeletonExploreItem'
+import LoadPage from '~/components/LoadPage'
 
 const Profile = () => {
     const navigate = useNavigate()
@@ -46,6 +47,7 @@ const Profile = () => {
         })
     return (
         <div>
+            {isLoading && <LoadPage />}
             {data && (
                 <div className='max-w-[975px] mx-auto pt-[30px] px-5'>
                     <div className='flex items-start mb-11'>
@@ -106,9 +108,9 @@ const Profile = () => {
                                     {isFollowing && (
                                         <Button
                                             onClick={apiUnFollow(data._id)}
-                                            className='text-red-500'
+                                            className='text-red-500 bg-red-500/10'
                                             size='small'
-                                            type='text'
+                                            type='second'
                                         >
                                             Unfollow
                                         </Button>

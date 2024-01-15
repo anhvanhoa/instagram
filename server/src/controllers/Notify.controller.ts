@@ -7,11 +7,9 @@ class NotifyController {
     async notification({ user }: Request, res: Response) {
         try {
             const { userName } = user as JwtData
-            console.log(userName)
             const response = await notificationProvider.getNotify(userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
-            console.log(error)
             if (!error.httpStatus)
                 return res
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)

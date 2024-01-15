@@ -6,6 +6,7 @@ const http = axios.create({
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': import.meta.env.VITE_URL,
     },
 })
 export const httpToken = axios.create({
@@ -13,6 +14,7 @@ export const httpToken = axios.create({
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': import.meta.env.VITE_URL,
     },
 })
 httpToken.interceptors.request.use(async (response) => {

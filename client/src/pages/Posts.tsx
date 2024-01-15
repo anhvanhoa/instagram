@@ -12,7 +12,7 @@ import UserName from '~/components/UserName'
 import Footer from '~/layouts/components/Footer'
 import formatTimeAgo from '~/utils/handleTime'
 import InputComment from '~/components/InputComment'
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import commentPosts from '~/apis/commentPosts'
 import useContextUser from '~/store/hook'
 import likePosts from '~/apis/likePosts'
@@ -20,13 +20,16 @@ import dislikePosts from '~/apis/dislikePosts'
 import socket from '~/socketIo'
 import Comments from '~/components/Comments'
 import SkeletonPostsPage from '~/components/SkeletonPostsPage'
+import Tippy from '@tippyjs/react/headless'
+import Wrapper from '~/components/Wrapper'
+import Button from '~/components/Button'
 
 const Posts = () => {
+    const params = useParams()
     const { state: user } = useContextUser()
     const [comment, setComment] = useState('')
     const [listComment, setListComment] = useState<string[]>([])
-    const [like, setLike] = useState<boolean>(false)
-    const params = useParams()
+    const [like, setLike] = useState(false)
     const {
         data: posts,
         isError,
@@ -47,13 +50,14 @@ const Posts = () => {
     const apiLike = (idPosts: string) => () => {
         mutate(idPosts)
         setLike(true)
-        socket.emit('like', { idPosts, idUser: user._id, idUserNotify: posts ? posts?.author._id : '' })
+        socket.emit('like', { idPosts, fromUser: user._id, toUser: posts ? posts?.author._id : '' })
     }
     const apiDislike = (idPosts: string) => () => {
         mutateDis(idPosts)
         setLike(false)
     }
     const apiComment = (idPosts: string, content: string) => () => {
+        socket.emit('comment', { idPosts, fromUser: user._id, toUser: posts ? posts?.author._id : '' })
         mutateComment(
             { content, idPosts },
             {
@@ -64,6 +68,13 @@ const Posts = () => {
             },
         )
     }
+    useLayoutEffect(() => {
+        posts?.like && setLike(true)
+        if (posts) socket.emit('joinRoom', posts.author._id)
+        return () => {
+            if (posts) socket.emit('leaveRoom', posts.author._id)
+        }
+    }, [posts])
     return (
         <div>
             <div className='flex justify-center'>
@@ -86,9 +97,39 @@ const Posts = () => {
                         </div>
                         <div className='overflow-hidden w-96 border relative overflow-y-auto flex flex-col h-full rounded-ee-lg rounded-se-lg'>
                             <div className='sticky top-0 bg-white'>
-                                <div className='flex justify-between px-4 py-3 border-b'>
+                                <div className='flex justify-between items-center px-4 py-3 border-b'>
                                     <AccountItem user={posts.author} size='small' />
-                                    <Icon icon='solar:menu-dots-broken' className='text-2xl' />
+                                    <Tippy
+                                        trigger='click'
+                                        interactive
+                                        placement='bottom-end'
+                                        render={() => (
+                                            <Wrapper>
+                                                <div className='bg-white rounded-xl px-2'>
+                                                    <Button type='text' className='py-3 border-b'>
+                                                        Copy link
+                                                    </Button>
+                                                    {user._id === posts.author._id && (
+                                                        <div>
+                                                            <Button type='text' className='py-3 border-b'>
+                                                                Edit posts
+                                                            </Button>
+                                                            <Button
+                                                                type='text'
+                                                                className='py-3 text-red-500 hover:text-red-600'
+                                                            >
+                                                                Delete posts
+                                                            </Button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </Wrapper>
+                                        )}
+                                    >
+                                        <div>
+                                            <Icon icon='solar:menu-dots-broken' className='text-2xl cursor-pointer' />
+                                        </div>
+                                    </Tippy>
                                 </div>
                             </div>
                             <div className='pb-4 flex-1'>

@@ -47,6 +47,7 @@ const Posts: React.FC<Props> = ({ user, posts }) => {
         setLike(false)
     }
     const apiComment = (idPosts: string, content: string) => () => {
+        socket.emit('comment', { idPosts, fromUser: state._id, toUser: user._id })
         mutateComment(
             { content, idPosts },
             {

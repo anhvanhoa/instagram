@@ -33,7 +33,7 @@ const AccountItem: React.FC<Props> = ({ user, size = 'medium' }) => {
         },
         small: {
             r: 18,
-            x: 21.5,
+            x: 20.8,
             y: 21.5,
         },
         big: {

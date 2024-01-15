@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 import images from '~/assets'
 
 interface Props {
@@ -6,11 +6,18 @@ interface Props {
     alt?: string
     className?: string
     link?: string
-    faback?: () => string
 }
-const Img: React.FC<Props> = ({ src, alt, className, faback = () => images.noAvatar }) => {
+const Img: React.FC<Props> = memo(({ src, alt, className }) => {
     src = src ? `${import.meta.env.VITE_URL}/images/` + src : images.noAvatar
-    return <img src={src} className={className} alt={alt} onError={(e) => (e.currentTarget.src = faback())} />
-}
+    return (
+        <img
+            loading='lazy'
+            src={src}
+            className={className}
+            alt={alt}
+            onError={(e) => (e.currentTarget.src = images.noAvatar)}
+        />
+    )
+})
 
 export default Img

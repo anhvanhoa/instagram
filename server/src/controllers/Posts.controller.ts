@@ -17,10 +17,11 @@ class PostsController {
             return res.status(error.httpStatus).json(error.data)
         }
     }
-    async getOnePosts({ params }: Request, res: Response) {
+    async getOnePosts({ params, user }: Request, res: Response) {
         try {
+            const { userName } = user as JwtData
             const { id } = params
-            const response = await postsProvider.getOnePosts(id)
+            const response = await postsProvider.getOnePosts(id, userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus)
@@ -102,7 +103,6 @@ class PostsController {
             const response = await postsProvider.crop(body, file)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
-            console.log(error)
             if (!error.httpStatus)
                 return res
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -114,6 +114,19 @@ class PostsController {
         try {
             const { userName } = user as JwtData
             const response = await postsProvider.suggests(userName, Number(query.limit))
+            return res.status(response.httpStatus).json(response.data)
+        } catch (error: any) {
+            if (!error.httpStatus)
+                return res
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .json({ msg: 'Server error' })
+            return res.status(error.httpStatus).json(error.data)
+        }
+    }
+    async checkLike({ params, user }: Request, res: Response) {
+        try {
+            const { userName } = user as JwtData
+            const response = await postsProvider.checkLike(userName, params.id)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus)

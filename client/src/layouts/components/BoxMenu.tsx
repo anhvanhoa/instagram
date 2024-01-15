@@ -1,4 +1,5 @@
 // import dataMenu from '~/dataDefault/dataMenu'
+import { Icon } from '@iconify/react/dist/iconify.js'
 import { useMutation } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { Link, useNavigate } from 'react-router-dom'
@@ -41,9 +42,9 @@ const BoxMenu = () => {
     const navigate = useNavigate()
     const handleSuccess = () => {
         dispatch({ payload: initializeUser, type: 'LOGOUT' })
-        navigate('/')
+        setTimeout(() => navigate('/'), 2000)
     }
-    const { mutate } = useMutation({
+    const { mutate, isPending } = useMutation({
         onSuccess: handleSuccess,
         mutationFn: () => logout(),
     })
@@ -85,9 +86,13 @@ const BoxMenu = () => {
             <ul className={classNames('bg-white list-none p-2 rounded-b-2xl mt-2')}>
                 <li
                     onClick={handleLogout}
-                    className={classNames('p-4 text-sm cursor-pointer hover:bg-gray-100 rounded-xl')}
+                    className={classNames(
+                        'p-4 text-sm cursor-pointer hover:bg-gray-100',
+                        'first-letter: rounded-xl flex items-center justify-between',
+                    )}
                 >
                     <p>Logout</p>
+                    {isPending && <Icon icon='ri:loader-line' className='mt-1 animate-spin' />}
                 </li>
             </ul>
         </div>

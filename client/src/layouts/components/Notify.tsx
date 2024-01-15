@@ -16,10 +16,7 @@ const Notify: React.FC<Props> = ({ handleClickOutside }) => {
         queryFn: () => getNotification(),
     })
     useEffect(() => {
-        socket.on('notification', (data) => {
-            console.log(data)
-            setNotification((prev) => [data, ...prev])
-        })
+        socket.on('notification', (data) => setNotification((prev) => [data, ...prev]))
         document.addEventListener('mousedown', handleClickOutside)
         return () => {
             socket.off('notification')
@@ -29,20 +26,22 @@ const Notify: React.FC<Props> = ({ handleClickOutside }) => {
     return (
         <div
             className={classNames(
-                'h-full bg-white rounded-tr-xl rounded-br-xl',
-                'shadow-2xl py-2 px-5 transition-all z-50 border-r border-solid border-[#ccc]/80',
+                'h-full bg-white rounded-tr-xl rounded-br-xl relative',
+                'shadow-2xl transition-all z-50 border-r border-solid border-[#ccc]/80',
             )}
         >
-            <h2 className={classNames('pt-3 pb-4 font-bold text-2xl')}>Notification</h2>
-            <div className=''>
-                <h3 className={classNames('font-semibold')}>New</h3>
-                <div>
+            <h2 className={classNames('py-4 px-5 border-b font-bold text-2xl sticky top-0 bg-white shadow-md z-20')}>
+                Notification
+            </h2>
+            <div className='px-5 overflow-auto h-full'>
+                {!data?.length && <p className='text-center mt-6'>No notification</p>}
+                <div className='py-2'>
                     {data &&
                         data.map((item, index) => (
                             <div
                                 key={index}
                                 className={classNames(
-                                    'flex items-center justify-between gap-3 p-2 my-1',
+                                    'flex items-center justify-between gap-3 py-2 px-4 my-1',
                                     'overflow-hidden hover:bg-gray-100 rounded-lg transition-all',
                                 )}
                             >
@@ -93,9 +92,6 @@ const Notify: React.FC<Props> = ({ handleClickOutside }) => {
                         </div>
                     ))}
                 </div>
-            </div>
-            <div className=''>
-                <h3 className={classNames('mb-4 font-semibold')}>Befor</h3>
             </div>
         </div>
     )

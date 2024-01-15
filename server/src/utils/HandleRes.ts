@@ -1,4 +1,3 @@
-import { Response, response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 
 class HandleRes {

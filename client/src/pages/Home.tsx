@@ -12,7 +12,7 @@ const Home = () => {
                     {state.following.length === 0 && <HomeSuggest />}
                     {state.following.length !== 0 && <PostsHome />}
                 </div>
-                <div className='pl-10 lg:block hidden'>
+                <div className='pl-10 xl:block hidden'>
                     <Suggest />
                 </div>
             </div>

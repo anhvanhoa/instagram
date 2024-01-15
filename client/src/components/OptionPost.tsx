@@ -3,7 +3,7 @@ import OverLay from './OverLay'
 import Button from './Button'
 interface Props {
     children: React.ReactNode
-    viewPosts: () => void
+    viewPosts?: () => void
 }
 const OptionPost: React.FC<Props> = ({ children, viewPosts }) => {
     const [overlay, setOverlay] = useState<boolean>(false)
@@ -14,7 +14,7 @@ const OptionPost: React.FC<Props> = ({ children, viewPosts }) => {
                 <OverLay onClose={changeOverlay(false)}>
                     <div className='bg-white w-96 rounded-xl flex flex-col'>
                         <Button type='text' className='py-3'>
-                            Sao chép liên kết
+                            Copy link
                         </Button>
                         <Button onClick={viewPosts} type='text' className='py-3 border-t'>
                             View posts
