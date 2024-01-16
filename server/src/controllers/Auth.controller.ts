@@ -49,7 +49,7 @@ class AuthController {
             const response = await authProvider.loginFacebook(body, (token) => {
                 res.cookie('tokenRefresh', token, {
                     httpOnly: true,
-                    sameSite: 'lax',
+                    sameSite: 'strict',
                     domain: process.env.URL_CLIENT,
                 })
             })
@@ -69,7 +69,7 @@ class AuthController {
                 res.cookie('tokenRefresh', token, {
                     httpOnly: true,
                     secure: true,
-                    sameSite: 'lax',
+                    sameSite: 'strict',
                     domain: process.env.URL_CLIENT,
                 })
             })
@@ -109,7 +109,7 @@ class AuthController {
             const response = await authProvider.refreshJwt(tokenRefresh, (token) => {
                 res.cookie('tokenRefresh', token, {
                     httpOnly: true,
-                    sameSite: 'lax',
+                    sameSite: 'strict',
                     domain: process.env.URL_CLIENT,
                 })
             })
