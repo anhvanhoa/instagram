@@ -12,6 +12,7 @@ import isMobilePhone from 'validator/lib/isMobilePhone'
 import { useNavigate } from 'react-router-dom'
 import useContextUser from '~/store/hook'
 import registerFacebook from '~/apis/registerFacebook'
+import rfToken from '~/utils/rfToken'
 const initData: LoginData = {
     emailTellName: '',
     email: null,
@@ -22,6 +23,7 @@ const initData: LoginData = {
 const Login = () => {
     const navigation = useNavigate()
     const { dispatch } = useContextUser()
+    const { rfTokenEncode } = rfToken()
     const [formData, setFormData] = useState<LoginData>(initData)
     // handle change input
     const handleChange = (name: keyof LoginData) => (event: React.ChangeEvent<HTMLInputElement>) =>
@@ -40,7 +42,8 @@ const Login = () => {
         mutate(formData, {
             onSuccess: (user) => {
                 dispatch({ payload: user, type: 'LOGIN' })
-                setTimeout(() => navigation('/'), 2000)
+                rfTokenEncode(user.refreshToken)
+                setTimeout(() => navigation('/'), 400)
             },
         })
         setFormData((prev) => ({ ...initData, emailTellName: prev.emailTellName, password: prev.password }))
@@ -50,7 +53,8 @@ const Login = () => {
         try {
             const user = await registerFacebook()
             dispatch({ payload: user, type: 'LOGIN' })
-            setTimeout(() => navigation('/'), 2000)
+            rfTokenEncode(user.refreshToken)
+            setTimeout(() => navigation('/'), 400)
         } catch (error) {
             console.log(error)
         }

@@ -2,9 +2,7 @@ import { httpToken } from '~/config/httpAxios'
 import { User } from '~/types/auth'
 
 const getUser = async (username: string) => {
-    const { data } = await httpToken.get<User>(`/user/${username}`, {
-        withCredentials: true,
-    })
+    const { data } = await httpToken.get<User>(`/user/${username}`)
     return data
 }
 

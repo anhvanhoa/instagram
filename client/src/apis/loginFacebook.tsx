@@ -8,10 +8,11 @@ interface LoginFB {
     photoURL: string | null
     uid: string
 }
+interface ResUser extends User {
+    refreshToken: string
+}
 const loginFacebook = async (data: LoginFB) => {
-    const res = await http.post<User>('/auth/login-facebook', data, {
-        withCredentials: true,
-    })
+    const res = await http.post<ResUser>('/auth/login-facebook', data)
     return res.data
 }
 

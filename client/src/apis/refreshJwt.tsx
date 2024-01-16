@@ -1,11 +1,11 @@
 import http from '~/config/httpAxios'
-import { User } from '~/types/auth'
-
-const refreshJwt = async () => {
-    const res = await http.get<Pick<User, 'accessToken'>>('auth/refresh', {
-        withCredentials: true,
-    })
-    return res.data
+interface Token {
+    accessToken: string
+    refreshToken: string
+}
+const refreshJwt = async (token: string) => {
+    const res = await http.post<Token>('auth/refresh', { tokenRefresh: token })
+    return res
 }
 
 export default refreshJwt

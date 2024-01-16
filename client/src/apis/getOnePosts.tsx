@@ -5,9 +5,7 @@ interface PostsLike extends Posts {
     like: User
 }
 const getOnePosts = async (id: string) => {
-    const res = await httpToken.get<PostsLike>(`/posts/${id}`, {
-        withCredentials: true,
-    })
+    const res = await httpToken.get<PostsLike>(`/posts/${id}`)
     return res.data
 }
 

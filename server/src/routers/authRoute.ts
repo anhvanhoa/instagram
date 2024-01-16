@@ -17,5 +17,5 @@ authRoute.post('/login', AuthController.login)
 // logout account
 authRoute.post('/logout', accuracy, AuthController.logout)
 // refresh
-authRoute.get('/refresh', AuthController.refreshJwt)
+authRoute.post('/refresh', AuthController.refreshJwt)
 export default authRoute

@@ -5,9 +5,7 @@ interface UserInfo extends User {
     isFollower: boolean
 }
 const infoUser = async (id: string) => {
-    const { data } = await httpToken.get<UserInfo>(`/user/${id}/info`, {
-        withCredentials: true,
-    })
+    const { data } = await httpToken.get<UserInfo>(`/user/${id}/info`)
     return data
 }
 

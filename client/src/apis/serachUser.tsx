@@ -6,7 +6,6 @@ const serachUser = async (q: string) => {
         params: {
             q,
         },
-        withCredentials: true,
     })
 
     return data

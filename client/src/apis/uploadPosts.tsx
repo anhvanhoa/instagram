@@ -8,9 +8,7 @@ export interface PostsUpload {
 }
 
 const uploadPosts = async (posts: PostsUpload) => {
-    const { data } = await httpToken.post<Posts>('/posts/upload', posts, {
-        withCredentials: true,
-    })
+    const { data } = await httpToken.post<Posts>('/posts/upload', posts)
     return data
 }
 

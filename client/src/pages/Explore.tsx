@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import suggestsPosts from '~/apis/suggestsPosts'
 import ExploreItem from '~/components/ExploreItem'
-import SkeletonExploreItem from '~/components/SkeletonExploreItem'
+import SkeletonExplore from '~/components/SkeletonExplore'
 
 const Explore = () => {
     const navigate = useNavigate()
@@ -30,21 +30,12 @@ const Explore = () => {
     return (
         <main>
             <div className='max-w-[975px] mx-auto pt-6 px-5'>
+                {isLoading && <SkeletonExplore />}
                 <div className={cln('grid grid-cols-3 grid-rows-1 gap-1 mb-7')}>
-                    {isLoading && (
-                        <>
-                            <SkeletonExploreItem />
-                            <SkeletonExploreItem />
-                            <SkeletonExploreItem />
-                            <SkeletonExploreItem />
-                            <SkeletonExploreItem />
-                            <SkeletonExploreItem />
-                        </>
-                    )}
                     {data &&
                         data.map((element) => (
-                            <div onClick={viewPosts(element._id)} className='cursor-pointer'>
-                                <ExploreItem key={element._id} posts={element} />
+                            <div key={element._id} onClick={viewPosts(element._id)} className='cursor-pointer'>
+                                <ExploreItem posts={element} />
                             </div>
                         ))}
                 </div>

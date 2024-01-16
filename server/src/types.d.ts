@@ -39,6 +39,7 @@ export interface Posts extends DocumentModel<Posts> {
 
 export interface ResUser extends Omit<User, 'password'> {
     accessToken: string
+    refreshToken: string
 }
 
 export interface Code {

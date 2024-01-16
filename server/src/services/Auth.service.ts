@@ -13,6 +13,7 @@ import slugify from 'slugify'
 import otp from '~/utils/Otp'
 
 export class AuthService {
+    listTokenRun: string[] = []
     //
     async uniqueEmail(email: string): Promise<boolean> {
         if (!isEmail(email))
@@ -67,7 +68,7 @@ export class AuthService {
         })
     }
     //
-    async loginFacebook(data: LoginFB, setCookie: (token: string) => void) {
+    async loginFacebook(data: LoginFB) {
         const { email, displayName, phoneNumber, photoURL, uid } = data
         if ((!email && !phoneNumber) || !uid)
             throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, {
@@ -94,9 +95,8 @@ export class AuthService {
             const accessToken = Token.createToken({ userName: user.userName }, '120s')
             const refreshToken = Token.createToken({ userName: user.userName }, '1h')
             await redis.set(user.userName, refreshToken)
-            setCookie(refreshToken)
             const { password: pass, ...newUser } = user._doc
-            const dataUser: ResUser = { ...newUser, accessToken }
+            const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
             return httpResponse(HttpStatus.OK, dataUser)
         }
         const user = await UserModel.findOne({ fbId: uid })
@@ -105,13 +105,12 @@ export class AuthService {
         const accessToken = Token.createToken({ userName: user.userName }, '120s')
         const refreshToken = Token.createToken({ userName: user.userName }, '1h')
         await redis.set(user.userName, refreshToken)
-        setCookie(refreshToken)
         const { password: pass, ...newUser } = user._doc
-        const dataUser: ResUser = { ...newUser, accessToken }
+        const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
         return httpResponse(HttpStatus.OK, dataUser)
     }
     //
-    async login(data: LoginType, setCookie: (token: string) => void) {
+    async login(data: LoginType) {
         const { email, password, numberPhone, userName } = data
         if (!email && !numberPhone && !userName)
             throw httpResponse(HttpStatus.BAD_GATEWAY, { msg: 'Data not valid !' })
@@ -138,30 +137,27 @@ export class AuthService {
         const accessToken = Token.createToken({ userName: user.userName }, '120s')
         const refreshToken = Token.createToken({ userName: user.userName }, '1h')
         await redis.set(user.userName, refreshToken)
-        setCookie(refreshToken)
         const { password: pass, ...newUser } = user._doc
-        const dataUser: ResUser = { ...newUser, accessToken }
+        const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
         return httpResponse(HttpStatus.OK, dataUser)
     }
     //
-    async logout(token: string) {
-        Token.verifyToken(token, async (error, data) => {
-            if (error)
-                throw httpResponse(HttpStatus.UNAUTHORIZED, {
-                    msg: 'You are not authorized to access this resource.',
-                })
-            else {
-                const { userName } = data
-                await redis.del(userName)
-            }
-        })
+    async logout(userName: string) {
+        await redis.del(userName)
         return httpResponse(HttpStatus.OK, { msg: 'Logout success' })
     }
     //
-    async refreshJwt(token: string, setCookie: (token: string) => void) {
+    async refreshJwt(token: string) {
+        const isToken = this.listTokenRun.includes(token)
+        if (isToken)
+            throw httpResponse(HttpStatus.TOO_MANY_REQUESTS, {
+                msg: 'API call in progress, please wait.',
+            })
+        this.listTokenRun.push(token)
         let userName = ''
         Token.verifyToken(token, (error, data) => {
             if (error) {
+                console.log(error)
                 throw httpResponse(HttpStatus.UNAUTHORIZED, {
                     msg: 'Login please !',
                 })
@@ -170,15 +166,15 @@ export class AuthService {
             }
         })
         const tokenDb = await redis.get(userName)
-        if (!tokenDb)
+        if (tokenDb !== token) {
             throw httpResponse(HttpStatus.UNAUTHORIZED, {
                 msg: 'Login please !',
             })
+        }
         const accessToken = Token.createToken({ userName }, '120s')
         const refreshToken = Token.createToken({ userName }, '7d')
         await redis.set(userName, refreshToken)
-        setCookie(refreshToken)
-        return httpResponse(HttpStatus.OK, { accessToken })
+        return httpResponse(HttpStatus.OK, { accessToken, refreshToken })
     }
 }
 const authProvider = new AuthService()

@@ -1,4 +1,3 @@
-// type BirthType = 'day' | 'year' | 'month'
 const generateBirthday = () => {
     return {
         generateYear: () => {
@@ -31,7 +30,7 @@ const generateBirthday = () => {
                 age--
             }
             return { birthday: `${y}-${m}-${d}`, age }
-        }
+        },
     }
 }
 

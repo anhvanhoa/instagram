@@ -3,6 +3,7 @@ import authProvider from '~/services/Auth.service'
 import { HttpStatus } from '~/http-status.enum'
 import otpProvider from '~/services/Otp.service'
 import isJWT from 'validator/lib/isJWT'
+import { JwtData } from '~/types'
 class AuthController {
     public async isInfo({ body }: Request, res: Response) {
         try {
@@ -46,13 +47,7 @@ class AuthController {
     //
     public async loginFacebook({ body }: Request, res: Response) {
         try {
-            const response = await authProvider.loginFacebook(body, (token) => {
-                res.cookie('tokenRefresh', token, {
-                    httpOnly: true,
-                    sameSite: 'strict',
-                    domain: process.env.URL_CLIENT,
-                })
-            })
+            const response = await authProvider.loginFacebook(body)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus)
@@ -65,13 +60,7 @@ class AuthController {
     //
     public async login({ body }: Request, res: Response) {
         try {
-            const response = await authProvider.login(body, (token) => {
-                res.cookie('tokenRefresh', token, {
-                    httpOnly: true,
-                    sameSite: 'strict',
-                    domain: process.env.URL_CLIENT,
-                })
-            })
+            const response = await authProvider.login(body)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus)
@@ -82,15 +71,10 @@ class AuthController {
         }
     }
     //
-    public async logout({ cookies }: Request, res: Response) {
+    public async logout({ user }: Request, res: Response) {
         try {
-            const { tokenRefresh }: { tokenRefresh: string } = cookies
-            if (!tokenRefresh || !isJWT(tokenRefresh))
-                return res
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .json({ msg: 'Token not valid' })
-            const response = await authProvider.logout(tokenRefresh)
-            res.clearCookie('tokenRefresh')
+            const { userName } = user as JwtData
+            const response = await authProvider.logout(userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus)
@@ -100,18 +84,12 @@ class AuthController {
             return res.status(error.httpStatus).json(error.data)
         }
     }
-    async refreshJwt({ cookies }: Request, res: Response) {
+    async refreshJwt({ body }: Request, res: Response) {
         try {
-            const { tokenRefresh }: { tokenRefresh: string } = cookies
+            const { tokenRefresh }: { tokenRefresh: string } = body
             if (!tokenRefresh || !isJWT(tokenRefresh))
                 return res.status(HttpStatus.UNAUTHORIZED).json({ msg: 'Login please !' })
-            const response = await authProvider.refreshJwt(tokenRefresh, (token) => {
-                res.cookie('tokenRefresh', token, {
-                    httpOnly: true,
-                    sameSite: 'strict',
-                    domain: process.env.URL_CLIENT,
-                })
-            })
+            const response = await authProvider.refreshJwt(tokenRefresh)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus)

@@ -42,7 +42,8 @@ const BoxMenu = () => {
     const navigate = useNavigate()
     const handleSuccess = () => {
         dispatch({ payload: initializeUser, type: 'LOGOUT' })
-        setTimeout(() => navigate('/'), 2000)
+        localStorage.removeItem('rf_token')
+        setTimeout(() => navigate('/'), 400)
     }
     const { mutate, isPending } = useMutation({
         onSuccess: handleSuccess,

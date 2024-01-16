@@ -7,13 +7,7 @@ const logout = async () => {
     signOut(auth).then(() => {
         console.log('thanh cong')
     })
-    const res = await httpToken.post<Msg>(
-        '/auth/logout',
-        {},
-        {
-            withCredentials: true,
-        },
-    )
+    const res = await httpToken.post<Msg>('/auth/logout')
     return res.data
 }
 

@@ -1,9 +1,7 @@
 import { httpToken } from '~/config/httpAxios'
 
 const uploadImg = async (dataForm: FormData) => {
-    const { data } = await httpToken.postForm<string>('/image/upload', dataForm, {
-        withCredentials: true,
-    })
+    const { data } = await httpToken.postForm<string>('/image/upload', dataForm)
     return data
 }
 
