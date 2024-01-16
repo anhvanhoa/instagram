@@ -47,7 +47,11 @@ class AuthController {
     public async loginFacebook({ body }: Request, res: Response) {
         try {
             const response = await authProvider.loginFacebook(body, (token) => {
-                res.cookie('tokenRefresh', token, { httpOnly: true, sameSite: 'strict' })
+                res.cookie('tokenRefresh', token, {
+                    httpOnly: true,
+                    sameSite: 'strict',
+                    domain: process.env.URL_CLIENT,
+                })
             })
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -64,8 +68,9 @@ class AuthController {
             const response = await authProvider.login(body, (token) => {
                 res.cookie('tokenRefresh', token, {
                     httpOnly: true,
+                    secure: true,
                     sameSite: 'strict',
-                    path: '/',
+                    domain: process.env.URL_CLIENT,
                 })
             })
             return res.status(response.httpStatus).json(response.data)
@@ -102,7 +107,11 @@ class AuthController {
             if (!tokenRefresh || !isJWT(tokenRefresh))
                 return res.status(HttpStatus.UNAUTHORIZED).json({ msg: 'Login please !' })
             const response = await authProvider.refreshJwt(tokenRefresh, (token) => {
-                res.cookie('tokenRefresh', token, { httpOnly: true, sameSite: 'strict' })
+                res.cookie('tokenRefresh', token, {
+                    httpOnly: true,
+                    sameSite: 'strict',
+                    domain: process.env.URL_CLIENT,
+                })
             })
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
