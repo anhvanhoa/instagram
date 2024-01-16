@@ -7,7 +7,6 @@ const http = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: true,
 })
 export const httpToken = axios.create({
     baseURL: `${import.meta.env.VITE_URL}/api`,
@@ -15,7 +14,6 @@ export const httpToken = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: true,
 })
 httpToken.interceptors.request.use(async (response) => {
     const crToken = localStorage.getItem('cr_token')

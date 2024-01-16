@@ -68,7 +68,6 @@ class AuthController {
             const response = await authProvider.login(body, (token) => {
                 res.cookie('tokenRefresh', token, {
                     httpOnly: true,
-                    secure: true,
                     sameSite: 'strict',
                     domain: process.env.URL_CLIENT,
                 })

@@ -23,6 +23,7 @@ const configCors: CorsOptions = {
     credentials: true,
     origin: process.env.URL_CLIENT,
 }
+app.use(cors(configCors))
 const io = new Server<
     ServerToClientEvents,
     ClientToServerEvents,
@@ -32,7 +33,6 @@ const io = new Server<
 ioEvent(io)
 
 app.use(express.static(join(__dirname, '../public')))
-app.use(cors(configCors))
 app.use(express.json())
 app.use(morgan('tiny'))
 app.use(express.urlencoded({ extended: true }))
