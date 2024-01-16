@@ -22,8 +22,8 @@ const httpServer = createServer(app)
 const configCors: CorsOptions = {
     credentials: true,
     origin: process.env.URL_CLIENT,
+    exposedHeaders: ['set-cookie'],
 }
-app.use(cors(configCors))
 const io = new Server<
     ServerToClientEvents,
     ClientToServerEvents,
@@ -37,6 +37,7 @@ app.use(express.json())
 app.use(morgan('tiny'))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
+app.use(cors(configCors))
 Routers(app)
 connectDataBase()
 dbRedis()
