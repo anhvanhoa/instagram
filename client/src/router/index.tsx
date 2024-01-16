@@ -13,63 +13,72 @@ import Reels from '~/pages/Reels'
 import Message from '~/pages/Message'
 import Posts from '~/pages/Posts'
 import NotFound from '~/pages/NotFound'
-export const routersPublic = createBrowserRouter([
-    {
-        element: <LayoutAuth />,
-        errorElement: <NotFound />,
-        children: [
-            {
-                element: <HomeNotAuth />,
-                path: pathPublic.home,
-            },
-            {
-                element: <Login />,
-                path: pathPublic.login,
-            },
-            {
-                element: <Register />,
-                path: pathPublic.signup,
-            },
-        ],
-    },
-])
-export const routersPrivate = createBrowserRouter([
-    {
-        element: <LayoutMain />,
-        errorElement: <NotFound />,
-        children: [
-            {
-                element: <Home />,
-                path: pathPrivate.home,
-            },
-            {
-                element: <Explore />,
-                path: pathPrivate.explore,
-            },
-            {
-                element: <Reels />,
-                path: pathPrivate.reels,
-            },
-            {
-                element: <Message />,
-                path: pathPrivate.inbox,
-            },
-            {
-                element: <Message />,
-                path: pathPrivate.chat,
-            },
-            {
-                element: <Posts />,
-                path: pathPrivate.posts,
-            },
-            {
-                element: <Profile />,
-                path: pathPrivate.profile,
-            },
-            {
-                element: <EditProfile />,
-                path: pathPrivate.editProfile,
-            },
-        ],
-    },
-])
+const option = {
+    basename: '/',
+}
+export const routersPublic = createBrowserRouter(
+    [
+        {
+            element: <LayoutAuth />,
+            errorElement: <NotFound />,
+            children: [
+                {
+                    element: <HomeNotAuth />,
+                    path: pathPublic.home,
+                },
+                {
+                    element: <Login />,
+                    path: pathPublic.login,
+                },
+                {
+                    element: <Register />,
+                    path: pathPublic.signup,
+                },
+            ],
+        },
+    ],
+    option,
+)
+export const routersPrivate = createBrowserRouter(
+    [
+        {
+            element: <LayoutMain />,
+            errorElement: <NotFound />,
+            children: [
+                {
+                    element: <Home />,
+                    path: pathPrivate.home,
+                },
+                {
+                    element: <Explore />,
+                    path: pathPrivate.explore,
+                },
+                {
+                    element: <Reels />,
+                    path: pathPrivate.reels,
+                },
+                {
+                    element: <Message />,
+                    path: pathPrivate.inbox,
+                },
+                {
+                    element: <Message />,
+                    path: pathPrivate.chat,
+                },
+                {
+                    element: <Posts />,
+                    path: pathPrivate.posts,
+                },
+                {
+                    element: <Profile />,
+                    path: pathPrivate.profile,
+                },
+                {
+                    element: <EditProfile />,
+                    path: pathPrivate.editProfile,
+                },
+            ],
+        },
+    ],
+    option,
+)

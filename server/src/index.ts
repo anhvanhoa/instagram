@@ -22,6 +22,7 @@ const httpServer = createServer(app)
 const configCors: CorsOptions = {
     credentials: true,
     origin: process.env.URL_CLIENT,
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
 }
 const io = new Server<
     ServerToClientEvents,
