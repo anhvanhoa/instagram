@@ -1,27 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Icon } from '@iconify/react'
 import useDebounce from '~/hooks/useDebounce'
-import { useQuery } from '@tanstack/react-query'
-import serachUser from '~/apis/serachUser'
-import { User } from '~/types/auth'
-const SearchInput = ({ setUsers }: { setUsers(value: React.SetStateAction<User[]>): void }) => {
+interface Props {
+    value: string
+    setValue: (value: React.SetStateAction<string>) => void
+    isLoading: boolean
+}
+const SearchInput = ({ value, setValue, isLoading }: Props) => {
     const [iconSearch, setIconSearch] = useState<boolean>(true)
-    const [value, setValue] = useState<string>('')
     const newValue = useDebounce(value, 500)
     const handleSearch = () => setIconSearch(false)
     const handleClear = () => {
         setValue('')
         setIconSearch(true)
     }
-    const { data, isFetching } = useQuery({
-        queryKey: ['search', newValue],
-        queryFn: () => serachUser(newValue),
-        initialData: [],
-        enabled: Boolean(newValue),
-    })
-    useEffect(() => {
-        setUsers(data)
-    }, [data, setUsers])
     // set value search
     const handleValue = (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.target.value)
     return (
@@ -55,14 +47,14 @@ const SearchInput = ({ setUsers }: { setUsers(value: React.SetStateAction<User[]
                     </div>
                 )}
                 <div className='opacity-50 absolute right-4 top-1/2 w-4 h-4 -translate-y-1/2 block '>
-                    {!iconSearch && !isFetching && (
+                    {!iconSearch && !isLoading && (
                         <Icon
                             onClick={handleClear}
                             className='text-gray-400 cursor-pointer'
                             icon='icon-park-solid:close-one'
                         />
                     )}
-                    {!newValue && isFetching && <Icon icon='nonicons:loading-16' />}
+                    {!newValue && isLoading && <Icon icon='nonicons:loading-16' />}
                 </div>
             </div>
         </div>

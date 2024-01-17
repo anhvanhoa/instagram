@@ -4,6 +4,7 @@ import UserName from './UserName'
 import formatTimeAgo from '~/utils/handleTime'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { User } from '~/types/auth'
+import { Link } from 'react-router-dom'
 interface Props {
     user: User
     time: string
@@ -14,7 +15,7 @@ const AccountPosts: React.FC<Props> = ({ user, time }) => {
             <div className='flex items-center justify-between'>
                 <div className='flex items-center'>
                     <div className='relative flex justify-center items-center'>
-                        <svg className='w-[42px] h-[42px] absolute '>
+                        <svg className='w-[42px] h-[42px] absolute hidden'>
                             <linearGradient id='my-gradient-posts' x1='0%' y1='100%' x2='100%' y2='0%'>
                                 <stop offset='5%' stopColor='#F4A14B' />
                                 <stop offset='50%' stopColor='#E1306C' />
@@ -30,11 +31,13 @@ const AccountPosts: React.FC<Props> = ({ user, time }) => {
                                 strokeWidth='2'
                             />
                         </svg>
-                        <Img
-                            className='rounded-[50%] w-8 h-8 aspect-square object-cover relative z-10'
-                            src={user.avatar}
-                            alt={user.userName}
-                        />
+                        <Link to={`/${user.userName}`}>
+                            <Img
+                                className='rounded-[50%] w-8 h-8 aspect-square object-cover relative z-10'
+                                src={user.avatar}
+                                alt={user.userName}
+                            />
+                        </Link>
                     </div>
                     <div className='ml-3 flex items-center gap-1'>
                         <div className='font-semibold flex items-center'>

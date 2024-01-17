@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
 const NotFound = () => {
     return (
-        <div className='w-full'>
+        <div className='w-full px-8'>
             <div className='text-center'>
-                <h2 className='font-semibold text-2xl py-8'>Rất tiếc, trang này hiện không khả dụng.</h2>
+                <h2 className='font-semibold text-2xl py-8'>Sorry, this page isn't available.</h2>
                 <p>
-                    Liên kết bạn theo dõi có thể bị hỏng hoặc trang này có thể đã bị gỡ.{' '}
+                    The link you followed may be broken, or the page may have been removed.
                     <Link className='text-primary font-medium' to='/'>
-                        Quay lại Instagram.
+                        Go back to Instagram.
                     </Link>
                 </p>
             </div>

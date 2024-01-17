@@ -1,11 +1,13 @@
 import { Icon } from '@iconify/react'
+import classNames from 'classnames'
 import { useEffect } from 'react'
 interface Props {
     children: React.ReactNode
     onClose?: () => void
     iconClose?: boolean
+    className?: string
 }
-const OverLay = ({ children, onClose, iconClose }: Props) => {
+const OverLay = ({ children, onClose, iconClose, className }: Props) => {
     useEffect(() => {
         window.document.body.classList.add('is-scroll')
         window.document.body.classList.add('group')
@@ -15,7 +17,7 @@ const OverLay = ({ children, onClose, iconClose }: Props) => {
         }
     }, [])
     return (
-        <section className='fixed inset-0 z-[1000] flex items-center justify-center'>
+        <section className={classNames('fixed inset-0 z-[1000] flex items-center justify-center', className)}>
             {iconClose && (
                 <div onClick={onClose} className='absolute top-4 right-4 text-white z-[100] cursor-pointer'>
                     <Icon icon='carbon:close' />

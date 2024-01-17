@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react'
 import classNames from 'classnames'
 import UserName from './UserName'
 import Img from './Img'
+import { Link } from 'react-router-dom'
 
 type Size = 'small' | 'medium' | 'big'
 interface Props {
@@ -46,7 +47,7 @@ const AccountItem: React.FC<Props> = ({ user, size = 'medium' }) => {
         <div className='flex items-center justify-between'>
             <div className='flex items-center'>
                 <div className='relative flex justify-center items-center'>
-                    <svg className={classNames('absolute', storySize[size])}>
+                    <svg className={classNames('absolute hidden', storySize[size])}>
                         <linearGradient id='my-gradient-avatar' x1='0%' y1='100%' x2='100%' y2='0%'>
                             <stop offset='5%' stopColor='#F4A14B' />
                             <stop offset='50%' stopColor='#E1306C' />
@@ -62,14 +63,16 @@ const AccountItem: React.FC<Props> = ({ user, size = 'medium' }) => {
                             strokeWidth='2'
                         />
                     </svg>
-                    <Img
-                        className={classNames(
-                            'rounded-[50%] aspect-square object-cover relative z-10',
-                            avatarSize[size],
-                        )}
-                        src={user.avatar}
-                        alt={user.userName}
-                    />
+                    <Link to={`/${user.userName}`}>
+                        <Img
+                            className={classNames(
+                                'rounded-[50%] aspect-square object-cover relative z-10',
+                                avatarSize[size],
+                            )}
+                            src={user.avatar}
+                            alt={user.userName}
+                        />
+                    </Link>
                 </div>
                 <div
                     className={classNames({

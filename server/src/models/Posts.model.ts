@@ -8,6 +8,7 @@ const posts = new Schema<Posts>(
         comments: [{ ref: 'comments', type: Schema.Types.ObjectId }],
         title: String,
         contents: [{ type: String }],
+        typeAspect: String,
     },
     {
         timestamps: true,

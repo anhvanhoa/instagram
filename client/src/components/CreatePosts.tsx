@@ -19,7 +19,11 @@ const CreatePosts = ({ handleClose }: Props) => {
     return (
         <>
             <OverLay onClose={handleClose} iconClose>
-                <div className={classNames('bg-white min-w-[520px] h-[560px] rounded-2xl z-10 overflow-hidden')}>
+                <div
+                    className={classNames(
+                        'bg-white w-[320px] h-[360px] xs:w-[450px] xs:h-[490px] sm:min-w-[520px] sm:h-[560px] rounded-2xl z-10 overflow-hidden',
+                    )}
+                >
                     {step === 1 && <UploadFile setImages={setImages} setStep={setStep} />}
                     {step === 2 && <CropImage onStep={setStep} setImages={setImages} listImage={images} />}
                     {step === 3 && <EditImg onStep={setStep} listImage={images} />}

@@ -8,7 +8,7 @@ interface Props {
 const InteractPosts: React.FC<Props> = ({ apiDislike, apiLike, like, viewPosts }) => {
     return (
         <div>
-            <div className='flex items-center justify-between mt-4'>
+            <div className='flex items-center justify-between mt-4 px-2'>
                 <div className='flex items-center gap-4'>
                     <span className='cursor-pointer' onClick={like ? apiDislike : apiLike}>
                         {!like && <IconApp type='heart-posts' className={'transition-all w-6 hover:scale-110'} />}

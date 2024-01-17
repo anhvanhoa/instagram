@@ -70,10 +70,13 @@ const Posts: React.FC<Props> = ({ user, posts }) => {
     })
     return (
         <div className='my-4 bg-white mb-6 pb-4 border-b border-[#ccc]/50 border-solid'>
-            <div className='px-1 pb-3 flex justify-between items-center'>
+            <div className='px-2 pb-3 flex justify-between items-center'>
                 <AccountPosts time={posts.createdAt} user={user} />
                 <OptionPost viewPosts={viewPosts(posts._id)}>
-                    <Icon icon='solar:menu-dots-bold' className='cursor-pointer' />
+                    <Icon
+                        icon='solar:menu-dots-bold'
+                        className='cursor-pointer text-xl hover:bg-gray-100 px-1 rounded-md'
+                    />
                 </OptionPost>
             </div>
             <div className='relative'>
@@ -103,7 +106,7 @@ const Posts: React.FC<Props> = ({ user, posts }) => {
                 apiLike={apiLike(posts._id)}
                 viewPosts={viewPosts(posts._id)}
             />
-            <div className='mt-3'>
+            <div className='mt-3 px-2'>
                 <div className='mb-2'>
                     <p className='text-sm font-semibold'>{posts.likes.length + (like ? 1 : 0)} likes</p>
                 </div>

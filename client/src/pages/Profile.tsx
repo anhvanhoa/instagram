@@ -1,5 +1,4 @@
-import { Link, NavLink, useNavigate, useParams } from 'react-router-dom'
-import classNames from 'classnames'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '@iconify/react'
 import Button from '~/components/Button'
 import IconApp from '~/assets/icons/IconApp'
@@ -12,7 +11,10 @@ import { initializeUser } from '~/store/constant'
 import follow from '~/apis/follow'
 import unfollow from '~/apis/unfollow'
 import SkeletonExploreItem from '~/components/SkeletonExploreItem'
-import LoadPage from '~/components/LoadPage'
+import NotFound from './NotFound'
+import Footer from '~/layouts/components/Footer'
+import Tippy from '@tippyjs/react/headless'
+import BoxMenu from '~/layouts/components/BoxMenu'
 
 const Profile = () => {
     const navigate = useNavigate()
@@ -47,18 +49,31 @@ const Profile = () => {
         })
     return (
         <div>
-            {isLoading && <LoadPage />}
+            {(!data || isLoading) && <NotFound />}
             {data && (
-                <div className='max-w-[975px] mx-auto pt-[30px] px-5'>
-                    <div className='flex items-start mb-11'>
-                        <div className='w-[31%] mr-[30px] relative'>
-                            <div className='w-[150px] h-[150px] mx-auto'>
+                <div className='max-w-[975px] mx-auto md:pt-[30px] flex flex-col h-screen'>
+                    <div>
+                        <div className='mb-8 bg-white border-b flex justify-between px-4 py-3 md:hidden'>
+                            <div></div>
+                            <div>
+                                <p className='font-semibold'>{data.fullName}</p>
+                            </div>
+                            <Tippy trigger='click' interactive render={() => <BoxMenu />}>
+                                <div className='cursor-pointer'>
+                                    <IconApp type='setting' />
+                                </div>
+                            </Tippy>
+                        </div>
+                    </div>
+                    <div className='flex justify-start md:justify-center px-8 mb-4 sm:mb-11'>
+                        <div className='mr-7 sm:mr-16 relative'>
+                            <div className='w-20 h-20 sm:w-[150px] sm:h-[150px] mx-auto'>
                                 <Img
                                     src={data.avatar}
                                     alt={data.userName}
                                     className='w-full h-full object-cover rounded-[50%]'
                                 />
-                                <div className=' absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 '>
+                                <div className=' absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden'>
                                     <svg width={165} height={165}>
                                         <linearGradient id='my-gradient' x1='0%' y1='100%' x2='100%' y2='0%'>
                                             <stop offset='5%' stopColor='#F4A14B' />
@@ -77,9 +92,9 @@ const Profile = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className='flex-1'>
-                            <div className='flex items-center'>
-                                <div className='font-semibold flex items-center pr-6'>
+                        <div>
+                            <div className='flex-col flex sm:flex-row gap-3 items-start sm:items-center'>
+                                <div className='sm:font-semibold flex items-center pr-6'>
                                     <h2 className='text-xl'>{data.userName}</h2>
                                     <span className='ml-1 mt-0.5'>
                                         {data.verify && (
@@ -118,72 +133,50 @@ const Profile = () => {
                                 </div>
                             </div>
                             <div className='w-full mb-4'></div>
-                            <div className='flex items-center mb-3'>
-                                <p className='mr-10'>
-                                    <span className='pr-1 font-semibold'>{data.posts.length}</span>
-                                    posts
-                                </p>
-                                <p className='mr-10'>
-                                    <span className='pr-1 font-semibold'>{data.followers.length}</span>
-                                    followers
-                                </p>
-                                <p className='mr-10'>
-                                    <span className='pr-1 font-semibold'>{data.following.length}</span>
-                                    following
-                                </p>
-                            </div>
-                            <div className='text-sm'>
-                                <p className='font-semibold'>{data.fullName}</p>
-                                <div className='mt-2'>{data.bio}</div>
+                            <div>
+                                <div className='sm:flex items-center mb-3 hidden'>
+                                    <p className='mr-10'>
+                                        <span className='pr-1 font-semibold'>{data.posts.length}</span>
+                                        posts
+                                    </p>
+                                    <p className='mr-10'>
+                                        <span className='pr-1 font-semibold'>{data.followers.length}</span>
+                                        followers
+                                    </p>
+                                    <p className='mr-10'>
+                                        <span className='pr-1 font-semibold'>{data.following.length}</span>
+                                        following
+                                    </p>
+                                </div>
+                                <div className='text-sm hidden sm:block'>
+                                    <p className='font-semibold'>{data.fullName}</p>
+                                    <div className='mt-2'>{data.bio}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div>
-                        <div className='flex justify-center items-center border-t border-[#ccc]'>
-                            <NavLink
-                                to={`/${data.userName}`}
-                                className={({ isActive }) =>
-                                    classNames('flex items-center mr-[60px] py-5 border-t', {
-                                        'border-black': isActive,
-                                        'border-transparent': !isActive,
-                                    })
-                                }
-                            >
-                                <span className='text-xs'>
-                                    <Icon icon='mdi:grid' />
-                                </span>
-                                <span className='uppercase text-xs font-medium px-1'>posts</span>
-                            </NavLink>
-                            <NavLink
-                                to={`/${data.userName}/saved`}
-                                className={({ isActive }) =>
-                                    classNames('flex items-center mr-[60px] py-5 border-t', {
-                                        'border-black': isActive,
-                                        'border-transparent': !isActive,
-                                    })
-                                }
-                            >
-                                <span className=''>
-                                    <Icon icon='fluent:bookmark-16-regular' />
-                                </span>
-                                <span className='uppercase text-xs font-medium px-1'>Saved</span>
-                            </NavLink>
-                            <NavLink
-                                className={({ isActive }) =>
-                                    classNames('flex items-center py-5 border-t', {
-                                        'border-black': isActive,
-                                        'border-transparent': !isActive,
-                                    })
-                                }
-                                to={`/${data.userName}/tagged`}
-                            >
-                                <span>
-                                    <Icon icon='ph:user-square' />
-                                </span>
-                                <span className='uppercase text-xs font-medium px-1'>Tagged</span>
-                            </NavLink>
+                    <div className='sm:hidden'>
+                        <div className='text-sm'>
+                            <p className='font-semibold'>{data.fullName}</p>
+                            <div className='mt-2'>{data.bio}</div>
                         </div>
-                        <div className='grid grid-cols-3 gap-2'>
+                        <div className='grid grid-cols-3 text-sm border-t mt-6 py-3'>
+                            <div>
+                                <p className='pr-1 text-center font-semibold'>{data.posts.length}</p>
+                                <p className='text-center text-gray-500'>posts</p>
+                            </div>
+                            <div>
+                                <p className='pr-1 text-center font-semibold'>{data.followers.length}</p>
+                                <p className='text-center text-gray-500'>followers</p>
+                            </div>
+                            <div>
+                                <p className='pr-1 text-center font-semibold'>{data.following.length}</p>
+                                <p className='text-center text-gray-500'>following</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className='border-t flex-1 flex flex-col pt-1'>
+                        <div className='grid grid-cols-3 gap-px sm:gap-1 sm:px-8'>
                             {isLoading && (
                                 <>
                                     <SkeletonExploreItem />
@@ -212,8 +205,14 @@ const Profile = () => {
                                     </div>
                                 </div>
                             ))}
+                            {!data.posts.length && (
+                                <p className='col-span-3 text-center mt-10 text-xl'>There are no posts</p>
+                            )}
                         </div>
-                        {!data.posts.length && <p className='text-center mt-10 text-xl'>There are no posts</p>}
+                        <div className='flex-1'></div>
+                        <div>
+                            <Footer />
+                        </div>
                     </div>
                 </div>
             )}

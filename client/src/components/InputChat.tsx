@@ -1,9 +1,8 @@
 import React, { useRef } from 'react'
 import IconApp from '~/assets/icons/IconApp'
 import Button from './Button'
-import data from '@emoji-mart/data'
-import Picker from '@emoji-mart/react'
 import Tippy from '@tippyjs/react/headless'
+import Emoij from './Emoij'
 interface Props {
     value: string
     setValue: (value: React.SetStateAction<string>) => void
@@ -12,6 +11,7 @@ interface Props {
 const InputChat: React.FC<Props> = ({ value, setValue, onSend }) => {
     const refInput = useRef<HTMLInputElement>(null)
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)
+    const changeEmoij = (value: string) => setValue((prev) => `${prev}${value}`)
     return (
         <div className='m-4'>
             <div className='flex items-center p-3 border rounded-3xl'>
@@ -21,24 +21,7 @@ const InputChat: React.FC<Props> = ({ value, setValue, onSend }) => {
                         interactive
                         trigger='click'
                         placement={'top-start'}
-                        render={() => (
-                            <div>
-                                <Picker
-                                    skinTonePosition={'none'}
-                                    locale='vi'
-                                    perLine={10}
-                                    maxFrequentRows={0}
-                                    previewPosition={'none'}
-                                    navPosition={'none'}
-                                    searchPosition={'none'}
-                                    theme={'light'}
-                                    categories={['people']}
-                                    icons={'outline'}
-                                    data={data}
-                                    onEmojiSelect={(e: { native: string }) => setValue((prev) => `${prev}${e.native}`)}
-                                />
-                            </div>
-                        )}
+                        render={() => <Emoij onSelect={changeEmoij} />}
                     >
                         <div>
                             <IconApp className='w-5 block' type='smile' />

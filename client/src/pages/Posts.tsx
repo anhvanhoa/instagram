@@ -77,25 +77,33 @@ const Posts = () => {
     }, [posts])
     return (
         <div>
-            <div className='flex justify-center'>
+            <div className='flex justify-center mx-4 sm:mx-14 md:mx-8'>
                 {isError && <LoadPage />}
                 {isLoading && <SkeletonPostsPage />}
                 {posts && (
-                    <div className='mt-6 justify-center overflow-hidden flex'>
+                    <div className='mt-6 justify-center overflow-hidden flex flex-col md:flex-row'>
                         <div
-                            className={classNames('h-[600px]', `aspect-[${posts.typeAspect}]`, {
-                                'aspect-square': !posts.typeAspect,
-                            })}
+                            className={classNames(
+                                'md:min-w-[350px] md:max-w-[550px] md:max-h-[550px] flex items-center border border-r-0 border-r-transparent',
+                            )}
                         >
                             <Slider maxElemnt={posts.contents.length}>
                                 {posts.contents.map((img, index) => (
                                     <div key={index} className='flex-shrink-0 w-full'>
-                                        <Img src={img} className='object-contain w-full h-full' />
+                                        <Img
+                                            src={img}
+                                            className='rounded-sm md:rounded-none md:max-h-[550px] md:min-h-[500px] object-contain w-full h-full'
+                                        />
                                     </div>
                                 ))}
                             </Slider>
                         </div>
-                        <div className='overflow-hidden w-96 border relative overflow-y-auto flex flex-col h-full rounded-ee-lg rounded-se-lg'>
+                        <div
+                            className={classNames(
+                                'mt-8 md:mt-0 flex-shrink-0 md:w-72 border relative overflow-y-auto',
+                                'md:h-[550px] h-[500px] flex flex-col md:rounded-ee-lg md:rounded-se-lg rounded-sm',
+                            )}
+                        >
                             <div className='sticky top-0 bg-white'>
                                 <div className='flex justify-between items-center px-4 py-3 border-b'>
                                     <AccountItem user={posts.author} size='small' />
@@ -127,7 +135,10 @@ const Posts = () => {
                                         )}
                                     >
                                         <div>
-                                            <Icon icon='solar:menu-dots-broken' className='text-2xl cursor-pointer' />
+                                            <Icon
+                                                icon='solar:menu-dots-bold'
+                                                className='cursor-pointer text-xl hover:bg-gray-100 px-1 rounded-md'
+                                            />
                                         </div>
                                     </Tippy>
                                 </div>
@@ -191,7 +202,7 @@ const Posts = () => {
                                 <p className='text-gray-500 text-xs px-4 pb-3'>
                                     time: {formatTimeAgo(posts.createdAt)}
                                 </p>
-                                <div className='border-t px-4 py-2'>
+                                <div className='border-t px-2 py-2'>
                                     <InputComment
                                         comment={comment}
                                         setComment={setComment}

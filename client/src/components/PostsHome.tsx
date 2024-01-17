@@ -29,7 +29,7 @@ const PostsHome = () => {
                     />
                 </div>
             </div>
-            <div className='w-[470px] mx-auto'>
+            <div className='mx-auto xs:max-w-[470px]'>
                 {isLoading && (
                     <>
                         <SkeletonPosts />

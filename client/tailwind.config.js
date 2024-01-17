@@ -3,6 +3,9 @@ export default {
     content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
     theme: {
         extend: {
+            screens: {
+                xs: '480px',
+            },
             keyframes: {
                 hidden: {
                     '0%': { opacity: '0' },

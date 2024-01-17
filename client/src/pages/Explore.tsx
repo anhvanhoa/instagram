@@ -29,7 +29,7 @@ const Explore = () => {
     }, [handleScroll])
     return (
         <main>
-            <div className='max-w-[975px] mx-auto pt-6 px-5'>
+            <div className='max-w-[975px] mx-auto pt-6 p-1 md:px-5'>
                 {isLoading && <SkeletonExplore />}
                 <div className={cln('grid grid-cols-3 grid-rows-1 gap-1 mb-7')}>
                     {data &&
@@ -39,14 +39,12 @@ const Explore = () => {
                             </div>
                         ))}
                 </div>
-            </div>
-            {isLoading && (
-                <div className='w-[975px] mx-auto flex justify-center'>
-                    <div>
+                {isLoading && (
+                    <div className='w-7 mx-auto'>
                         <Icon icon='system-uicons:loader' className='text-3xl animate-spin' />
                     </div>
-                </div>
-            )}
+                )}
+            </div>
         </main>
     )
 }

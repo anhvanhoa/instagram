@@ -51,7 +51,7 @@ const BoxMenu = () => {
     })
     const handleLogout = () => mutate()
     return (
-        <div className={classNames('w-[268px] overflow-hidden rounded-2xl bg-[#F4F4F4]')}>
+        <div className={classNames('w-52 xs:w-[268px] overflow-hidden rounded-2xl bg-[#F4F4F4] shadow-sidebar')}>
             <ul className={classNames('bg-white list-none p-2 rounded-t-2xl')}>
                 {dataMenu.map((element, index) => {
                     if (element.to) {

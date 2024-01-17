@@ -44,7 +44,6 @@ const CropImage = memo(({ setImages, listImage, onStep }: Props) => {
         },
         [listImage],
     )
-
     useEffect(() => {
         let width = 520
         let height = 520
@@ -56,19 +55,6 @@ const CropImage = memo(({ setImages, listImage, onStep }: Props) => {
             case '16/9':
                 height *= 0.5625
                 setSizeCrop({ height, width })
-                break
-                // case 'origin':
-                // getSize(listImage[indexSlide].fileCrop, (widthImg, heightImg) => {
-                //     if (heightImg > widthImg) {
-                //         const ratio = heightImg / widthImg
-                //         width = height / ratio
-                //         setSizeCrop({ height, width })
-                //     } else {
-                //         const ratio = widthImg / heightImg
-                //         height = width / ratio
-                //         setSizeCrop({ height, width })
-                //     }
-                // })
                 break
             default:
                 setSizeCrop({ height, width })
@@ -83,13 +69,6 @@ const CropImage = memo(({ setImages, listImage, onStep }: Props) => {
             setAspect(typeAspect)
             setImages((prev) => {
                 prev.forEach((_, i) => {
-                    // if (typeAspect === 'origin') {
-                    //     prev[i].serverSize.width = 1
-                    //     prev[i].serverSize.height = 1
-                    //     prev[i].serverSize.x = 0
-                    //     prev[i].serverSize.y = 0
-                    //     return
-                    // }
                     let a = 1
                     if (typeAspect === '4/5') a = 4 / 5
                     if (typeAspect === '16/9') a = 4 / 5

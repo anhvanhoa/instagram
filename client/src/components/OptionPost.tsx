@@ -12,20 +12,22 @@ const OptionPost: React.FC<Props> = ({ children, viewPosts }) => {
         <div>
             {overlay && (
                 <OverLay onClose={changeOverlay(false)}>
-                    <div className='bg-white w-96 rounded-xl flex flex-col'>
-                        <Button type='text' className='py-3'>
-                            Copy link
-                        </Button>
-                        <Button onClick={viewPosts} type='text' className='py-3 border-t'>
-                            View posts
-                        </Button>
-                        <Button
-                            onClick={changeOverlay(false)}
-                            type='text'
-                            className='border-t py-3 text-red-500 hover:text-red-600'
-                        >
-                            Cancel
-                        </Button>
+                    <div className='min-w-[320px] px-8 xs:px-0'>
+                        <div className='bg-white xs:w-96 rounded-xl flex flex-col'>
+                            <Button type='text' className='py-3'>
+                                Copy link
+                            </Button>
+                            <Button onClick={viewPosts} type='text' className='py-3 border-t'>
+                                View posts
+                            </Button>
+                            <Button
+                                onClick={changeOverlay(false)}
+                                type='text'
+                                className='border-t py-3 text-red-500 hover:text-red-600'
+                            >
+                                Cancel
+                            </Button>
+                        </div>
                     </div>
                 </OverLay>
             )}

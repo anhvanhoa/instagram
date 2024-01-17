@@ -2,19 +2,20 @@ import React from 'react'
 import Button from './Button'
 import Tippy from '@tippyjs/react/headless'
 import IconApp from '~/assets/icons/IconApp'
-import Picker from '@emoji-mart/react'
-import data from '@emoji-mart/data'
+import Emoij from './Emoij'
 interface Props {
     comment: string
     setComment: (value: React.SetStateAction<string>) => void
     apiComment: () => void
     positionSmile: 'left' | 'right'
 }
+
 const InputComment: React.FC<Props> = ({ comment, setComment, apiComment, positionSmile = 'left' }) => {
-    const channgeComment = (event: React.ChangeEvent<HTMLInputElement>) => setComment(event.target.value)
+    const changeComment = (event: React.ChangeEvent<HTMLInputElement>) => setComment(event.target.value)
+    const changeEmoij = (value: string) => setComment((prev) => `${prev}${value}`)
     return (
         <div>
-            <div>
+            <div className='px-2'>
                 <div className='flex gap-x-3 items-center justify-between h-7'>
                     {positionSmile === 'left' && (
                         <div>
@@ -22,26 +23,7 @@ const InputComment: React.FC<Props> = ({ comment, setComment, apiComment, positi
                                 interactive
                                 trigger='click'
                                 placement={'top-end'}
-                                render={() => (
-                                    <div>
-                                        <Picker
-                                            skinTonePosition={'none'}
-                                            locale='vi'
-                                            perLine={10}
-                                            maxFrequentRows={0}
-                                            previewPosition={'none'}
-                                            navPosition={'none'}
-                                            searchPosition={'none'}
-                                            theme={'light'}
-                                            categories={['people']}
-                                            icons={'outline'}
-                                            data={data}
-                                            onEmojiSelect={(e: { native: string }) =>
-                                                setComment((prev) => `${prev}${e.native}`)
-                                            }
-                                        />
-                                    </div>
-                                )}
+                                render={() => <Emoij onSelect={changeEmoij}></Emoij>}
                             >
                                 <div className='mt-[1px] cursor-pointer transition-all w-6 hover:scale-110'>
                                     <IconApp type='smile' className='w-5 h-5' />
@@ -52,7 +34,7 @@ const InputComment: React.FC<Props> = ({ comment, setComment, apiComment, positi
                     <div className='flex-1'>
                         <input
                             value={comment}
-                            onChange={channgeComment}
+                            onChange={changeComment}
                             className='text-sm w-full outline-none'
                             type='text'
                             placeholder='Add a comment'
@@ -70,26 +52,7 @@ const InputComment: React.FC<Props> = ({ comment, setComment, apiComment, positi
                                 interactive
                                 trigger='click'
                                 placement={'top-end'}
-                                render={() => (
-                                    <div>
-                                        <Picker
-                                            skinTonePosition={'none'}
-                                            locale='vi'
-                                            perLine={10}
-                                            maxFrequentRows={0}
-                                            previewPosition={'none'}
-                                            navPosition={'none'}
-                                            searchPosition={'none'}
-                                            theme={'light'}
-                                            categories={['people']}
-                                            icons={'outline'}
-                                            data={data}
-                                            onEmojiSelect={(e: { native: string }) =>
-                                                setComment((prev) => `${prev}${e.native}`)
-                                            }
-                                        />
-                                    </div>
-                                )}
+                                render={() => <Emoij onSelect={changeEmoij}></Emoij>}
                             >
                                 <div className='mt-[1px] cursor-pointer transition-all w-6 hover:scale-110'>
                                     <IconApp type='smile' className='w-5 h-5' />

@@ -1,4 +1,3 @@
-// import ChatNew from '~/components/ChatNew'
 import { useParams } from 'react-router-dom'
 import BoxChat from '~/components/BoxChat'
 import IconApp from '~/assets/icons/IconApp'
@@ -59,7 +58,7 @@ const Message = () => {
                     </div>
                 </div>
                 <div>
-                    {isLoading && <NotMessageSkeleton />}
+                    {(isLoading || isLoadingUser) && <NotMessageSkeleton />}
                     {(!params.id || !params.username) && <NotMessage />}
                     {params.id && params.username && dataChat && (
                         <BoxChat idUser={state._id} dataChat={dataChat} userChat={data} />
