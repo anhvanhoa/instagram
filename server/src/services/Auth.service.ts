@@ -13,7 +13,6 @@ import slugify from 'slugify'
 import otp from '~/utils/Otp'
 
 export class AuthService {
-    listTokenRun: string[] = []
     //
     async uniqueEmail(email: string): Promise<boolean> {
         if (!isEmail(email))
@@ -148,12 +147,6 @@ export class AuthService {
     }
     //
     async refreshJwt(token: string) {
-        const isToken = this.listTokenRun.includes(token)
-        if (isToken)
-            throw httpResponse(HttpStatus.TOO_MANY_REQUESTS, {
-                msg: 'API call in progress, please wait.',
-            })
-        this.listTokenRun.push(token)
         let userName = ''
         Token.verifyToken(token, (error, data) => {
             if (error) {
@@ -166,7 +159,7 @@ export class AuthService {
             }
         })
         const tokenDb = await redis.get(userName)
-        if (tokenDb !== token) {
+        if (!tokenDb) {
             throw httpResponse(HttpStatus.UNAUTHORIZED, {
                 msg: 'Login please !',
             })

@@ -10,6 +10,7 @@ import { useMutation } from '@tanstack/react-query'
 import uploadImg from '~/apis/uploadImg'
 import uploadPosts, { PostsUpload } from '~/apis/uploadPosts'
 import Img from './Img'
+import { CroppedRect } from 'react-avatar-editor'
 
 interface Props {
     listImage: TypeImgCrop[]
@@ -46,16 +47,20 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
         },
         mutationFn: (data: FormData) => uploadImg(data),
     })
+    function formData(fileCrop: File, serverSize: CroppedRect) {
+        const formData = new FormData()
+        formData.append('images', fileCrop)
+        formData.append('width', String(serverSize.width))
+        formData.append('height', String(serverSize.height))
+        formData.append('x', String(serverSize.x))
+        formData.append('y', String(serverSize.y))
+        return formData
+    }
     const apiCrop = async () => {
         setIsUploadPosts(true)
         listImage.forEach(async ({ serverSize, fileCrop }) => {
-            const formData = new FormData()
-            formData.append('images', fileCrop)
-            formData.append('width', String(serverSize.width))
-            formData.append('height', String(serverSize.height))
-            formData.append('x', String(serverSize.x))
-            formData.append('y', String(serverSize.y))
-            mutate(formData)
+            const data = formData(fileCrop, serverSize)
+            mutate(data)
         })
     }
     useEffect(() => {
