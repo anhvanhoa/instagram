@@ -1,49 +1,20 @@
-// import dataMenu from '~/dataDefault/dataMenu'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { useMutation } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { Link, useNavigate } from 'react-router-dom'
 import logout from '~/apis/logout'
 import IconApp from '~/assets/icons/IconApp'
+import { dataMenu } from '~/mock/menu'
 import { initializeUser } from '~/store/constant'
 import useContextUser from '~/store/hook'
-interface Menu {
-    name: string
-    icon: React.ReactNode
-    to?: string
-}
-const dataMenu: Menu[] = [
-    {
-        name: 'Setting',
-        icon: <IconApp className='w-[18px]' type='setting' />,
-        to: '/accounts/edit',
-    },
-    {
-        name: 'Your activity',
-        icon: <IconApp className='w-[18px]' type='activity' />,
-        to: '/your_activity',
-    },
-    {
-        name: 'Saved',
-        icon: <IconApp className='w-[18px]' type='saved' />,
-        to: 'anhvanhoa.it/saved',
-    },
-    {
-        name: 'Switch apperance',
-        icon: <IconApp className='w-[18px]' type='mode' />,
-    },
-    {
-        name: 'Report a problem',
-        icon: <IconApp className='w-[18px]' type='problem' />,
-    },
-]
+
 const BoxMenu = () => {
     const { dispatch } = useContextUser()
     const navigate = useNavigate()
     const handleSuccess = () => {
         dispatch({ payload: initializeUser, type: 'LOGOUT' })
         localStorage.removeItem('rf_token')
-        setTimeout(() => navigate('/'), 400)
+        setTimeout(() => navigate('/'), 100)
     }
     const { mutate, isPending } = useMutation({
         onSuccess: handleSuccess,
@@ -63,7 +34,9 @@ const BoxMenu = () => {
                                         'flex text-sm items-center p-4 hover:bg-gray-100 rounded-xl transition-all',
                                     )}
                                 >
-                                    <span>{element.icon}</span>
+                                    <span>
+                                        <IconApp type={element.icon} className='w-[18px]' />
+                                    </span>
                                     <span className={classNames('mb-[3px] pl-3')}>{element.name}</span>
                                 </Link>
                             </li>
@@ -76,7 +49,9 @@ const BoxMenu = () => {
                                         'text-sm flex items-center p-4 hover:bg-gray-100 rounded-xl transition-all',
                                     )}
                                 >
-                                    <span>{element.icon}</span>
+                                    <span>
+                                        <IconApp type={element.icon} className='w-[18px]' />
+                                    </span>
                                     <span className={classNames('mb-[3px] pl-3')}>{element.name}</span>
                                 </div>
                             </li>

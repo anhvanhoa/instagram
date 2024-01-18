@@ -6,11 +6,12 @@ import { memo } from 'react'
 import IconApp from '~/assets/icons/IconApp'
 import classNames from 'classnames'
 interface Props {
+    hiddenHead?: boolean
     setStep: (value: React.SetStateAction<number>) => void
     setImages: (value: React.SetStateAction<TypeImgCrop[]>) => void
 }
 const clientInit = { x: 0.5, y: 0.5 }
-const UploadFile = memo(({ setStep, setImages }: Props) => {
+const UploadFile = memo(({ setStep, setImages, hiddenHead }: Props) => {
     const [drag, setDrag] = useState<boolean>(false)
     const inputFile = useRef<HTMLInputElement>(null)
     const handleClickInput = () => inputFile.current?.click()
@@ -54,7 +55,11 @@ const UploadFile = memo(({ setStep, setImages }: Props) => {
     return (
         <div className='flex flex-col justify-center h-full'>
             <div className='flex flex-col justify-center h-full'>
-                <div className='flex justify-center items-center h-11 border-b border-[#ccc] border-solid'>
+                <div
+                    className={classNames('flex justify-center items-center h-11 border-b border-[#ccc] border-solid', {
+                        hidden: hiddenHead,
+                    })}
+                >
                     <h4 className='font-medium'>Create new post</h4>
                 </div>
                 <div

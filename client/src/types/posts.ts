@@ -13,7 +13,6 @@ export interface Posts {
     author: User
     contents: string[]
     createdAt: string
-    typeAspect: string
 }
 
 export interface TypeImgCrop {

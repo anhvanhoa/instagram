@@ -3,6 +3,8 @@ export const pathPrivate = {
     reels: '/reels',
     explore: '/explore',
     inbox: '/message',
+    notification: '/notification',
+    createPosts: '/create-posts',
     chat: '/message/:username/t/:id',
     profile: '/:username',
     editProfile: '/accounts/edit',

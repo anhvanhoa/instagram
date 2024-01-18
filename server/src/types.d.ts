@@ -34,7 +34,7 @@ export interface Posts extends DocumentModel<Posts> {
     comments: ObjectId[]
     author: ObjectId
     contents: []
-    typeAspect: string
+    isDelete: boolean
 }
 
 export interface ResUser extends Omit<User, 'password'> {

@@ -56,7 +56,7 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
             <HeaderChat user={userChat} />
             <div className='flex-1 overflow-y-scroll' ref={contentRef}>
                 <InfoChat user={userChat} />
-                <div className='px-4 mt-12 mb-2'>
+                <div className='px-4 mt-12 mb-2 pb-6'>
                     {messageNew.map((item) => (
                         <BoxMessage
                             key={item._id}
@@ -69,7 +69,9 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
                     ))}
                 </div>
             </div>
-            <InputChat value={message} setValue={setMessage} onSend={handleSend} />
+            <div className='mb-14 md:mb-0 border-t'>
+                <InputChat value={message} setValue={setMessage} onSend={handleSend} />
+            </div>
         </section>
     )
 }

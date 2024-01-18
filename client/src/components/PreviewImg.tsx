@@ -34,11 +34,10 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
                     {
                         title: description,
                         contents,
-                        typeAspect: listImage[indexSlide].aspect,
                     },
                     {
-                        onSuccess: () => onStep(5),
-                        onError: () => onStep(6),
+                        onSuccess: () => onStep(4),
+                        onError: () => onStep(5),
                     },
                 )
                 setIsUploadPosts(false)

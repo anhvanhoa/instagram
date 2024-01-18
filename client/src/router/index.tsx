@@ -13,6 +13,8 @@ import Reels from '~/pages/Reels'
 import Message from '~/pages/Message'
 import Posts from '~/pages/Posts'
 import NotFound from '~/pages/NotFound'
+import Notification from '~/pages/Notification'
+import { CreatePosts } from '~/pages/CreatePosts'
 const option = {
     basename: '/',
 }
@@ -76,6 +78,14 @@ export const routersPrivate = createBrowserRouter(
                 {
                     element: <EditProfile />,
                     path: pathPrivate.editProfile,
+                },
+                {
+                    element: <Notification />,
+                    path: pathPrivate.notification,
+                },
+                {
+                    element: <CreatePosts />,
+                    path: pathPrivate.createPosts,
                 },
             ],
         },

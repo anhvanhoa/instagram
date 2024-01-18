@@ -11,7 +11,7 @@ import { initializeUser } from '~/store/constant'
 import follow from '~/apis/follow'
 import unfollow from '~/apis/unfollow'
 import SkeletonExploreItem from '~/components/SkeletonExploreItem'
-import NotFound from './NotFound'
+// import NotFound from './NotFound'
 import Footer from '~/layouts/components/Footer'
 import Tippy from '@tippyjs/react/headless'
 import BoxMenu from '~/layouts/components/BoxMenu'
@@ -49,7 +49,7 @@ const Profile = () => {
         })
     return (
         <div>
-            {(!data || isLoading) && <NotFound />}
+            {/* {(!data || isLoading) && <NotFound />} */}
             {data && (
                 <div className='max-w-[975px] mx-auto md:pt-[30px] flex flex-col h-screen'>
                     <div>
@@ -65,7 +65,7 @@ const Profile = () => {
                             </Tippy>
                         </div>
                     </div>
-                    <div className='flex justify-start md:justify-center px-8 mb-4 sm:mb-11'>
+                    <div className='flex justify-start md:justify-center px-4 sm:px-8 mb-4 sm:mb-11'>
                         <div className='mr-7 sm:mr-16 relative'>
                             <div className='w-20 h-20 sm:w-[150px] sm:h-[150px] mx-auto'>
                                 <Img
@@ -156,7 +156,7 @@ const Profile = () => {
                         </div>
                     </div>
                     <div className='sm:hidden'>
-                        <div className='text-sm'>
+                        <div className='text-sm px-4 sm:px-8'>
                             <p className='font-semibold'>{data.fullName}</p>
                             <div className='mt-2'>{data.bio}</div>
                         </div>

@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import getOnePosts from '~/apis/getOnePosts'
 import IconApp from '~/assets/icons/IconApp'
 import AccountItem from '~/components/AccountItem'
@@ -23,17 +23,25 @@ import SkeletonPostsPage from '~/components/SkeletonPostsPage'
 import Tippy from '@tippyjs/react/headless'
 import Wrapper from '~/components/Wrapper'
 import Button from '~/components/Button'
+import deletePosts from '~/apis/deletePosts'
+import Alert from '~/components/Alert'
+import EditPosts from '~/components/EditPosts'
+import HeaderMobile from '~/components/HeaderMobile'
 
 const Posts = () => {
     const params = useParams()
     const { state: user } = useContextUser()
     const [comment, setComment] = useState('')
+    const [confirm, setConfirm] = useState(false)
+    const [edit, setEdit] = useState(false)
     const [listComment, setListComment] = useState<string[]>([])
     const [like, setLike] = useState(false)
+    const navigate = useNavigate()
     const {
         data: posts,
         isError,
         isLoading,
+        refetch,
     } = useQuery({
         queryKey: ['posts', params.id],
         queryFn: () => getOnePosts(params.id || ''),
@@ -43,6 +51,11 @@ const Posts = () => {
     })
     const { mutate } = useMutation({
         mutationFn: (idPosts: string) => likePosts({ idPosts }),
+    })
+    const { mutate: mutateDelete } = useMutation({
+        mutationFn: (id: string) => deletePosts(id),
+        onError: () => setConfirm(false),
+        onSuccess: () => navigate('/'),
     })
     const { mutate: mutateDis } = useMutation({
         mutationFn: (idPosts: string) => dislikePosts({ idPosts }),
@@ -68,6 +81,9 @@ const Posts = () => {
             },
         )
     }
+    const apiDelete = (id: string) => () => mutateDelete(id)
+    const cancel = () => setConfirm(false)
+    const handleCloseEdit = () => setEdit(false)
     useLayoutEffect(() => {
         posts?.like && setLike(true)
         if (posts) socket.emit('joinRoom', posts.author._id)
@@ -77,6 +93,13 @@ const Posts = () => {
     }, [posts])
     return (
         <div>
+            {edit && posts && <EditPosts onSuccess={refetch} onClose={handleCloseEdit} posts={posts} />}
+            {posts && confirm && (
+                <Alert onCancel={cancel} title='Delete posts' textAgree='Delete' onAgree={apiDelete(posts._id)} />
+            )}
+            <div className='sticky top-0 z-50 bg-white'>
+                {posts && <HeaderMobile title={posts.title}></HeaderMobile>}
+            </div>
             <div className='flex justify-center mx-4 sm:mx-14 md:mx-8'>
                 {isError && <LoadPage />}
                 {isLoading && <SkeletonPostsPage />}
@@ -84,7 +107,7 @@ const Posts = () => {
                     <div className='mt-6 justify-center overflow-hidden flex flex-col md:flex-row'>
                         <div
                             className={classNames(
-                                'md:min-w-[350px] md:max-w-[550px] md:max-h-[550px] flex items-center border border-r-0 border-r-transparent',
+                                'mt-4 md:min-w-[350px] md:max-w-[550px] md:max-h-[550px] flex items-center border border-r-0 border-r-transparent',
                             )}
                         >
                             <Slider maxElemnt={posts.contents.length}>
@@ -119,10 +142,15 @@ const Posts = () => {
                                                     </Button>
                                                     {user._id === posts.author._id && (
                                                         <div>
-                                                            <Button type='text' className='py-3 border-b'>
+                                                            <Button
+                                                                onClick={() => setEdit(true)}
+                                                                type='text'
+                                                                className='py-3 border-b'
+                                                            >
                                                                 Edit posts
                                                             </Button>
                                                             <Button
+                                                                onClick={() => setConfirm(true)}
                                                                 type='text'
                                                                 className='py-3 text-red-500 hover:text-red-600'
                                                             >

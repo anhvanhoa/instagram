@@ -13,7 +13,7 @@ const InputChat: React.FC<Props> = ({ value, setValue, onSend }) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)
     const changeEmoij = (value: string) => setValue((prev) => `${prev}${value}`)
     return (
-        <div className='m-4'>
+        <div className='m-2'>
             <div className='flex items-center p-3 border rounded-3xl'>
                 <div className='pt-[2px] relative cursor-pointer'>
                     <Tippy

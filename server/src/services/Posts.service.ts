@@ -134,7 +134,7 @@ export class PostsService {
                 $push: { posts: post._id },
             },
         )
-        return httpResponse(HttpStatus.OK, { msg: 'create posts success !' })
+        return httpResponse(HttpStatus.OK, post)
     }
     async crop({ height, width, x, y }: SizeCrop, file?: Express.Multer.File) {
         if (!file) throw httpResponse(HttpStatus.FORBIDDEN, { msg: 'Forbidden' })
@@ -173,6 +173,31 @@ export class PostsService {
             likes: { $in: user._id },
         })
         return httpResponse(HttpStatus.OK, posts ? user._doc : null)
+    }
+    async deletePosts(id: string, userName: string) {
+        const user = await UserModel.findOne({
+            userName,
+        })
+        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        await PostsModel.deleteOne({
+            _id: id,
+            author: user._id,
+        })
+        await UserModel.updateOne(
+            { _id: user._id },
+            {
+                $pull: { posts: id },
+            },
+        )
+        return httpResponse(HttpStatus.OK, { msg: 'Delete success' })
+    }
+    async editPosts(posts: Posts, userName: string) {
+        const user = await UserModel.findOne({
+            userName,
+        })
+        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        await PostsModel.updateOne({ _id: posts._id }, posts)
+        return httpResponse(HttpStatus.OK, { msg: 'Edit success' })
     }
 }
 const postsProvider = new PostsService()

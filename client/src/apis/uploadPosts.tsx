@@ -4,7 +4,6 @@ import { Posts } from '~/types/posts'
 export interface PostsUpload {
     title: string
     contents: string[]
-    typeAspect: string
 }
 
 const uploadPosts = async (posts: PostsUpload) => {

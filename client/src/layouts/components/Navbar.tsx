@@ -21,38 +21,26 @@ const Navbar: React.FC<Props> = memo(({ active }) => {
     const navigate = useNavigate()
     const { id, handleId } = active
     useEffect(() => {
-        if (id === 5) {
+        socket.on(`notifyMessage`, () =>
             setNotifys((prev) => ({
                 ...prev,
-                message: false,
-            }))
-            socket.off('notifyMessage')
-        } else
-            socket.on(`notifyMessage`, () =>
-                setNotifys((prev) => ({
-                    ...prev,
-                    message: true,
-                })),
-            )
-        if (id === 6) {
+                message: true,
+            })),
+        )
+        socket.on(`notification`, () =>
             setNotifys((prev) => ({
                 ...prev,
-                notification: false,
-            }))
-            socket.off('notification')
-        } else {
-            socket.on(`notification`, () =>
-                setNotifys((prev) => ({
-                    ...prev,
-                    notification: true,
-                })),
-            )
-        }
+                notification: true,
+            })),
+        )
         return () => {
             socket.off('notifyMessage')
+            socket.off('notification')
         }
     }, [id])
     const handleActive = (link: string, id: number) => () => {
+        if (id === 5) setNotifys((prev) => ({ ...prev, message: false }))
+        if (id === 6) setNotifys((prev) => ({ ...prev, notification: false }))
         handleId(id)()
         if (link !== '/#') navigate(link)
     }
@@ -80,10 +68,10 @@ const Navbar: React.FC<Props> = memo(({ active }) => {
                                 <span className='group-hover/item:scale-105 transition-all flex-shrink-0 relative'>
                                     <IconApp type={element.id === id ? element.iconActive : element.icon} />
                                     {notifys.message && element.id === 5 && (
-                                        <div className='w-2 h-2 rounded-[50%] bg-red-600 absolute -top-1 -right-1'></div>
+                                        <div className='w-2 h-2 rounded-[50%] bg-red-600 absolute -top-2 -right-1'></div>
                                     )}
                                     {notifys.notification && element.id === 6 && (
-                                        <div className='w-2 h-2 rounded-[50%] bg-red-600 absolute -top-1 -right-1'></div>
+                                        <div className='w-2 h-2 rounded-[50%] bg-red-600 absolute -top-2 -right-1'></div>
                                     )}
                                 </span>
                                 <span

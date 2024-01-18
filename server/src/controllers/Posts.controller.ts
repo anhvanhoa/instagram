@@ -136,5 +136,31 @@ class PostsController {
             return res.status(error.httpStatus).json(error.data)
         }
     }
+    async deletePosts({ params, user }: Request, res: Response) {
+        try {
+            const { userName } = user as JwtData
+            const response = await postsProvider.deletePosts(params.id, userName)
+            return res.status(response.httpStatus).json(response.data)
+        } catch (error: any) {
+            if (!error.httpStatus)
+                return res
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .json({ msg: 'Server error' })
+            return res.status(error.httpStatus).json(error.data)
+        }
+    }
+    async editPosts({ body, user }: Request, res: Response) {
+        try {
+            const { userName } = user as JwtData
+            const response = await postsProvider.editPosts(body, userName)
+            return res.status(response.httpStatus).json(response.data)
+        } catch (error: any) {
+            if (!error.httpStatus)
+                return res
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .json({ msg: 'Server error' })
+            return res.status(error.httpStatus).json(error.data)
+        }
+    }
 }
 export default new PostsController()

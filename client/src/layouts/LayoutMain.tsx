@@ -18,9 +18,8 @@ const LayoutMain = () => {
         <div className='flex group'>
             {nav && <Sidebar />}
             <div className='flex-1 relative'>
-                {!nav && <NavbarMobile />}
                 <Outlet />
-                <div className='md:mb-0 mb-10'></div>
+                {!nav && <NavbarMobile />}
             </div>
         </div>
     )

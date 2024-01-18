@@ -57,7 +57,7 @@ const Message = () => {
                         {dataUser && <ListAccountChat dataUser={dataUser} />}
                     </div>
                 </div>
-                <div>
+                <div className=''>
                     {(isLoading || isLoadingUser) && <NotMessageSkeleton />}
                     {(!params.id || !params.username) && <NotMessage />}
                     {params.id && params.username && dataChat && (

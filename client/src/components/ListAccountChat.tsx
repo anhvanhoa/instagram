@@ -28,10 +28,11 @@ const ListAccountChat: React.FC<Props> = memo(({ dataUser }) => {
                 })
             })
         })
+        setData(dataUser)
         return () => {
             socket.off('notifyMessage')
         }
-    }, [state._id])
+    }, [state._id, dataUser])
     return (
         <div className='h-full'>
             {data.map((user) => (
