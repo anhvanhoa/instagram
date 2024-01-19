@@ -15,20 +15,20 @@ export class Notification {
         const notifications = await NotificationModel.find({
             toUser: user._id,
             createdAt: { $gte: twentyFourHoursAgo },
-        }).populate<PopulateOption>([
-            {
-                path: 'fromUser',
-                model: 'users',
-            },
-            {
-                path: 'toUser',
-                model: 'users',
-            },
-            {
-                path: 'idPosts',
-                model: 'posts',
-            },
-        ])
+        })
+            .populate<PopulateOption>([
+                {
+                    path: 'fromUser',
+                    model: 'users',
+                },
+                {
+                    path: 'toUser',
+                    model: 'users',
+                },
+            ])
+            .sort({
+                createdAt: 'desc',
+            })
         return httpResponse(HttpStatus.OK, notifications)
     }
     async notification(data: NotificationEmit, content: string) {
@@ -36,27 +36,13 @@ export class Notification {
         if (!user) return 'User not'
         const posts = await PostsModel.findById(data.idPosts)
         if (!posts) return 'Posts not'
-        const notify = (
-            await NotificationModel.create({
-                fromUser: data.fromUser,
-                toUser: data.toUser,
-                content,
-                idPosts: data.idPosts,
-            })
-        ).populate<PopulateOption>([
-            {
-                path: 'fromUser',
-                model: 'users',
-            },
-            {
-                path: 'toUser',
-                model: 'users',
-            },
-            {
-                path: 'idPosts',
-                model: 'posts',
-            },
-        ])
+        content = `${content} ${posts.title}`
+        const notify = await NotificationModel.create({
+            fromUser: data.fromUser,
+            toUser: data.toUser,
+            content,
+            idPosts: posts._id,
+        })
         return notify
     }
 }

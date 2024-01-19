@@ -68,7 +68,7 @@ export const CreatePosts = () => {
                 contextNext={
                     step === 2 && (
                         <Button loading={isPending || isPending2} onClick={apiCrop} size='custom' type='text'>
-                            Posts
+                            Share
                         </Button>
                     )
                 }

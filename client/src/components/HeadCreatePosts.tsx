@@ -4,9 +4,10 @@ interface Props {
     onPrev: () => void
     onNext: () => void
     title: string
+    textNext?: string
     isLoading?: boolean
 }
-const HeadCreatePosts = ({ onPrev, title, onNext, isLoading }: Props) => {
+const HeadCreatePosts = ({ onPrev, title, onNext, isLoading, textNext = 'Next' }: Props) => {
     return (
         <div>
             <div className='flex justify-between items-center h-11 border-b border-[#ccc] border-solid'>
@@ -15,7 +16,7 @@ const HeadCreatePosts = ({ onPrev, title, onNext, isLoading }: Props) => {
                 </Button>
                 <h4 className='font-medium'>{title}</h4>
                 <Button loading={isLoading} type='text' className='mr-3' onClick={onNext}>
-                    Next
+                    {textNext}
                 </Button>
             </div>
         </div>

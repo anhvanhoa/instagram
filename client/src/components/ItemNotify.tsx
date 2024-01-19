@@ -2,10 +2,13 @@ import classNames from 'classnames'
 import Img from './Img'
 import Button from './Button'
 import { Notification } from '~/types/chat'
+import { useNavigate } from 'react-router-dom'
 interface Porps {
     notify: Notification
 }
 const ItemNotify: React.FC<Porps> = ({ notify }) => {
+    const navigate = useNavigate()
+    const viewNotify = (link: string) => () => navigate(`/p/${link}`)
     return (
         <div>
             <div
@@ -23,11 +26,10 @@ const ItemNotify: React.FC<Porps> = ({ notify }) => {
                     <div className='text-sm text-dot mt-1'>
                         <p className='font-semibold inline-block pr-1'>{notify.fromUser.userName}</p>
                         {notify.content}
-                        <p className='font-semibold inline-block pl-1'>{notify.idPosts.title}</p>
                     </div>
                 </div>
                 <div className='ml-2'>
-                    <Button type='text' disable>
+                    <Button onClick={viewNotify(notify.idPosts)} type='text'>
                         open
                     </Button>
                 </div>

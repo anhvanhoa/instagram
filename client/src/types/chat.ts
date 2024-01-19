@@ -1,5 +1,4 @@
 import { User } from './auth'
-import { Posts } from './posts'
 
 export interface ContentChat {
     _id: string
@@ -35,7 +34,7 @@ export interface Notification {
     _id: string
     fromUser: User
     toUser: User
-    idPosts: Posts
+    idPosts: string
     content: string
     createdAt: string
 }

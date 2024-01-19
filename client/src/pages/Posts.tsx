@@ -6,7 +6,6 @@ import getOnePosts from '~/apis/getOnePosts'
 import IconApp from '~/assets/icons/IconApp'
 import AccountItem from '~/components/AccountItem'
 import Img from '~/components/Img'
-import LoadPage from '~/components/LoadPage'
 import Slider from '~/components/Slider'
 import UserName from '~/components/UserName'
 import Footer from '~/layouts/components/Footer'
@@ -27,6 +26,7 @@ import deletePosts from '~/apis/deletePosts'
 import Alert from '~/components/Alert'
 import EditPosts from '~/components/EditPosts'
 import HeaderMobile from '~/components/HeaderMobile'
+import NotFound from './NotFound'
 
 const Posts = () => {
     const params = useParams()
@@ -45,6 +45,7 @@ const Posts = () => {
     } = useQuery({
         queryKey: ['posts', params.id],
         queryFn: () => getOnePosts(params.id || ''),
+        refetchOnReconnect: false,
     })
     const { mutate: mutateComment } = useMutation({
         mutationFn: (data: { idPosts: string; content: string }) => commentPosts(data),
@@ -97,17 +98,17 @@ const Posts = () => {
             {posts && confirm && (
                 <Alert onCancel={cancel} title='Delete posts' textAgree='Delete' onAgree={apiDelete(posts._id)} />
             )}
-            <div className='sticky top-0 z-50 bg-white'>
+            <div className='sticky top-0 z-50 bg-white md:hidden '>
                 {posts && <HeaderMobile title={posts.title}></HeaderMobile>}
             </div>
             <div className='flex justify-center mx-4 sm:mx-14 md:mx-8'>
-                {isError && <LoadPage />}
+                {isError && <NotFound />}
                 {isLoading && <SkeletonPostsPage />}
                 {posts && (
                     <div className='mt-6 justify-center overflow-hidden flex flex-col md:flex-row'>
                         <div
                             className={classNames(
-                                'mt-4 md:min-w-[350px] md:max-w-[550px] md:max-h-[550px] flex items-center border border-r-0 border-r-transparent',
+                                'md:min-w-[350px] md:max-w-[550px] md:max-h-[550px] flex items-center border border-r-0 border-r-transparent',
                             )}
                         >
                             <Slider maxElemnt={posts.contents.length}>

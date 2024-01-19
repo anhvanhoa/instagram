@@ -101,6 +101,7 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
                 onPrev={() => onStep(3)}
                 onNext={apiCrop}
                 title='Create posts new'
+                textNext='Share'
             />
             <div className='flex'>
                 <div className='w-[520px] h-[520px] bg-black/50 relative flex justify-center items-center'>

@@ -2,8 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
 import getNotification from '~/apis/getNotification'
-import Button from '~/components/Button'
-import Img from '~/components/Img'
+import ItemNotify from '~/components/ItemNotify'
 import socket from '~/socketIo'
 import { Notification } from '~/types/chat'
 interface Props {
@@ -36,61 +35,8 @@ const Notify: React.FC<Props> = ({ handleClickOutside }) => {
             <div className='px-5 overflow-auto h-full'>
                 {!data?.length && <p className='text-center mt-6'>No notification</p>}
                 <div className='py-2'>
-                    {data &&
-                        data.map((item, index) => (
-                            <div
-                                key={index}
-                                className={classNames(
-                                    'flex items-center justify-between gap-3 py-2 px-4 my-1',
-                                    'overflow-hidden hover:bg-gray-100 rounded-lg transition-all',
-                                )}
-                            >
-                                <div className='flex gap-3'>
-                                    <Img
-                                        src={item.fromUser.avatar}
-                                        alt=''
-                                        className='w-10 h-10 object-cover rounded-[50%] flex-shrink-0'
-                                    />
-                                    <div className='text-sm text-dot mt-1'>
-                                        <p className='font-semibold inline-block pr-1'>{item.fromUser.userName}</p>
-                                        {item.content}
-                                        <p className='font-semibold inline-block pl-1'>{item.idPosts.title}</p>
-                                    </div>
-                                </div>
-                                <div className='ml-2'>
-                                    <Button type='text' disable>
-                                        open
-                                    </Button>
-                                </div>
-                            </div>
-                        ))}
-                    {notification.map((item, index) => (
-                        <div
-                            key={index}
-                            className={classNames(
-                                'flex items-center justify-between gap-3 p-2 my-1',
-                                'overflow-hidden hover:bg-gray-100 rounded-lg transition-all',
-                            )}
-                        >
-                            <div className='flex gap-3'>
-                                <Img
-                                    src={item.fromUser.avatar}
-                                    alt=''
-                                    className='w-10 h-10 object-cover rounded-[50%] flex-shrink-0'
-                                />
-                                <div className='text-sm text-dot mt-1'>
-                                    <p className='font-semibold inline-block pr-1'>{item.fromUser.userName}</p>
-                                    {item.content}
-                                    <p className='font-semibold inline-block pl-1'>{item.idPosts.title}</p>
-                                </div>
-                            </div>
-                            <div className='ml-2'>
-                                <Button type='text' disable>
-                                    open
-                                </Button>
-                            </div>
-                        </div>
-                    ))}
+                    {data && data.map((item, index) => <ItemNotify key={index} notify={item} />)}
+                    {notification && notification.map((item, index) => <ItemNotify key={index} notify={item} />)}
                 </div>
             </div>
         </div>
