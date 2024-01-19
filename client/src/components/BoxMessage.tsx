@@ -71,7 +71,7 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
                         theme='light'
                         content={<SettingMessage onClick={handleDeleteReceive} />}
                     >
-                        <div className='px-2 py-1'>
+                        <div className='px-2 py-1 hidden'>
                             <Icon icon='solar:menu-dots-bold' className='cursor-pointer' />
                         </div>
                     </Tippy>

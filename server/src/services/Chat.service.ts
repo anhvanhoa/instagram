@@ -149,6 +149,7 @@ export class ChatService {
         const boxChat = boxChats
             .reduce<ContentChat[]>((init, item) => init.concat(item.contentChat), [])
             .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+        if (boxChat.length === 0) return false
         const chat = boxChat[boxChat.length - 1]
         return chat._doc
     }

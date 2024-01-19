@@ -58,10 +58,12 @@ const Message = () => {
                     </div>
                 </div>
                 <div className=''>
-                    {(isLoading || isLoadingUser) && <NotMessageSkeleton />}
-                    {(!params.id || !params.username) && <NotMessage />}
+                    {(isLoading || isLoadingUser) && !data._id && <NotMessageSkeleton />}
+                    {(!params.id || !params.username) && !data._id && dataUser && <NotMessage />}
                     {params.id && params.username && dataChat && (
-                        <BoxChat idUser={state._id} dataChat={dataChat} userChat={data} />
+                        <div>
+                            <BoxChat idUser={state._id} dataChat={dataChat} userChat={data} />
+                        </div>
                     )}
                 </div>
             </div>

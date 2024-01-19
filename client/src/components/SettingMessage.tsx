@@ -13,7 +13,7 @@ const SettingMessage: React.FC<Props> = ({ onClick }) => {
                 type='text'
                 className='text-red-500 hover:text-red-600'
             >
-                Delete
+                Recall
             </Button>
         </ul>
     )
