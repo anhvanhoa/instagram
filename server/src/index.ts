@@ -15,7 +15,8 @@ import {
     InterServerEvents,
     SocketData,
 } from './types'
-configDotenv({ path: '.env' })
+configDotenv({ path: '.env.production' })
+// configDotenv({ path: '.env.local' })
 const app = express()
 const port = 8008
 const httpServer = createServer(app)
