@@ -67,7 +67,7 @@ class ChatIo {
                 chat,
             })
         })
-    recall = (
+    delete = (
         socket: Socket<
             ServerToClientEvents,
             ClientToServerEvents,
@@ -76,7 +76,7 @@ class ChatIo {
         >,
     ) =>
         socket.on('delete', async (data) => {
-            const chat = await chatProvider.recall(
+            const chat = await chatProvider.delete(
                 data.idContentChat,
                 data.idUserisDeleteReceive,
                 data.isDeleteSend,

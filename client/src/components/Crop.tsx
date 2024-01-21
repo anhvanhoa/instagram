@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import AvatarEditor, { Position } from 'react-avatar-editor'
 import { Icon } from '@iconify/react'
 import { TypeImgCrop } from '~/types/posts'
@@ -31,6 +31,10 @@ const Crop: React.FC<Props> = ({ images, setImages }) => {
     const [active, setActive] = useState(0)
     const [net, setNet] = useState(false)
     const [positionClient, setPositionClient] = useState({ x: 0.5, y: 0.5 })
+    const [aspect, setAspect] = useState(() => {
+        const aspect = images[0].aspect
+        return aspect
+    })
     const handleSlider = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
         const type = e.currentTarget.dataset['name']
         if (type === 'right') setActive((prev) => prev + 1)
@@ -45,6 +49,7 @@ const Crop: React.FC<Props> = ({ images, setImages }) => {
             setImages((prev) => {
                 prev[active].serverSize = sizeReact
                 prev[active].clientSize = positionClient
+                console.log(prev)
                 return prev
             })
         }
@@ -60,6 +65,7 @@ const Crop: React.FC<Props> = ({ images, setImages }) => {
         (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
             const typeAspect = event.currentTarget.dataset['aspect']
             if (!typeAspect) return
+            setAspect(typeAspect)
             setImages((prev) => {
                 prev.forEach((_, i) => {
                     let a = 1
@@ -98,11 +104,28 @@ const Crop: React.FC<Props> = ({ images, setImages }) => {
                     setSize({ height, width })
                     break
             }
-            handlePositionSlider(active)
             handleMouseUp()
         },
-        [setImages, getCrop, handlePositionSlider, active, handleMouseUp],
+        [setImages, getCrop, handlePositionSlider, active],
     )
+    useLayoutEffect(() => {
+        let width = getCrop().width
+        let height = getCrop().height
+        switch (aspect) {
+            case '4/5':
+                width *= 0.8
+                setSize({ height, width })
+                break
+            case '16/9':
+                height *= 0.5625
+                setSize({ height, width })
+                break
+            default:
+                setSize({ height, width })
+                break
+        }
+        handlePositionSlider(active)
+    }, [handleMouseUp, getCrop])
     const resizeCrop = useCallback(() => setSize(getCrop()), [getCrop])
     useEffect(() => {
         window.addEventListener('resize', resizeCrop)
@@ -161,11 +184,17 @@ const Crop: React.FC<Props> = ({ images, setImages }) => {
                 </div>
             </div>
             <div className='flex justify-center items-center gap-8 py-3 border-y mt-2 text-gray-500'>
-                <p data-aspect='1' onClick={handleAspect} className='hover:bg-gray-100 px-2 rounded-md cursor-pointer'>
+                <p
+                    data-aspect='1'
+                    onMouseDown={handleAspect}
+                    onClick={handleAspect}
+                    className='hover:bg-gray-100 px-2 rounded-md cursor-pointer'
+                >
                     1:1
                 </p>
                 <p
                     data-aspect='4/5'
+                    onMouseDown={handleAspect}
                     onClick={handleAspect}
                     className='hover:bg-gray-100 px-2 rounded-md cursor-pointer'
                 >
@@ -173,6 +202,7 @@ const Crop: React.FC<Props> = ({ images, setImages }) => {
                 </p>
                 <p
                     data-aspect='16/9'
+                    onMouseDown={handleAspect}
                     onClick={handleAspect}
                     className='hover:bg-gray-100 px-2 rounded-md cursor-pointer'
                 >

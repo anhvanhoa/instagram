@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import suggestsPosts from '~/apis/suggestsPosts'
 import ExploreItem from '~/components/ExploreItem'
+import HeaderMobile from '~/components/HeaderMobile'
 import SkeletonExplore from '~/components/SkeletonExplore'
 
 const Explore = () => {
@@ -29,9 +30,10 @@ const Explore = () => {
     }, [handleScroll])
     return (
         <main>
-            <div className='max-w-[975px] mx-auto pt-6 p-1 md:px-5'>
+            <HeaderMobile className='md:hidden' title='Explore' />
+            <div className='max-w-[975px] mx-auto md:pt-6 p-2 md:px-5'>
                 {isLoading && <SkeletonExplore />}
-                <div className={cln('grid grid-cols-3 grid-rows-1 gap-1 mb-7')}>
+                <div className={cln('grid grid-cols-2 sm:grid-cols-3 grid-rows-1 gap-1 mb-7')}>
                     {data &&
                         data.map((element) => (
                             <div key={element._id} onClick={viewPosts(element._id)} className='cursor-pointer'>

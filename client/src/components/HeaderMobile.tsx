@@ -2,16 +2,17 @@ import { Icon } from '@iconify/react/dist/iconify.js'
 import React, { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 interface Props {
+    className?: string
     title: string
     contextNext?: ReactNode
     onNext?: () => void
 }
-const HeaderMobile: React.FC<Props> = ({ onNext, title, contextNext }) => {
+const HeaderMobile: React.FC<Props> = ({ onNext, title, contextNext, className }) => {
     const navifate = useNavigate()
     const handleBack = () => navifate(-1)
     return (
-        <div>
-            <div>
+        <div className='sticky top-0 bg-white'>
+            <div className={className}>
                 <div className='flex justify-between items-center px-4 py-3 border-b'>
                     <div onClick={handleBack}>
                         <Icon
@@ -22,7 +23,9 @@ const HeaderMobile: React.FC<Props> = ({ onNext, title, contextNext }) => {
                     <div>
                         <p className='font-semibold'>{title}</p>
                     </div>
-                    <div onClick={onNext}>{contextNext}</div>
+                    <div className='min-w-[25px]' onClick={onNext}>
+                        {contextNext}
+                    </div>
                 </div>
             </div>
         </div>

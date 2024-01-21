@@ -17,7 +17,7 @@ export const httpToken = axios.create({
     },
 })
 httpToken.interceptors.request.use(async (response) => {
-    const { rfTokenDecode, rfTokenRemove } = rfToken()
+    const { rfTokenDecode, rfTokenRemove, rfTokenEncode } = rfToken()
     const crToken = localStorage.getItem('cr_token')
     const rf_token = rfTokenDecode()
     if (!crToken || !rf_token) {
@@ -33,10 +33,18 @@ httpToken.interceptors.request.use(async (response) => {
     }
     const date = new Date()
     if (exp < date.getTime() / 1000) {
-        const {
-            data: { accessToken },
-        } = await refreshJwt(rf_token)
-        response.headers.Authorization = `Bearer ${accessToken}`
+        try {
+            const {
+                data: { accessToken, refreshToken },
+            } = await refreshJwt(rf_token)
+            localStorage.setItem('cr_token', accessToken)
+            rfTokenEncode(refreshToken)
+            response.headers.Authorization = `Bearer ${accessToken}`
+        } catch (error) {
+            localStorage.removeItem('cr_token')
+            rfTokenRemove()
+            location.reload()
+        }
     } else {
         response.headers.Authorization = `Bearer ${crToken}`
     }

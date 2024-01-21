@@ -41,12 +41,12 @@ const HeaderHomeMobile = () => {
                     <Tippy
                         onClickOutside={changeBoxSearch(false)}
                         interactive
-                        placement='bottom-end'
+                        placement='bottom-start'
                         visible={boxSearch}
                         render={() => (
                             <div
                                 className={classNames(
-                                    'w-96 max-h-96 h-64',
+                                    'w-72 max-h-96 h-64',
                                     'bg-white shadow-lg rounded-lg p-4 border-t z-50',
                                 )}
                             >

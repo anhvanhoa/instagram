@@ -52,7 +52,7 @@ const InputComment: React.FC<Props> = ({ comment, setComment, apiComment, positi
                                 interactive
                                 trigger='click'
                                 placement={'top-end'}
-                                render={() => <Emoij onSelect={changeEmoij}></Emoij>}
+                                render={() => <Emoij height={200} onSelect={changeEmoij}></Emoij>}
                             >
                                 <div className='mt-[1px] cursor-pointer transition-all w-6 hover:scale-110'>
                                     <IconApp type='smile' className='w-5 h-5' />

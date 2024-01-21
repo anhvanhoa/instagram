@@ -31,7 +31,11 @@ export class ChatService {
         const userChat = await Promise.all(
             users.map(async (item) => {
                 const chat = await this.recentlyChat(item._id, user._id)
-                if (!chat) return null
+                if (!chat)
+                    return {
+                        chat: null,
+                        ...item,
+                    }
                 return {
                     chat,
                     ...item,
@@ -111,16 +115,26 @@ export class ChatService {
             { _id: true },
         )
         if (!roomChat) return httpResponse(HttpStatus.OK, [])
-        const boxChats = await BoxChatModel.find({
+        const boxchatSender = await BoxChatModel.findOne({
             idRoom: roomChat._id,
+            idUser: user._id,
         }).populate<PopulateOption>({
             path: 'contentChat',
-            match: { isDeleteSend: false, isDeleteReceive: false },
+            match: { isDeleteSend: false },
         })
+        const boxchatReceiver = await BoxChatModel.findOne({
+            idRoom: roomChat._id,
+            idUser: userChat._id,
+        }).populate<PopulateOption>({
+            path: 'contentChat',
+            match: { isDeleteReceive: false },
+        })
+        if (!boxchatSender || !boxchatReceiver) return httpResponse(HttpStatus.OK, [])
+        const boxChats = boxchatSender.contentChat.concat(boxchatReceiver.contentChat)
         if (boxChats.length === 0) return httpResponse(HttpStatus.OK, [])
-        const boxChat = boxChats
-            .reduce<ContentChat[]>((init, item) => init.concat(item.contentChat), [])
-            .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+        const boxChat = boxChats.sort(
+            (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
+        )
         return httpResponse(HttpStatus.OK, boxChat)
     }
     async recentlyChat(idUserChat: string, idUser: string) {
@@ -128,36 +142,17 @@ export class ChatService {
         const userChat = await UserModel.findOne({ _id: idUserChat })
         if (!user || !userChat)
             throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
-        const roomChat = await RoomChatModel.findOne(
-            {
-                $and: [
-                    { members: { $elemMatch: { idUser: user._id } } },
-                    { members: { $elemMatch: { idUser: userChat._id } } },
-                    { members: { $size: 2 } },
-                ],
-            },
-            { _id: true },
-        )
-        if (!roomChat) return false
-        const boxChats = await BoxChatModel.find({
-            idRoom: roomChat._id,
-        }).populate<PopulateOption>({
-            path: 'contentChat',
-            match: { isDeleteSend: false, isDeleteReceive: false },
-        })
+        const { data: boxChats } = await this.boxChat(user.userName, idUserChat)
         if (boxChats.length === 0) return false
-        const boxChat = boxChats
-            .reduce<ContentChat[]>((init, item) => init.concat(item.contentChat), [])
-            .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
-        if (boxChat.length === 0) return false
-        const chat = boxChat[boxChat.length - 1]
+        if (boxChats.length === 0) return false
+        const chat = boxChats[boxChats.length - 1]
         return chat._doc
     }
     async seen(_id: string) {
         await ContentChatModel.updateOne({ _id }, { $set: { isSeen: true } })
         return (await ContentChatModel.findById(_id))?._doc
     }
-    async recall(_id: string, isDeleteReceive: boolean, isDeleteSend: boolean) {
+    async delete(_id: string, isDeleteReceive: boolean, isDeleteSend: boolean) {
         await ContentChatModel.updateOne(
             { _id },
             { $set: { isDeleteSend, isDeleteReceive } },

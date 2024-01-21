@@ -15,7 +15,7 @@ const LayoutMain = () => {
         }
     }, [])
     return (
-        <div className='flex group'>
+        <div className='flex group min-h-screen'>
             {nav && <Sidebar />}
             <div className='flex-1 relative'>
                 <Outlet />

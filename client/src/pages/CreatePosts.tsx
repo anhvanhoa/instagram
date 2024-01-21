@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import classNames from 'classnames'
 import { useState } from 'react'
 import { CroppedRect } from 'react-avatar-editor'
-import { Link } from 'react-router-dom'
+import { Link, useBlocker } from 'react-router-dom'
 import uploadImg from '~/apis/uploadImg'
 import uploadPosts, { PostsUpload } from '~/apis/uploadPosts'
 import Button from '~/components/Button'
@@ -16,6 +16,7 @@ import { TypeImgCrop } from '~/types/posts'
 let contents: string[] = []
 export const CreatePosts = () => {
     const [images, setImages] = useState<TypeImgCrop[]>([])
+    console.log(images)
     const [step, setStep] = useState<number>(1)
     const [overlay, setOverlay] = useState(false)
     const [description, setDescription] = useState<string>('')
@@ -61,6 +62,7 @@ export const CreatePosts = () => {
             mutate(data)
         })
     }
+    useBlocker(() => isPending || isPending2)
     return (
         <div>
             <HeaderMobile

@@ -9,7 +9,7 @@ interface Props {
 const ExploreItem: React.FC<Props> = ({ posts }) => {
     return (
         <div className={classNames('relative group/explore')}>
-            <Img className='aspect-square object-cover rounded-md' src={posts.contents[0]} alt={posts.contents[0]} />
+            <Img className='aspect-square object-cover rounded-sm' src={posts.contents[0]} alt={posts.contents[0]} />
             <div className='absolute top-2 right-2'>
                 {posts.contents.length > 1 && (
                     <Icon className='text-sm md:text-xl lg:text-2xl text-white' icon='ion:copy' />

@@ -12,6 +12,7 @@ import NotMessageSkeleton from '~/components/NotMessageSkeleton'
 import AccountChatSkeleton from '~/components/AccountChatSkeleton'
 import userChat from '~/apis/userChat'
 import ListAccountChat from '~/components/ListAccountChat'
+import HeaderMobile from '~/components/HeaderMobile'
 
 const Message = () => {
     const { state } = useContextUser()
@@ -33,31 +34,35 @@ const Message = () => {
         enabled: Boolean(params.username) || Boolean(params.id),
     })
     return (
-        <main className='w-full'>
-            <div className='grid grid-cols-[80px,_1fr] lg:grid-cols-[350px,_1fr]'>
-                <div className='border-[#ccc] border-r h-screen overflow-y-hidden'>
+        <main className='w-full h-screen flex flex-col'>
+            <HeaderMobile
+                title='Chat'
+                className={classNames('xs:hidden', {
+                    hidden: params.id && params.username,
+                })}
+            />
+            <div className='grid grid-cols-1 xs:grid-cols-[65px,_1fr] lg:grid-cols-[350px,_1fr] flex-1'>
+                <div
+                    className={classNames('border-[#ccc] xs:border-r overflow-y-hidden xs:block', {
+                        hidden: params.id && params.username,
+                    })}
+                >
                     {isLoadingUser && <AccountChatSkeleton />}
                     <div className={classNames({ hidden: isLoadingUser })}>
-                        <div className='lg:flex items-center justify-between pt-5 px-6 pb-3 hidden'>
+                        <div className='lg:flex tex items-center justify-between px-6 py-5 hidden border-b'>
                             <h2 className='text-xl font-bold'>{state.fullName}</h2>
                             <div className='px-2 cursor-pointer'>
                                 <IconApp type='pen' />
                             </div>
                         </div>
-                        <div className='lg:mt-6 border-y border-[#ccc] text-neutral-500'>
-                            <p
-                                className={classNames(
-                                    'py-3 lg:text-left lg:pl-6 text-center text-sm',
-                                    'font-semibold cursor-pointer text-black',
-                                )}
-                            >
-                                Primary
-                            </p>
-                        </div>
                         {dataUser && <ListAccountChat dataUser={dataUser} />}
                     </div>
                 </div>
-                <div className=''>
+                <div
+                    className={classNames('xs:block', {
+                        hidden: !params.id || !params.username,
+                    })}
+                >
                     {(isLoading || isLoadingUser) && !data._id && <NotMessageSkeleton />}
                     {(!params.id || !params.username) && !data._id && dataUser && <NotMessage />}
                     {params.id && params.username && dataChat && (

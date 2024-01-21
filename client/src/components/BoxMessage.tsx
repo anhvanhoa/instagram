@@ -42,12 +42,12 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
             })}
         >
             <div className='max-w-[70%] flex items-end gap-2'>
-                {position === 'left' && avatar && <Img src={avatar} className='w-6 h-6 rounded-[50%] object-cover ' />}
+                {position === 'left' && <Img src={avatar} className='w-6 h-6 rounded-[50%] object-cover ' />}
                 {position === 'right' && (
                     <Tippy
                         className='rounded-xl'
                         interactive
-                        placement='left'
+                        placement='bottom-end'
                         theme='light'
                         trigger='click'
                         content={<SettingMessage onClick={handleDeleteSend} />}
@@ -67,11 +67,11 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
                         className='rounded-xl'
                         interactive
                         trigger='click'
-                        placement='right'
+                        placement='bottom-start'
                         theme='light'
                         content={<SettingMessage onClick={handleDeleteReceive} />}
                     >
-                        <div className='px-2 py-1 hidden'>
+                        <div className='px-2 py-1'>
                             <Icon icon='solar:menu-dots-bold' className='cursor-pointer' />
                         </div>
                     </Tippy>

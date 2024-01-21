@@ -3,7 +3,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { User } from '~/types/auth'
 import { ContentChat } from '~/types/chat'
 import BoxMessage from './BoxMessage'
-import InputChat from './InputChat'
+import InputChat from '~/components/InputChat'
 import HeaderChat from './HeaderChat'
 import socket from '~/socketIo'
 
@@ -69,7 +69,7 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
                     ))}
                 </div>
             </div>
-            <div className='mb-14 md:mb-0 border-t'>
+            <div className='mb-14 md:mb-0'>
                 <InputChat value={message} setValue={setMessage} onSend={handleSend} />
             </div>
         </section>

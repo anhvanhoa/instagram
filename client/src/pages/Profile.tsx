@@ -15,6 +15,7 @@ import SkeletonExploreItem from '~/components/SkeletonExploreItem'
 import Footer from '~/layouts/components/Footer'
 import Tippy from '@tippyjs/react/headless'
 import BoxMenu from '~/layouts/components/BoxMenu'
+import HeaderMobile from '~/components/HeaderMobile'
 
 const Profile = () => {
     const navigate = useNavigate()
@@ -52,19 +53,18 @@ const Profile = () => {
             {/* {(!data || isLoading) && <NotFound />} */}
             {data && (
                 <div className='max-w-[975px] mx-auto md:pt-[30px] flex flex-col h-screen'>
-                    <div>
-                        <div className='mb-8 bg-white border-b flex justify-between px-4 py-3 md:hidden'>
-                            <div></div>
-                            <div>
-                                <p className='font-semibold'>{data.fullName}</p>
-                            </div>
+                    <HeaderMobile
+                        className='md:hidden'
+                        title={data.fullName}
+                        contextNext={
                             <Tippy trigger='click' interactive render={() => <BoxMenu />}>
                                 <div className='cursor-pointer'>
                                     <IconApp type='setting' />
                                 </div>
                             </Tippy>
-                        </div>
-                    </div>
+                        }
+                    />
+                    <div className='mb-6 bg-white flex justify-between px-4 md:hidden'></div>
                     <div className='flex justify-start md:justify-center px-4 sm:px-8 mb-4 sm:mb-11'>
                         <div className='mr-7 sm:mr-16 relative'>
                             <div className='w-20 h-20 sm:w-[150px] sm:h-[150px] mx-auto'>
@@ -175,8 +175,8 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='border-t flex-1 flex flex-col pt-1'>
-                        <div className='grid grid-cols-3 gap-px sm:gap-1 sm:px-8'>
+                    <div className='border-t flex-1 flex flex-col pt-1 sm:pt-6 md:pt-8 px-1'>
+                        <div className='grid grid-cols-2 sm:grid-cols-3 gap-px sm:gap-1 sm:px-8'>
                             {isLoading && (
                                 <>
                                     <SkeletonExploreItem />
@@ -190,7 +190,11 @@ const Profile = () => {
                                     className='relative group/posts cursor-pointer'
                                     onClick={viewPosts(post._id)}
                                 >
-                                    <Img src={post.contents[0]} alt='' className='aspect-square object-cover' />
+                                    <Img
+                                        src={post.contents[0]}
+                                        alt={post.title}
+                                        className='aspect-square object-cover rounded-sm'
+                                    />
                                     {post.contents.length > 1 && (
                                         <Icon className='text-2xl text-white absolute top-3 right-3' icon='ion:copy' />
                                     )}
@@ -210,7 +214,7 @@ const Profile = () => {
                             )}
                         </div>
                         <div className='flex-1'></div>
-                        <div>
+                        <div className='hidden md:block'>
                             <Footer />
                         </div>
                     </div>

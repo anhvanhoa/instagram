@@ -64,5 +64,5 @@ export interface ServerToClientEvents {
 }
 
 export interface UserChat extends User {
-    chat: ContentChat
+    chat: ContentChat | null
 }

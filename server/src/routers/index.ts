@@ -35,7 +35,7 @@ const ioEvent = (
         ChatIo.leaveRoom(socket)
         ChatIo.chat(socket)
         ChatIo.seen(socket)
-        ChatIo.recall(socket)
+        ChatIo.delete(socket)
         Notify.notificationLike(socket)
         Notify.notificationComment(socket)
         socket.on('disconnect', () => console.log('discounect !'))

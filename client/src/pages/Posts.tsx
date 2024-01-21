@@ -101,14 +101,15 @@ const Posts = () => {
             <div className='sticky top-0 z-50 bg-white md:hidden '>
                 {posts && <HeaderMobile title={posts.title}></HeaderMobile>}
             </div>
-            <div className='flex justify-center mx-4 sm:mx-14 md:mx-8'>
+            <div className='flex justify-center mx-0.5 xs:mx-4 sm:mx-8'>
                 {isError && <NotFound />}
                 {isLoading && <SkeletonPostsPage />}
                 {posts && (
-                    <div className='mt-6 justify-center overflow-hidden flex flex-col md:flex-row'>
+                    <div className='mt-0.5 xs:mt-6 justify-center overflow-hidden flex flex-col md:flex-row'>
                         <div
                             className={classNames(
-                                'md:min-w-[350px] md:max-w-[550px] md:max-h-[550px] flex items-center border border-r-0 border-r-transparent',
+                                'md:min-w-[350px] md:max-w-[550px] md:max-h-[550px]',
+                                'flex items-center border border-r-0 border-r-transparent',
                             )}
                         >
                             <Slider maxElemnt={posts.contents.length}>
@@ -124,12 +125,12 @@ const Posts = () => {
                         </div>
                         <div
                             className={classNames(
-                                'mt-8 md:mt-0 flex-shrink-0 md:w-72 border relative overflow-y-auto',
-                                'md:h-[550px] h-[500px] flex flex-col md:rounded-ee-lg md:rounded-se-lg rounded-sm',
+                                'flex-shrink-0 md:w-72 md:border relative overflow-y-auto bg-gray-50/50 md:bg-white',
+                                'md:h-[550px] h-[450px] flex flex-col md:rounded-ee-lg md:rounded-se-lg rounded-sm',
                             )}
                         >
                             <div className='sticky top-0 bg-white'>
-                                <div className='flex justify-between items-center px-4 py-3 border-b'>
+                                <div className='flex justify-between items-center md:px-4 px-2 py-4 md:py-3 border-b'>
                                     <AccountItem user={posts.author} size='small' />
                                     <Tippy
                                         trigger='click'
@@ -172,20 +173,20 @@ const Posts = () => {
                                     </Tippy>
                                 </div>
                             </div>
+                            <div className='px-3 md:px-5 py-2 text-sm'>
+                                <div className='text-ellipsis whitespace-nowrap overflow-hidden'>
+                                    <div
+                                        className={classNames('inline-block mr-1', {
+                                            hidden: !posts.title,
+                                        })}
+                                    >
+                                        <UserName user={posts.author} />
+                                    </div>
+                                    {posts.title}
+                                </div>
+                            </div>
                             <div className='pb-4 flex-1'>
                                 <div className=''>
-                                    <div className='px-5 py-2 text-sm'>
-                                        <div className='text-ellipsis whitespace-nowrap overflow-hidden'>
-                                            <div
-                                                className={classNames('inline-block mr-1', {
-                                                    hidden: !posts.title,
-                                                })}
-                                            >
-                                                <UserName user={posts.author} />
-                                            </div>
-                                            {posts.title}
-                                        </div>
-                                    </div>
                                     {listComment.map((comment, index) => (
                                         <Comments key={index} comment={comment} user={user} />
                                     ))}
@@ -194,7 +195,7 @@ const Posts = () => {
                                     ))}
                                 </div>
                             </div>
-                            <div className='sticky bottom-0 bg-white pt-4 border-t shadow-lg'>
+                            <div className='sticky bottom-0 bg-white pt-4 border-t'>
                                 <div className='flex items-center justify-between px-4'>
                                     <div className='flex items-center gap-4'>
                                         <span className='cursor-pointer'>
@@ -225,26 +226,25 @@ const Posts = () => {
                                         </span>
                                     </div>
                                 </div>
-                                <div className='pt-2 font-medium text-sm px-4'>
-                                    <p className='inline-block'>{posts.likes.length + (like ? 1 : 0)} </p> likes
+                                <div className='py-3 font-medium text-sm px-4 flex justify-between'>
+                                    <p className='inline-block'>{posts.likes.length + (like ? 1 : 0)} likes</p>
+                                    <p className='text-gray-500 text-xs'>{formatTimeAgo(posts.createdAt)}</p>
                                 </div>
-                                <p className='text-gray-500 text-xs px-4 pb-3'>
-                                    time: {formatTimeAgo(posts.createdAt)}
-                                </p>
-                                <div className='border-t px-2 py-2'>
-                                    <InputComment
-                                        comment={comment}
-                                        setComment={setComment}
-                                        positionSmile='left'
-                                        apiComment={apiComment(posts._id, comment)}
-                                    />
-                                </div>
+                            </div>
+                            <div className='border-t px-2 py-2.5 bg-white'>
+                                <InputComment
+                                    comment={comment}
+                                    setComment={setComment}
+                                    positionSmile='left'
+                                    apiComment={apiComment(posts._id, comment)}
+                                />
                             </div>
                         </div>
                     </div>
                 )}
             </div>
-            <div className='mt-12'>
+            <div className='mt-16'></div>
+            <div className='mt-12 hidden md:block'>
                 <Footer />
             </div>
         </div>

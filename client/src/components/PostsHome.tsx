@@ -16,8 +16,8 @@ const PostsHome = () => {
     })
     return (
         <div>
-            <div className='p-2'>
-                <Icon className='mx-auto text-3xl text-gray-500 animate-spin hidden' icon='lucide:loader' />
+            <div className='p-2 hidden'>
+                <Icon className='mx-auto text-3xl text-gray-500 animate-spin' icon='lucide:loader' />
             </div>
             <div className={classNames('mt-4 py-4 bg-white rounded-md hidden')}>
                 <div className={classNames('flex gap-x-4')}>
@@ -40,6 +40,7 @@ const PostsHome = () => {
                 {data && data.map((element) => <Posts key={element._id} posts={element} user={element.author} />)}
                 <EndPosts />
             </div>
+            <div className='mb-14'></div>
         </div>
     )
 }
