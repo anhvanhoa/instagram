@@ -1,13 +1,10 @@
 import { Outlet } from 'react-router-dom'
-import Sidebar from './components/Sidebar'
-import NavbarMobile from './components/NavbarMobile'
+import Sidebar from '~/layouts/components/Sidebar'
+import NavbarMobile from '~/layouts/components/NavbarMobile'
 import { useEffect, useState } from 'react'
 const LayoutMain = () => {
     const [nav, setNav] = useState(() => window.innerWidth > 768 || false)
-    const resizeCrop = () => {
-        if (window.innerWidth < 768) setNav(false)
-        else setNav(true)
-    }
+    const resizeCrop = () => (window.innerWidth < 768 ? setNav(false) : setNav(true))
     useEffect(() => {
         window.addEventListener('resize', resizeCrop)
         return () => {
@@ -15,7 +12,7 @@ const LayoutMain = () => {
         }
     }, [])
     return (
-        <div className='flex group min-h-screen'>
+        <div className='flex group min-h-dvh'>
             {nav && <Sidebar />}
             <div className='flex-1 relative'>
                 <Outlet />

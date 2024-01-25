@@ -9,8 +9,8 @@ interface Props {
     timer?: string
 }
 const HeaderChat: React.FC<Props> = ({ user }) => {
-    const navifate = useNavigate()
-    const handleBack = () => navifate(-1)
+    const navigate = useNavigate()
+    const handleBack = () => navigate(-1)
     return (
         <div className='flex items-center justify-between py-3 px-2 border-b'>
             <div className='flex items-center'>
@@ -24,7 +24,12 @@ const HeaderChat: React.FC<Props> = ({ user }) => {
                     <Img src={user.avatar} alt='' className='w-full h-full object-cover' />
                 </div>
                 <div className='ml-3'>
-                    <p className='text-sm leading-4 xs:text-base font-semibold'>{user.userName}</p>
+                    <div className='font-semibold flex items-center'>
+                        <p className='text-sm leading-4 xs:text-base font-semibold'>{user.userName}</p>
+                        <span className='ml-1 mt-0.5'>
+                            {user.verify && <Icon className='text-primary text-xs' icon='ph:seal-check-fill' />}
+                        </span>
+                    </div>
                     <p className='text-xs leading-3 text-gray-500 mt-1'>{user.fullName}</p>
                 </div>
             </div>

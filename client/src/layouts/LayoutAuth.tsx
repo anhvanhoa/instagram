@@ -4,7 +4,9 @@ const LayoutAuth = () => {
     return (
         <div>
             <Outlet />
-            <Footer />
+            <div className='hidden md:block'>
+                <Footer />
+            </div>
         </div>
     )
 }

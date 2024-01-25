@@ -98,7 +98,7 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
             {isUploadPosts && <div className='bg-black/5 fixed inset-0 z-50'></div>}
             <HeadCreatePosts
                 isLoading={isPending || isPending2}
-                onPrev={() => onStep(3)}
+                onPrev={() => onStep(2)}
                 onNext={apiCrop}
                 title='Create posts new'
                 textNext='Share'

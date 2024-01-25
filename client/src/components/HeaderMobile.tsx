@@ -11,7 +11,7 @@ const HeaderMobile: React.FC<Props> = ({ onNext, title, contextNext, className }
     const navifate = useNavigate()
     const handleBack = () => navifate(-1)
     return (
-        <div className='sticky top-0 bg-white'>
+        <div className='sticky top-0 bg-white z-50'>
             <div className={className}>
                 <div className='flex justify-between items-center px-4 py-3 border-b'>
                     <div onClick={handleBack}>

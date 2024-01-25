@@ -125,13 +125,15 @@ const Posts = () => {
                         </div>
                         <div
                             className={classNames(
-                                'flex-shrink-0 md:w-72 md:border relative overflow-y-auto bg-gray-50/50 md:bg-white',
+                                'flex-shrink-0 md:w-72 md:border relative bg-gray-50/50 md:bg-white',
                                 'md:h-[550px] h-[450px] flex flex-col md:rounded-ee-lg md:rounded-se-lg rounded-sm',
                             )}
                         >
                             <div className='sticky top-0 bg-white'>
                                 <div className='flex justify-between items-center md:px-4 px-2 py-4 md:py-3 border-b'>
-                                    <AccountItem user={posts.author} size='small' />
+                                    <div className='relative'>
+                                        <AccountItem user={posts.author} size='small' />
+                                    </div>
                                     <Tippy
                                         trigger='click'
                                         interactive

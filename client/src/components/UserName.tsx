@@ -41,7 +41,7 @@ const UserName: React.FC<Props> = ({ dropDow, user }) => {
                 disabled={!dropDow}
                 delay={[800, 100]}
                 interactive
-                placement='bottom-start'
+                placement='bottom'
                 render={() => (
                     <TippyUser
                         isFollow={data.isFollowing}
@@ -53,11 +53,9 @@ const UserName: React.FC<Props> = ({ dropDow, user }) => {
                 )}
                 onShow={handleApi}
             >
-                <h2 className='flex items-center font-semibold'>
-                    <Link className='text-sm' to={user.userName}>
-                        {user.userName}
-                    </Link>
-                </h2>
+                <Link className='text-sm' to={`/${user.userName}`}>
+                    <h2 className='flex items-center font-semibold'>{user.userName}</h2>
+                </Link>
             </TippyHeadless>
         </div>
     )

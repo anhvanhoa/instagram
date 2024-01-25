@@ -14,7 +14,7 @@ function App() {
     const profile_id = localStorage.getItem('profile_id')
     const { data, isLoading, isSuccess, isError } = useQuery({
         queryKey: ['user'],
-        queryFn: () => profile(profile_id || ''),
+        queryFn: () => profile(profile_id as string),
         enabled: Boolean(profile_id) && Boolean(cr_token),
         refetchOnWindowFocus: false,
     })

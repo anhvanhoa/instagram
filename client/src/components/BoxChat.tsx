@@ -34,9 +34,7 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
         socket.emit(`joinRoom`, userChat._id)
         socket.on(`notifyDelete`, (data) => {
             if (data._id !== userChat._id) return
-            setMessageNew((prev) => {
-                return prev.filter((item) => item._id !== data.chat._id)
-            })
+            setMessageNew((prev) => prev.filter((item) => item._id !== data.chat._id))
         })
         socket.on(`sendMessage`, (data) => {
             if (data.idUserChat === userChat._id || data.idUser === userChat._id) {

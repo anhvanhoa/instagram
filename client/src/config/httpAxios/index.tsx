@@ -16,7 +16,12 @@ export const httpToken = axios.create({
         'Content-Type': 'application/json',
     },
 })
+let isAbort = false
 httpToken.interceptors.request.use(async (response) => {
+    const controller = new AbortController()
+    console.log(isAbort)
+    response.signal = controller.signal
+    if (isAbort) controller.abort()
     const { rfTokenDecode, rfTokenRemove, rfTokenEncode } = rfToken()
     const crToken = localStorage.getItem('cr_token')
     const rf_token = rfTokenDecode()
@@ -33,6 +38,7 @@ httpToken.interceptors.request.use(async (response) => {
     }
     const date = new Date()
     if (exp < date.getTime() / 1000) {
+        isAbort = true
         try {
             const {
                 data: { accessToken, refreshToken },
@@ -40,6 +46,7 @@ httpToken.interceptors.request.use(async (response) => {
             localStorage.setItem('cr_token', accessToken)
             rfTokenEncode(refreshToken)
             response.headers.Authorization = `Bearer ${accessToken}`
+            isAbort = false
         } catch (error) {
             localStorage.removeItem('cr_token')
             rfTokenRemove()

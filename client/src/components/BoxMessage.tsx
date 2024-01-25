@@ -37,8 +37,8 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
     return (
         <div
             className={classNames({
-                'flex items-end': position === 'left',
-                'flex justify-end': position === 'right',
+                'my-1.5 flex items-end': position === 'left',
+                'my-1.5 flex justify-end': position === 'right',
             })}
         >
             <div className='max-w-[70%] flex items-end gap-2'>
@@ -58,7 +58,12 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
                     </Tippy>
                 )}
                 <div>
-                    <p className={classNames('py-2 px-3 rounded-3xl mt-px inline-block', positionType[position])}>
+                    <p
+                        className={classNames(
+                            'text-sm md:text-base py-2 px-3 rounded-3xl mt-px inline-block',
+                            positionType[position],
+                        )}
+                    >
                         {message}
                     </p>
                 </div>

@@ -55,14 +55,16 @@ export interface ClientToServerEvents {
 }
 
 export interface ServerToClientEvents {
-    notifyMessage: (data: UserChat) => void
+    notifyMessage: (data: UserChatSocket) => void
     sendMessage: (data: ContentChatIO) => void
     connect_server: (id: string) => void
     notify_error: (message: string) => void
-    notifyDelete: (data: UserChat) => void
+    notifyDelete: (data: UserChatSocket) => void
     notification: (data: Notification) => void
 }
-
+export interface UserChatSocket extends User {
+    chat: ContentChat
+}
 export interface UserChat extends User {
     chat: ContentChat | null
 }

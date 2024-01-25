@@ -17,8 +17,8 @@ const Suggest = () => {
         enabled: Boolean(user.following.length),
     })
     return (
-        <div className='pt-8 max-w-[300px]'>
-            <div className='mt-4 mb-3 h-16 flex flex-col justify-center'>
+        <div className='max-w-[300px]'>
+            <div className='mt-2 mb-3 h-16 flex flex-col justify-center'>
                 {!user._id && <SkeletonUser />}
                 {user._id && <AccountItem size='big' user={user} />}
             </div>

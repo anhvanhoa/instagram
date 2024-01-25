@@ -1,6 +1,7 @@
 import { JwtPayload } from 'jsonwebtoken'
 import { DocumentModel } from './models/types'
 import { ObjectId } from 'mongoose'
+import { Socket } from 'socket.io'
 export type Gender = 'nam' | 'nữ' | 'khác'
 export interface User extends DocumentModel<User> {
     _id: string
@@ -182,3 +183,10 @@ interface SocketData {
 export interface UserChat extends User {
     chat: ContentChat
 }
+
+export type SocketIo = Socket<
+    ServerToClientEvents,
+    ClientToServerEvents,
+    InterServerEvents,
+    SocketData
+>

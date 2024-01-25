@@ -1,5 +1,6 @@
 import Img from './Img'
 import { Icon } from '@iconify/react/dist/iconify.js'
+import classNames from 'classnames'
 import socket from '~/socketIo'
 import { SeenChat, UserChat } from '~/types/chat'
 
@@ -20,7 +21,11 @@ const AccountChat = ({ user }: Props) => {
             socket.emit('seen', { idUser, idContentChat })
     return (
         <div
-            className='cursor-pointer flex items-center justify-center lg:justify-between lg:px-6 py-2 px-2 xs:px-0 hover:bg-gray-100'
+            title={user.fullName}
+            className={classNames(
+                'cursor-pointer flex items-center justify-center lg:px-3',
+                'lg:justify-between py-2 px-2 xs:px-0 hover:bg-gray-100',
+            )}
             onClick={handleSeen}
         >
             <div className='flex items-center w-full relative'>
@@ -30,11 +35,17 @@ const AccountChat = ({ user }: Props) => {
                         icon='radix-icons:dot-filled'
                     />
                 )}
+
                 <div className=' lg:w-14 lg:h-14 h-12 w-12 mx-auto lg:mx-0 overflow-hidden rounded-[50%] xs:flex-shrink-0'>
                     <Img className='w-full h-full object-cover' src={user.avatar} alt='' />
                 </div>
                 <div className='xs:hidden ml-3 lg:flex flex-col gap-y-1 overflow-hidden flex-1'>
-                    <p className=''>{user.fullName}</p>
+                    <div className='font-semibold flex items-center'>
+                        <p className='text-sm'>{user.fullName}</p>
+                        <span className='ml-1 mt-0.5'>
+                            {user.verify && <Icon className='text-primary text-sm' icon='ph:seal-check-fill' />}
+                        </span>
+                    </div>
                     {user.chat && (
                         <p className='text-xs text-[#737373] whitespace-nowrap text-ellipsis overflow-hidden'>
                             <span className='font-medium text-black'>

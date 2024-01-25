@@ -3,6 +3,7 @@ import Button from '~/components/Button'
 import { User } from '~/types/auth'
 import Img from './Img'
 import { Link } from 'react-router-dom'
+import { Icon } from '@iconify/react/dist/iconify.js'
 
 interface Props {
     user: User
@@ -14,7 +15,12 @@ const InfoChat: React.FC<Props> = ({ user }) => {
                 <Img src={user.avatar} alt={user.fullName} className='w-full h-full object-cover' />
             </div>
             <div className='text-center'>
-                <p className='text-xl font-semibold'>{user.fullName}</p>
+                <div className='font-semibold flex items-center'>
+                    <p className='text-xl font-semibold'>{user.fullName}</p>
+                    <span className='ml-1 mt-1.5'>
+                        {user.verify && <Icon className='text-primary text-sm' icon='ph:seal-check-fill' />}
+                    </span>
+                </div>
                 <p className='text-sm text-gray-500'>{user.userName} · Instagram</p>
             </div>
             <Link to={`/${user.userName}`}>

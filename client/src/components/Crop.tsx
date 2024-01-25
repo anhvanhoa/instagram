@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import AvatarEditor, { Position } from 'react-avatar-editor'
 import { Icon } from '@iconify/react'
 import { TypeImgCrop } from '~/types/posts'
@@ -49,7 +49,6 @@ const Crop: React.FC<Props> = ({ images, setImages }) => {
             setImages((prev) => {
                 prev[active].serverSize = sizeReact
                 prev[active].clientSize = positionClient
-                console.log(prev)
                 return prev
             })
         }
@@ -106,9 +105,9 @@ const Crop: React.FC<Props> = ({ images, setImages }) => {
             }
             handleMouseUp()
         },
-        [setImages, getCrop, handlePositionSlider, active],
+        [setImages, getCrop, handleMouseUp, active],
     )
-    useLayoutEffect(() => {
+    useEffect(() => {
         let width = getCrop().width
         let height = getCrop().height
         switch (aspect) {
@@ -125,7 +124,7 @@ const Crop: React.FC<Props> = ({ images, setImages }) => {
                 break
         }
         handlePositionSlider(active)
-    }, [handleMouseUp, getCrop])
+    }, [getCrop, aspect, handlePositionSlider, active])
     const resizeCrop = useCallback(() => setSize(getCrop()), [getCrop])
     useEffect(() => {
         window.addEventListener('resize', resizeCrop)
