@@ -15,11 +15,11 @@ const LayoutMain = () => {
     return (
         <div className='flex group min-h-dvh'>
             {nav && <Sidebar />}
-            <div className='md:p-6 md:pl-0 p-0 max-h-screen w-full overflow-hidde'>
+            <div className='md:p-6 md:pl-0 p-0 max-h-screen w-full'>
                 <div
                     className={classNames(
                         'flex-1 relative w-full h-full md:border dark:border-second',
-                        'md:rounded-2xl overflow-auto scrollbar-hidden bg-third',
+                        'md:rounded-2xl overflow-hidden bg-third',
                     )}
                 >
                     <Outlet />

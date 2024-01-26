@@ -15,7 +15,7 @@ const HomeNotAuth = () => {
         return () => clearTimeout(timerId)
     }, [])
     return (
-        <main>
+        <main className='dark:bg-white'>
             <section className='flex justify-center items-center'>
                 <div className='relative mt-4 hidden lg:block'>
                     <div>

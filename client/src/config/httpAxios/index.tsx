@@ -19,7 +19,6 @@ export const httpToken = axios.create({
 let isAbort = false
 httpToken.interceptors.request.use(async (response) => {
     const controller = new AbortController()
-    console.log(isAbort)
     response.signal = controller.signal
     if (isAbort) controller.abort()
     const { rfTokenDecode, rfTokenRemove, rfTokenEncode } = rfToken()

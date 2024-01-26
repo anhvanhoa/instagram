@@ -22,7 +22,7 @@ const Suggest = () => {
     })
     return (
         <div className='max-w-[300px] mx-8'>
-            <div className='py-4 flex flex-col justify-center border-b border-second'>
+            <div className='sticky top-0 py-4 flex flex-col justify-center border-b border-second'>
                 {!user._id && <SkeletonUser />}
                 {user._id && (
                     <div className='flex justify-between items-center'>

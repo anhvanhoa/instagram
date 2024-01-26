@@ -33,7 +33,7 @@ const HeaderChat: React.FC<Props> = ({ user }) => {
                     <p className='text-xs leading-3 text-gray-500 mt-1'>{user.fullName}</p>
                 </div>
             </div>
-            <div className='flex items-center gap-x-4 px-2 *:fill-white'>
+            <div className='flex items-center gap-x-4 px-2 *:dark:fill-white'>
                 <span className='cursor-pointer hidden'>
                     <IconApp type='call' />
                 </span>

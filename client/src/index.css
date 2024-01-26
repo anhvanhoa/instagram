@@ -38,6 +38,16 @@ body {
     .scrollbar-hidden::-webkit-scrollbar {
         display: none;
     }
+    .scrollbar::-webkit-scrollbar {
+        width: 5px;
+    }
+    .scrollbar::-webkit-scrollbar-track {
+        background-color: rgb(var(--background-rgb));
+    }
+    .scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgb(var(--background-second-rgb));
+        border-radius: 50px;
+    }
 }
 
 .text-dot {

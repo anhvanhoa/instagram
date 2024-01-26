@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import images from '~/assets'
 import IconApp from '~/assets/icons/IconApp'
 import Img from './Img'
+import useContextUser from '~/store/hook'
 
 interface Props {
     data: User
@@ -15,6 +16,7 @@ interface Props {
     onUnFollow: () => void
 }
 const TippyUser = ({ data, onFollow, onUnFollow, isFollow, loading }: Props) => {
+    const { state } = useContextUser()
     return (
         <Wrapper>
             <div className='bg-main border border-second w-[300px] rounded-xl'>
@@ -48,7 +50,7 @@ const TippyUser = ({ data, onFollow, onUnFollow, isFollow, loading }: Props) => 
                         ))}
                 </div>
                 <div className='p-3'>
-                    {!isFollow && (
+                    {!isFollow && state._id !== data._id && (
                         <Button
                             onClick={onFollow}
                             iconL={loading && <Icon icon='nonicons:loading-16' className='animate-spin text-white' />}
@@ -57,7 +59,7 @@ const TippyUser = ({ data, onFollow, onUnFollow, isFollow, loading }: Props) => 
                             {!loading && <>{!isFollow && 'Follow'}</>}
                         </Button>
                     )}
-                    {isFollow && (
+                    {isFollow && state._id !== data._id && (
                         <div className='flex items-center gap-4'>
                             <div className='w-full'>
                                 <Link to={`/message/${data.userName}/t/${data._id}`}>

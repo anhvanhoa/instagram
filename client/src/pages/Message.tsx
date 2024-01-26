@@ -49,7 +49,7 @@ const Message = () => {
                 >
                     {isLoadingUser && <AccountChatSkeleton />}
                     <div
-                        className={classNames('h-full flex flex-col overflow-auto scrollbar-hidden', {
+                        className={classNames('h-full flex flex-col overflow-auto scrollbar', {
                             hidden: isLoadingUser,
                         })}
                     >

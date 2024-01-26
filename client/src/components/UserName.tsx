@@ -51,10 +51,11 @@ const UserName: React.FC<Props> = ({ dropDow, user }) => {
                         data={user}
                     />
                 )}
-                onShow={handleApi}
             >
                 <Link className='text-sm' to={`/${user.userName}`}>
-                    <h2 className='flex items-center font-semibold'>{user.userName}</h2>
+                    <h2 onMouseEnter={handleApi} className='flex items-center font-semibold'>
+                        {user.userName}
+                    </h2>
                 </Link>
             </TippyHeadless>
         </div>

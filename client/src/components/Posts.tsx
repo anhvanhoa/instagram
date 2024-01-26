@@ -72,7 +72,7 @@ const Posts: React.FC<Props> = ({ user, posts }) => {
         <div className={classNames('mt-4 py-4 border-b border-second mb-8 sm:mb-6')}>
             <div className='px-2 pb-3 flex justify-between items-center'>
                 <AccountPosts time={posts.createdAt} user={user} />
-                <OptionPost viewPosts={viewPosts(posts._id)}>
+                <OptionPost viewPosts={viewPosts(posts._id)} id={posts._id}>
                     <Icon
                         icon='solar:menu-dots-bold'
                         className='cursor-pointer text-xl hover:dark:bg-second hover:bg-gray-100 px-1 rounded-md'

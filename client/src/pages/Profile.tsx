@@ -66,7 +66,7 @@ const Profile = () => {
                     <div className='mb-6 bg-white flex justify-between px-4 md:hidden'></div>
                     <div className='flex justify-start md:justify-center px-4 sm:px-8 mb-4 sm:mb-11'>
                         <div className='mr-7 sm:mr-16 relative'>
-                            <div className='w-20 h-20 sm:w-[150px] sm:h-[150px] mx-auto'>
+                            <div className='w-20 h-20 sm:w-[170px] sm:h-[170px] mx-auto'>
                                 <Img
                                     src={data.avatar}
                                     alt={data.userName}
@@ -94,31 +94,33 @@ const Profile = () => {
                         <div>
                             <div className='flex-col flex sm:flex-row gap-3 items-start sm:items-center'>
                                 <div className='sm:font-semibold flex items-center pr-6'>
-                                    <h2 className='text-xl'>{data.userName}</h2>
+                                    <h2 className='text-xl md:text-2xl'>{data.userName}</h2>
                                     <span className='ml-1 mt-0.5'>
                                         {data.verify && (
-                                            <Icon className='text-primary text-sm' icon='ph:seal-check-fill' />
+                                            <Icon className='text-primary text-sm mt-1' icon='ph:seal-check-fill' />
                                         )}
                                     </span>
                                 </div>
                                 <div className='flex gap-3'>
-                                    {data.userName === state.userName && (
-                                        <Link to='/accounts/edit'>
-                                            <Button type='second'>Edit profile</Button>
-                                        </Link>
-                                    )}
-                                    {!isFollowing && data.userName !== state.userName && (
-                                        <Button onClick={apiFollow(data._id)} size='small'>
-                                            Follow
-                                        </Button>
-                                    )}
-                                    {data.userName !== state.userName && (
-                                        <Link to={`/message/${data.userName}/t/${data._id}`}>
-                                            <Button type={isFollowing ? 'primary' : 'second'} size='small'>
-                                                Message
+                                    <div>
+                                        {data.userName === state.userName && (
+                                            <Link to='/accounts/edit'>
+                                                <Button type='second'>Edit profile</Button>
+                                            </Link>
+                                        )}
+                                        {!isFollowing && data.userName !== state.userName && (
+                                            <Button onClick={apiFollow(data._id)} size='small'>
+                                                Follow
                                             </Button>
-                                        </Link>
-                                    )}
+                                        )}
+                                        {data.userName !== state.userName && (
+                                            <Link to={`/message/${data.userName}/t/${data._id}`}>
+                                                <Button type={isFollowing ? 'primary' : 'second'} size='small'>
+                                                    Message
+                                                </Button>
+                                            </Link>
+                                        )}
+                                    </div>
                                     {isFollowing && (
                                         <Button
                                             onClick={apiUnFollow(data._id)}
@@ -133,7 +135,7 @@ const Profile = () => {
                             </div>
                             <div className='w-full mb-4'></div>
                             <div>
-                                <div className='sm:flex items-center mb-3 hidden'>
+                                <div className='sm:flex items-center mb-3 hidden my-4'>
                                     <p className='mr-10'>
                                         <span className='pr-1 font-semibold'>{data.posts.length}</span>
                                         posts

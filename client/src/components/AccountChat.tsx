@@ -8,23 +8,21 @@ interface Props {
     user: UserChat
 }
 const AccountChat = ({ user }: Props) => {
+    const seen = ({ idContentChat, idUser }: SeenChat) => socket.emit('seen', { idUser, idContentChat })
     const handleSeen = () => {
+        console.log(user.chat)
         if (!user.chat) return
         seen({
             idUser: user._id,
             idContentChat: user.chat._id,
         })
     }
-    const seen =
-        ({ idContentChat, idUser }: SeenChat) =>
-        () =>
-            socket.emit('seen', { idUser, idContentChat })
     return (
         <div
             title={user.fullName}
             className={classNames(
                 'cursor-pointer flex items-center justify-center lg:px-3',
-                'lg:justify-between py-2 px-2 xs:px-0 hover:bg-sky-50/5',
+                'lg:justify-between py-2 px-2 xs:px-0 hover:dark:bg-sky-50/5 hover:bg-sky-50',
             )}
             onClick={handleSeen}
         >

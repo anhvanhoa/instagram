@@ -8,10 +8,10 @@ import useContextUser from '~/store/hook'
 const Home = () => {
     const { state } = useContextUser()
     return (
-        <main className='flex-1'>
+        <main className='h-full'>
             <HeaderHomeMobile />
-            <div className={classNames('flex justify-center')}>
-                <div className='flex-1 border-second xl:border-r'>
+            <div className='flex justify-center h-full overflow-hidden'>
+                <div className='flex-1 border-second xl:border-r overflow-auto scrollbar'>
                     <div className={classNames('py-2 px-4 hidden')}>
                         <div className={classNames('flex gap-x-4')}>
                             <StoryItem
@@ -22,12 +22,12 @@ const Home = () => {
                             />
                         </div>
                     </div>
-                    <div className={classNames('px-2 xs:px-4 sm:px-8 max-w-full xs:max-w-lg w-full mx-auto')}>
+                    <div className='px-2 xs:px-4 sm:px-8 max-w-full xs:max-w-lg w-full mx-auto'>
                         {state.following.length === 0 && <HomeSuggest />}
                         {state.following.length !== 0 && <PostsHome />}
                     </div>
                 </div>
-                <div className='xl:block hidden sticky top-0 h-full'>
+                <div className='xl:block hidden h-full overflow-auto scrollbar-hidden'>
                     <Suggest />
                 </div>
             </div>

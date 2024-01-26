@@ -36,6 +36,8 @@ const Posts = () => {
     const [listComment, setListComment] = useState<string[]>([])
     const [like, setLike] = useState(false)
     const navigate = useNavigate()
+    const url = `${location.origin}/p/${params.id}`
+    const handleCopy = () => navigator.clipboard.writeText(url)
     const {
         data: posts,
         isError,
@@ -139,8 +141,8 @@ const Posts = () => {
                                         placement='bottom-end'
                                         render={() => (
                                             <Wrapper>
-                                                <div className='bg-white rounded-xl px-2'>
-                                                    <Button type='text' className='py-3 border-b'>
+                                                <div className='bg-main rounded-xl px-2 border border-second'>
+                                                    <Button onClick={handleCopy} type='text' className='py-3'>
                                                         Copy link
                                                     </Button>
                                                     {user._id === posts.author._id && (

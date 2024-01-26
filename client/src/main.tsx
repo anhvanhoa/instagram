@@ -6,7 +6,7 @@ import ProviderUser from './store/ProviderUser.tsx'
 import './config/firebase'
 import './index.css'
 const theme = localStorage.getItem('theme')
-theme && window.document.lastElementChild?.classList.add('dark')
+theme !== 'dark' && window.document.lastElementChild?.classList.remove('dark')
 const queryClient = new QueryClient()
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
