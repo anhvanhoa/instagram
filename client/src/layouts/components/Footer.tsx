@@ -11,7 +11,7 @@ function Footer() {
     ))
     return (
         <footer>
-            <div className='px-4 mb-16'>
+            <div className='px-4 pb-8'>
                 <div className='flex justify-center items-center mt-6 '>
                     <div className='flex justify-center items-center flex-wrap'>{renderItems}</div>
                 </div>

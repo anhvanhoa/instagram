@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import images from '~/assets'
+import IconApp from '~/assets/icons/IconApp'
 import Button from '~/components/Button'
 
 interface Props {
@@ -27,11 +28,11 @@ const WrapperAuth: React.FC<Props> = ({ children, isAccount, isLogo }) => {
         !isLogin ? sessionStorage.setItem('loginOrRegister', 'true') : sessionStorage.clear()
     }
     return (
-        <section className='flex justify-center sm:mt-5'>
+        <section className='flex justify-center sm:pt-5 dark:bg-white dark:text-black'>
             <section className='w-96 p-2'>
                 <div className='rounded-md sm:border'>
                     <div className='mt-8 mb-3'>
-                        {isLogo || <img className='mx-auto w-44 h-12' src={images.logoText} alt='logo' />}
+                        {isLogo || <IconApp type='logo-text' className='mx-auto w-44 h-12' />}
                     </div>
                     <div className='mb-8'>{children}</div>
                 </div>

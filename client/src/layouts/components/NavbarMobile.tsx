@@ -55,7 +55,7 @@ const NavbarMobile = () => {
     }, [])
     return (
         <div className='md:hidden'>
-            <div className='fixed w-full bottom-0 bg-white border-t z-50'>
+            <div className='fixed w-full bottom-0 bg-main border-second border-t z-50'>
                 <div className='grid grid-cols-6 px-1 xs:px-2 md:px-4 py-4'>
                     {dataNavbar.map((navbar) => (
                         <NavLink onClick={() => navbar.id === 5 && setNotifys(false)} to={navbar.link} key={navbar.id}>
@@ -66,8 +66,11 @@ const NavbarMobile = () => {
                                             <div className='w-2 h-2 rounded-[50%] bg-red-600 absolute -top-1 -right-1'></div>
                                         )}
                                         <IconApp
-                                            type={isActive ? navbar.iconActive : navbar.icon}
-                                            className='cursor-pointer w-6 hover:scale-110 transition-all'
+                                            type={navbar.icon}
+                                            className={classNames('cursor-pointer w-6 hover:scale-110 transition-all', {
+                                                'fill-pink-600 text-pink-600': isActive,
+                                                'fill-white': !isActive,
+                                            })}
                                         />
                                     </div>
                                 </div>

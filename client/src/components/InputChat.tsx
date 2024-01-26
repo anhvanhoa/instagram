@@ -14,7 +14,7 @@ const InputChat: React.FC<Props> = ({ value, setValue, onSend }) => {
     const changeEmoij = (value: string) => setValue((prev) => `${prev}${value}`)
     return (
         <div className='m-2'>
-            <div className='flex items-center p-2 sm:p-3 border rounded-3xl'>
+            <div className='flex items-center p-2 sm:p-3 border border-second rounded-3xl'>
                 <div className='pt-[2px] relative cursor-pointer'>
                     <Tippy
                         onClickOutside={() => refInput.current?.focus()}
@@ -24,7 +24,7 @@ const InputChat: React.FC<Props> = ({ value, setValue, onSend }) => {
                         render={() => <Emoij onSelect={changeEmoij} />}
                     >
                         <div>
-                            <IconApp className='w-5 block' type='smile' />
+                            <IconApp className='w-5 block fill-white' type='smile' />
                         </div>
                     </Tippy>
                 </div>
@@ -36,7 +36,7 @@ const InputChat: React.FC<Props> = ({ value, setValue, onSend }) => {
                         onChange={handleChange}
                         type='text'
                         placeholder='Chat...'
-                        className='w-full outline-none'
+                        className='w-full outline-none bg-transparent'
                     />
                 </div>
                 {value && (

@@ -31,15 +31,15 @@ const SkeletonPostsPage = () => {
                             <SkeletonUser />
                         </div>
                     </div>
-                    <div className='sticky bottom-0 bg-white pt-4 border-t shadow-lg'>
+                    <div className='sticky bottom-0 pt-4 border-t shadow-lg'>
                         <div className='px-4'>
-                            <div className='h-9 bg-gray-200 rounded-3xl w-full mb-2'></div>
+                            <div className='h-9 dark:bg-gray-50/10 bg-gray-100 rounded-3xl w-full mb-2'></div>
                         </div>
                         <div className='px-5'>
-                            <div className='h-2.5 bg-gray-200 rounded-3xl w-20 mb-4'></div>
+                            <div className='h-2.5 dark:bg-gray-50/10 bg-gray-100 rounded-3xl w-20 mb-4'></div>
                         </div>
                         <div className='border-t px-4 py-2'>
-                            <div className='h-10 bg-gray-200 rounded-md w-full'></div>
+                            <div className='h-10 dark:bg-gray-50/10 bg-gray-100 rounded-md w-full'></div>
                         </div>
                     </div>
                 </div>

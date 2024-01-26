@@ -117,7 +117,7 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
                         }}
                     />
                 </div>
-                <div className='w-[340px] border-l'>
+                <div className='w-[340px] border-l border-gray-50/20'>
                     <div className='flex items-center p-4 gap-2'>
                         <Img
                             className='rounded-[50%] w-8 h-8 aspect-square object-cover relative z-10 p-px mt-[2px]'
@@ -133,15 +133,15 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
                                 setDescription(e.target.value)
                             }}
                             value={description}
-                            rows={10}
-                            placeholder='Viết chú thích ...'
-                            className='w-full resize-none px-4 py-1 outline-none'
+                            rows={8}
+                            placeholder='Are you ok ?'
+                            className='w-full resize-none px-4 py-1 outline-none bg-transparent'
                         ></textarea>
                         <div className='flex justify-between px-4 text-gray-500'>
                             <p className='text-xs'>{description.length}/2.200</p>
                         </div>
                     </div>
-                    <div className='mt-4'>
+                    <div className='mt-4 hidden'>
                         <div className='flex items-center justify-between px-4 py-3 border-y border-solid border-[#ccc]'>
                             <p>Cài đặt nâng cao</p>
                             <Icon icon='uiw:down' />

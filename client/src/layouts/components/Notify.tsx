@@ -25,11 +25,13 @@ const Notify: React.FC<Props> = ({ handleClickOutside }) => {
     return (
         <div
             className={classNames(
-                'h-full bg-white rounded-tr-3xl rounded-br-3xl relative overflow-hidden',
-                'shadow-2xl transition-all z-50 border-r border-solid border-[#ccc]/80',
+                'h-full rounded-tr-3xl rounded-br-3xl relative',
+                'shadow-2xl transition-all z-50 overflow-hidden',
             )}
         >
-            <h2 className={classNames('py-4 px-5 border-b font-bold text-2xl sticky top-0 bg-white z-20')}>
+            <h2
+                className={classNames('py-4 px-5 border-b font-medium text-2xl', 'sticky top-0 z-20 border-gray-50/10')}
+            >
                 Notification
             </h2>
             <div className='px-5 overflow-auto h-full'>

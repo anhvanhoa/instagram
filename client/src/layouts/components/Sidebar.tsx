@@ -38,15 +38,16 @@ const Sidebar = () => {
         <section
             ref={refSide}
             className={classNames('hidden md:block relative', {
-                'is-cllapse group': [2, 5, 6].includes(id),
+                // 'is-cllapse group': [2, 5, 6].includes(id),
                 'is-side group': [2, 6].includes(id),
                 'lg:w-60': id !== 5 && !location.pathname.startsWith('/message'),
             })}
         >
             <div
                 className={classNames(
-                    'transition-all duration-100 ease-linear px-3 pt-2 pb-5 sticky top-0 h-screen w-[76px] lg:w-60 group-[.is-cllapse]:w-[76px]',
-                    'flex flex-col justify-between border-r border-solid border-[#ccc]/40 z-[99] bg-white',
+                    'transition-all duration-100 ease-linear px-3 pt-2 pb-5 sticky top-0 h-screen',
+                    'flex flex-col justify-between z-[99] bg-main w-[76px] lg:w-60',
+                    'group-[.is-cllapse]:w-[76px]',
                 )}
             >
                 <div>
@@ -54,14 +55,15 @@ const Sidebar = () => {
                     <Navbar active={active} />
                     <User handleId={handleId} />
                 </div>
-                <div>
+                <div className='xl:hidden'>
                     <Menu />
                 </div>
             </div>
             <div
                 className={classNames(
-                    'h-screen w-96 bg-white top-0 -left-full ml-px rounded-e-3xl fixed',
-                    'shadow-sidebar group-[.is-side]:left-[76px] duration-200 transition-all z-50',
+                    'h-screen w-96 bg-main top-0 -translate-x-full rounded-e-3xl fixed',
+                    'shadow-sidebar  dark:shadow-gray-50/5 group-[.is-side]:translate-x-0 group-[.is-side]:left-full',
+                    'transition-all z-50 border-l-2 border-second absolute -ml-px duration-300',
                 )}
             >
                 {id === 2 && <Search handleClickOutside={handleClickOutside} />}

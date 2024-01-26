@@ -24,8 +24,4 @@ export const dataMenu: Menu[] = [
         name: 'Switch apperance',
         icon: 'mode',
     },
-    {
-        name: 'Report a problem',
-        icon: 'problem',
-    },
 ]

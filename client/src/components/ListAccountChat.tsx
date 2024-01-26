@@ -41,7 +41,7 @@ const ListAccountChat: React.FC<Props> = memo(({ dataUser }) => {
                     to={`/message/${user.userName}/t/${user._id}`}
                     className={({ isActive }) =>
                         classNames({
-                            'bg-gray-200/70 block': isActive,
+                            'border-l-4 border-sky-500 block': isActive,
                         })
                     }
                 >

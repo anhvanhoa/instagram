@@ -12,12 +12,12 @@ const HeaderChat: React.FC<Props> = ({ user }) => {
     const navigate = useNavigate()
     const handleBack = () => navigate(-1)
     return (
-        <div className='flex items-center justify-between py-3 px-2 border-b'>
+        <div className='flex items-center justify-between py-3 px-2 border-b border-second'>
             <div className='flex items-center'>
                 <div className='mr-6' onClick={handleBack}>
                     <Icon
                         icon='formkit:left'
-                        className='text-2xl px-2 py-px cursor-pointer hover:bg-gray-100 hover:scale-110 transition-all rounded-lg'
+                        className='text-2xl px-2 py-px cursor-pointer hover:bg-second hover:scale-110 transition-all rounded-lg'
                     />
                 </div>
                 <div className='w-9 xs:w-11 xs:h-11 rounded-[50%] overflow-hidden'>
@@ -33,7 +33,7 @@ const HeaderChat: React.FC<Props> = ({ user }) => {
                     <p className='text-xs leading-3 text-gray-500 mt-1'>{user.fullName}</p>
                 </div>
             </div>
-            <div className='flex items-center gap-x-4 px-2'>
+            <div className='flex items-center gap-x-4 px-2 *:fill-white'>
                 <span className='cursor-pointer hidden'>
                     <IconApp type='call' />
                 </span>

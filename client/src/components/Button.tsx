@@ -39,7 +39,7 @@ const Button: React.FC<Props> = ({
         custom: '',
         primary: 'bg-primary text-white hover:bg-hover-btn-primary rounded-md',
         text: 'text-primary hover:text-hover-button',
-        second: 'bg-second rounded-md',
+        second: 'bg-gray-200 dark:bg-second rounded-md',
     }
     if (type === 'text') size = 'custom'
     const disableCls = disable ? 'opacity-70 pointer-events-none' : ''

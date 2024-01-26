@@ -24,7 +24,7 @@ const AccountChat = ({ user }: Props) => {
             title={user.fullName}
             className={classNames(
                 'cursor-pointer flex items-center justify-center lg:px-3',
-                'lg:justify-between py-2 px-2 xs:px-0 hover:bg-gray-100',
+                'lg:justify-between py-2 px-2 xs:px-0 hover:bg-sky-50/5',
             )}
             onClick={handleSeen}
         >
@@ -35,7 +35,6 @@ const AccountChat = ({ user }: Props) => {
                         icon='radix-icons:dot-filled'
                     />
                 )}
-
                 <div className=' lg:w-14 lg:h-14 h-12 w-12 mx-auto lg:mx-0 overflow-hidden rounded-[50%] xs:flex-shrink-0'>
                     <Img className='w-full h-full object-cover' src={user.avatar} alt='' />
                 </div>
@@ -48,9 +47,7 @@ const AccountChat = ({ user }: Props) => {
                     </div>
                     {user.chat && (
                         <p className='text-xs text-[#737373] whitespace-nowrap text-ellipsis overflow-hidden'>
-                            <span className='font-medium text-black'>
-                                {user.chat.idUser !== user._id ? 'You:' : ''}
-                            </span>
+                            <span className='font-medium'>{user.chat.idUser !== user._id ? 'You:' : ''}</span>
                             <span className='px-px'></span>
                             {user.chat.message}
                         </p>

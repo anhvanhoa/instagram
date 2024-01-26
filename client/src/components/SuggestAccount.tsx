@@ -36,7 +36,7 @@ const SuggestAccount: React.FC<Props> = ({ userP, type = 'text' }) => {
                 <AlertUnfollow user={userP} handleUnfollow={apiUnFollow(userP._id)} handleClose={hiddenUnfollow} />
             )}
             <div className='py-2 flex justify-between items-center'>
-                <AccountItem user={userP} size='small' />
+                <AccountItem user={userP} />
                 <Button
                     loading={isPending || isPending2}
                     onClick={stateFollow ? showUnfollow : apiFollow(userP._id)}

@@ -50,9 +50,11 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
         }
     }, [dataChat, idUser, userChat._id])
     return (
-        <section className='h-screen flex flex-col justify-between'>
-            <HeaderChat user={userChat} />
-            <div className='flex-1 overflow-y-scroll' ref={contentRef}>
+        <section className='flex flex-col h-full justify-between'>
+            <div className='flex-1 overflow-auto scrollbar-hidden' ref={contentRef}>
+                <div className='sticky top-0 bg-[rgba(var(--background-third-rgb),0.9)] backdrop-blur-md'>
+                    <HeaderChat user={userChat} />
+                </div>
                 <InfoChat user={userChat} />
                 <div className='px-4 mt-12 mb-2 pb-6'>
                     {messageNew.map((item) => (

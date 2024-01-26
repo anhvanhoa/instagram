@@ -31,7 +31,7 @@ const Explore = () => {
     return (
         <main>
             <HeaderMobile className='md:hidden' title='Explore' />
-            <div className='max-w-[975px] mx-auto md:pt-6 p-2 md:px-5'>
+            <div className='max-w-5xl mx-auto md:pt-6 p-2 md:px-5'>
                 {isLoading && <SkeletonExplore />}
                 <div className={cln('grid grid-cols-2 sm:grid-cols-3 grid-rows-1 gap-1 mb-7')}>
                     {data &&

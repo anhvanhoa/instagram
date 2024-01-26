@@ -14,7 +14,7 @@ const ItemNotify: React.FC<Porps> = ({ notify }) => {
             <div
                 className={classNames(
                     'flex notifys-center justify-between gap-3 py-2 px-4 my-1',
-                    'overflow-hidden hover:bg-gray-100 rounded-lg transition-all',
+                    'overflow-hidden hover:bg-gray-50/5 rounded-lg transition-all',
                 )}
             >
                 <div className='flex gap-3'>

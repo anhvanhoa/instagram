@@ -100,7 +100,7 @@ const CropImage = memo(({ setImages, listImage, onStep }: Props) => {
         <div>
             <HeadCreatePosts onPrev={() => onStep(1)} onNext={handleNext} title='Crop' />
             <div className='flex relative'>
-                <div className='w-[520px] h-[520px] bg-white'>
+                <div className='w-[520px] h-[520px] bg-main'>
                     <div className='flex justify-center items-center h-full w-[520px] relative'>
                         <SliderPosts
                             getIndexImg={handChangeIndex}

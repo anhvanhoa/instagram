@@ -1,7 +1,7 @@
 export const reelsThin = (
     <svg xmlns='http://www.w3.org/2000/svg' role='img' viewBox='0 0 24 24'>
         <line
-            fill='none'
+            fill='currentColor'
             stroke='currentColor'
             strokeLinejoin='round'
             strokeWidth='2'
@@ -11,7 +11,7 @@ export const reelsThin = (
             y2='7.002'
         ></line>
         <line
-            fill='none'
+            fill='currentColor'
             stroke='currentColor'
             strokeLinecap='round'
             strokeLinejoin='round'
@@ -22,11 +22,11 @@ export const reelsThin = (
             y2='7.002'
         ></line>
         <line
-            fill='none'
+            fill='currentColor'
             stroke='currentColor'
             strokeLinecap='round'
             strokeLinejoin='round'
-            strokeWidth='2'
+            strokeWidth='1.5'
             x1='7.207'
             x2='10.002'
             y1='2.11'
@@ -38,9 +38,10 @@ export const reelsThin = (
             stroke='currentColor'
             strokeLinecap='round'
             strokeLinejoin='round'
-            strokeWidth='2'
+            strokeWidth='1.5'
         ></path>
         <path
+            fill='currentColor'
             d='M9.763 17.664a.908.908 0 0 1-.454-.787V11.63a.909.909 0 0 1 1.364-.788l4.545 2.624a.909.909 0 0 1 0 1.575l-4.545 2.624a.91.91 0 0 1-.91 0Z'
             fillRule='evenodd'
         ></path>

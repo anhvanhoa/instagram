@@ -57,16 +57,19 @@ const Navbar: React.FC<Props> = memo(({ active }) => {
                 >
                     <li
                         onClick={handleActive(element.link, element.id)}
-                        className={classNames('list-none my-1.5 rounded-md transition-all hover:bg-gray-100')}
+                        className={classNames(
+                            'list-none my-1.5 rounded-md transition-all hover:bg-gray-100/80 hover:dark:bg-second',
+                        )}
                     >
                         <NavLink to={element.link} onClick={(e) => e.preventDefault()} className='group/item'>
                             <div
-                                className={classNames('rounded-md flex items-center p-3 overflow-hidden', {
-                                    'font-bold': element.id === id,
-                                })}
+                                className={classNames(
+                                    'rounded-md flex items-center p-3 overflow-hidden border border-transparent',
+                                    { 'font-medium text-pink-600': element.id === id },
+                                )}
                             >
                                 <span className='group-hover/item:scale-105 transition-all flex-shrink-0 relative'>
-                                    <IconApp type={element.id === id ? element.iconActive : element.icon} />
+                                    <IconApp type={element.icon} />
                                     {notifys.message && element.id === 5 && (
                                         <div className='w-2 h-2 rounded-[50%] bg-red-600 absolute -top-2 -right-1'></div>
                                     )}
@@ -76,7 +79,7 @@ const Navbar: React.FC<Props> = memo(({ active }) => {
                                 </span>
                                 <span
                                     className={classNames(
-                                        'pl-4 whitespace-nowrap',
+                                        'pl-3 whitespace-nowrap',
                                         'group-[.is-cllapse]:hidden hidden lg:block',
                                     )}
                                 >

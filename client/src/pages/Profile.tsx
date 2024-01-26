@@ -12,7 +12,6 @@ import follow from '~/apis/follow'
 import unfollow from '~/apis/unfollow'
 import SkeletonExploreItem from '~/components/SkeletonExploreItem'
 // import NotFound from './NotFound'
-import Footer from '~/layouts/components/Footer'
 import Tippy from '@tippyjs/react/headless'
 import BoxMenu from '~/layouts/components/BoxMenu'
 import HeaderMobile from '~/components/HeaderMobile'
@@ -160,7 +159,7 @@ const Profile = () => {
                             <p className='font-semibold'>{data.fullName}</p>
                             <div className='mt-2'>{data.bio}</div>
                         </div>
-                        <div className='grid grid-cols-3 text-sm border-t mt-6 py-3'>
+                        <div className='grid grid-cols-3 text-sm border-t border-second mt-6 py-3'>
                             <div>
                                 <p className='pr-1 text-center font-semibold'>{data.posts.length}</p>
                                 <p className='text-center text-gray-500'>posts</p>
@@ -175,7 +174,7 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                    <div className='border-t flex-1 flex flex-col pt-1 sm:pt-6 md:pt-8 px-1'>
+                    <div className='border-t border-second flex-1 flex flex-col pt-1 sm:pt-6 md:pt-8 px-1'>
                         <div className='grid grid-cols-2 sm:grid-cols-3 gap-px sm:gap-1 sm:px-8'>
                             {isLoading && (
                                 <>
@@ -214,9 +213,6 @@ const Profile = () => {
                             )}
                         </div>
                         <div className='flex-1'></div>
-                        <div className='hidden md:block'>
-                            <Footer />
-                        </div>
                     </div>
                 </div>
             )}

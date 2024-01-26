@@ -27,7 +27,7 @@ const SliderPosts = memo(
         return (
             <div>
                 <div className='flex relative'>
-                    <div className='w-[520px] h-[520px] bg-white'>
+                    <div className='w-[520px] h-[520px] bg-main'>
                         <div className='flex justify-center items-center h-full w-[520px] relative'>
                             <AvatarEditor
                                 ref={refAvatarEdit}

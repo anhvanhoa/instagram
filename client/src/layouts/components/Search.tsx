@@ -26,7 +26,7 @@ const Search: React.FC<Props> = ({ handleClickOutside }) => {
     }, [handleClickOutside])
     return (
         <div>
-            <h2 className='my-2 px-6 pt-3 pb-9 font-semibold text-2xl'>Tìm kiếm</h2>
+            <h2 className='my-2 px-4 py-6 font-semibold text-2xl'>Tìm kiếm</h2>
             <div className='overflow-hidden flex flex-col'>
                 <SearchInput isLoading={isLoading} setValue={setValue} value={value} />
                 <div className='pt-1 overflow-auto scroll-smooth'>
@@ -40,7 +40,7 @@ const Search: React.FC<Props> = ({ handleClickOutside }) => {
                     )}
                     {data &&
                         data.map((user) => (
-                            <div key={user._id} className='py-2 px-6 hover:bg-gray-100 relative'>
+                            <div key={user._id} className='py-2 px-6 hover:bg-gray-50/5 relative'>
                                 <Link to={user.userName} className='absolute inset-0'></Link>
                                 <AccountItem user={user} />
                             </div>

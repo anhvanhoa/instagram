@@ -8,7 +8,6 @@ import AccountItem from '~/components/AccountItem'
 import Img from '~/components/Img'
 import Slider from '~/components/Slider'
 import UserName from '~/components/UserName'
-import Footer from '~/layouts/components/Footer'
 import formatTimeAgo from '~/utils/handleTime'
 import InputComment from '~/components/InputComment'
 import { useLayoutEffect, useState } from 'react'
@@ -98,18 +97,18 @@ const Posts = () => {
             {posts && confirm && (
                 <Alert onCancel={cancel} title='Delete posts' textAgree='Delete' onAgree={apiDelete(posts._id)} />
             )}
-            <div className='sticky top-0 z-50 bg-white md:hidden '>
+            <div className='sticky top-0 z-50 md:hidden '>
                 {posts && <HeaderMobile title={posts.title}></HeaderMobile>}
             </div>
-            <div className='flex justify-center mx-0.5 xs:mx-4 sm:mx-8'>
+            <div className='flex justify-center mx-0.5 xs:mx-4 sm:mx-8 items-center'>
                 {isError && <NotFound />}
                 {isLoading && <SkeletonPostsPage />}
                 {posts && (
                     <div className='mt-0.5 xs:mt-6 justify-center overflow-hidden flex flex-col md:flex-row'>
                         <div
                             className={classNames(
-                                'md:min-w-[350px] md:max-w-[550px] md:max-h-[550px]',
-                                'flex items-center border border-r-0 border-r-transparent',
+                                'md:min-w-64 md:max-w-[600px] md:max-h-[600px]',
+                                'flex items-center md:border border-second border-r-0 border-r-transparent',
                             )}
                         >
                             <Slider maxElemnt={posts.contents.length}>
@@ -117,7 +116,7 @@ const Posts = () => {
                                     <div key={index} className='flex-shrink-0 w-full'>
                                         <Img
                                             src={img}
-                                            className='rounded-sm md:rounded-none md:max-h-[550px] md:min-h-[500px] object-contain w-full h-full'
+                                            className='rounded-sm md:rounded-none md:max-h-[600px] md:min-h-[500px] object-contain w-full h-full'
                                         />
                                     </div>
                                 ))}
@@ -125,12 +124,12 @@ const Posts = () => {
                         </div>
                         <div
                             className={classNames(
-                                'flex-shrink-0 md:w-72 md:border relative bg-gray-50/50 md:bg-white',
-                                'md:h-[550px] h-[450px] flex flex-col md:rounded-ee-lg md:rounded-se-lg rounded-sm',
+                                'flex-shrink-0 md:w-80 md:border border-second relative',
+                                'md:h-[600px] h-[450px] flex flex-col md:rounded-ee-lg md:rounded-se-lg rounded-sm',
                             )}
                         >
-                            <div className='sticky top-0 bg-white'>
-                                <div className='flex justify-between items-center md:px-4 px-2 py-4 md:py-3 border-b'>
+                            <div className='sticky top-0'>
+                                <div className='flex justify-between items-center md:px-4 px-2 py-4 md:py-3 border-b border-second'>
                                     <div className='relative'>
                                         <AccountItem user={posts.author} size='small' />
                                     </div>
@@ -169,7 +168,7 @@ const Posts = () => {
                                         <div>
                                             <Icon
                                                 icon='solar:menu-dots-bold'
-                                                className='cursor-pointer text-xl hover:bg-gray-100 px-1 rounded-md'
+                                                className='cursor-pointer text-xl hover:bg-gray-100 hover:dark:bg-second px-1 rounded-md'
                                             />
                                         </div>
                                     </Tippy>
@@ -197,7 +196,7 @@ const Posts = () => {
                                     ))}
                                 </div>
                             </div>
-                            <div className='sticky bottom-0 bg-white pt-4 border-t'>
+                            <div className='sticky bottom-0 bg-transparent pt-4 border-second border-t'>
                                 <div className='flex items-center justify-between px-4'>
                                     <div className='flex items-center gap-4'>
                                         <span className='cursor-pointer'>
@@ -233,7 +232,7 @@ const Posts = () => {
                                     <p className='text-gray-500 text-xs'>{formatTimeAgo(posts.createdAt)}</p>
                                 </div>
                             </div>
-                            <div className='border-t px-2 py-2.5 bg-white'>
+                            <div className='border-t px-2 py-2.5 border-second'>
                                 <InputComment
                                     comment={comment}
                                     setComment={setComment}
@@ -244,10 +243,6 @@ const Posts = () => {
                         </div>
                     </div>
                 )}
-            </div>
-            <div className='mt-16'></div>
-            <div className='mt-12 hidden md:block'>
-                <Footer />
             </div>
         </div>
     )

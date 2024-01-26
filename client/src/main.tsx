@@ -5,7 +5,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import ProviderUser from './store/ProviderUser.tsx'
 import './config/firebase'
 import './index.css'
-
+const theme = localStorage.getItem('theme')
+theme && window.document.lastElementChild?.classList.add('dark')
 const queryClient = new QueryClient()
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

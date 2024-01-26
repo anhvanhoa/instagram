@@ -23,7 +23,7 @@ const OverLay = ({ children, onClose, iconClose, className }: Props) => {
                     <Icon icon='carbon:close' />
                 </div>
             )}
-            <div className='absolute inset-0 bg-[#000000d6]/30' onClick={onClose}></div>
+            <div className='absolute inset-0 bg-black dark:bg-third opacity-20' onClick={onClose}></div>
             <div className='z-[111]'>{children}</div>
         </section>
     )

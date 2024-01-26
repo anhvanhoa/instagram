@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import images from '~/assets'
 import IconApp from '~/assets/icons/IconApp'
 import { Link } from 'react-router-dom'
 import socket from '~/socketIo'
@@ -16,12 +15,12 @@ const HeaderHomeMobile = () => {
         }
     }, [])
     return (
-        <div className='md:hidden sticky top-0 bg-white border-b px-4 py-3 z-[100]'>
+        <div className='md:hidden sticky top-0 border-second bg-[rgba(var(--background-third-rgb),0.5)] border-b px-4 py-3 z-[100] backdrop-blur-xl'>
             {search && <SearchMobile handleOnOffSearch={handleOnOffSearch} />}
             <div className='flex justify-between items-center gap-5'>
                 <div>
-                    <Link to='/' title='insatgram' className=''>
-                        <img src={images.logoText} className='pt-px' />
+                    <Link to='/' title='insatgram'>
+                        <IconApp type='logo-icon' className='w-6 dark:fill-white' />
                     </Link>
                 </div>
                 <div className='flex items-center gap-x-6 relative'>

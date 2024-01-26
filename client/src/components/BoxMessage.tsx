@@ -15,7 +15,7 @@ interface Props {
 }
 const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idChat, idUser }) => {
     const positionType: Record<TypePosition, string> = {
-        left: 'bg-second',
+        left: 'dark:bg-second bg-gray-100',
         right: 'bg-primary text-white',
     }
     const handleDeleteSend = () => {
@@ -48,11 +48,11 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
                         className='rounded-xl'
                         interactive
                         placement='bottom-end'
-                        theme='light'
+                        theme='dark'
                         trigger='click'
                         content={<SettingMessage onClick={handleDeleteSend} />}
                     >
-                        <div className='px-2 py-1'>
+                        <div className='px-2 py-0.5'>
                             <Icon icon='solar:menu-dots-bold' className='cursor-pointer' />
                         </div>
                     </Tippy>

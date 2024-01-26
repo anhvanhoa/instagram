@@ -10,6 +10,7 @@ import { menuSolid, menuThin, setting, activity, mode, problem, saved } from './
 import { comment, save, share, shareFail, smile } from './posts'
 import { ratioHorizontal, ratioSquare, ratioVertical, zoom } from './ratio'
 import { pen, call, callVideo, info, micro, picture } from './chat'
+import { logoIcon, logoText } from './logo'
 export type NameIcon =
     | 'home-thin'
     | 'home-solid'
@@ -52,6 +53,8 @@ export type NameIcon =
     | 'micro'
     | 'picture'
     | 'message-chat'
+    | 'logo-text'
+    | 'logo-icon'
 const Icons: Record<NameIcon, React.ReactNode> = {
     'home-thin': homeThin,
     'home-solid': homeSolid,
@@ -94,6 +97,8 @@ const Icons: Record<NameIcon, React.ReactNode> = {
     micro,
     picture,
     'message-chat': messageChat,
+    'logo-text': logoText,
+    'logo-icon': logoIcon,
 }
 
 export default Icons

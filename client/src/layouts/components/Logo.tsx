@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { memo } from 'react'
 import { Link } from 'react-router-dom'
-import images from '~/assets'
+import IconApp from '~/assets/icons/IconApp'
 interface Props {
     handleId: (id: number) => () => void
 }
@@ -15,10 +15,10 @@ const Logo: React.FC<Props> = memo(({ handleId }) => {
                         'group-[.is-cllapse]:scale-100 transition-all visible lg:scale-50 lg:invisible',
                     )}
                 >
-                    <img src={images.logoIcon} alt='logo' />
+                    <IconApp type='logo-icon' className='dark:fill-white' />
                 </div>
-                <div className='w-[103px] h-[29px] flex-shrink-0 group-[.is-cllapse]:hidden hidden lg:block'>
-                    <img src={images.logoText} alt='logo' />
+                <div className='flex-shrink-0 group-[.is-cllapse]:hidden hidden lg:block'>
+                    <IconApp type='logo-text' className='w-[103px] h-[29px]' />
                 </div>
             </Link>
         </div>

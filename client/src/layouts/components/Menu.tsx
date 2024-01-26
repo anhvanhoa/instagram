@@ -31,15 +31,15 @@ const Menu = () => {
                 <div
                     className={classNames(
                         {
-                            'isActive font-bold': active,
+                            'isActive text-pink-600 font-medium': active,
                         },
-                        'flex items-center p-3 my-1 cursor-pointer select-none rounded-md hover:bg-gray-100 group',
+                        'flex items-center p-3 my-1 cursor-pointer select-none rounded-md hover:bg-gray-100/80 hover:dark:bg-second group',
                     )}
                     onClick={handleMenu}
                 >
                     <div className='flex items-center'>
                         <span className={classNames('group-hover:scale-105 transition-all')}>
-                            <IconApp type={active ? 'menu-solid' : 'menu-thin'} />
+                            <IconApp type={'menu-thin'} />
                         </span>
                         <p
                             className={classNames(

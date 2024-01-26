@@ -118,10 +118,9 @@ const EditProfile = () => {
     }
     return (
         <div>
-            <h3 className='mt-3 md:mt-6 ml-6 font-semibold text-2xl'>Settings</h3>
-            <div className='px-2'>
-                <div className='max-w-2xl mx-auto p-4 sm:p-8 border mt-4 md:mt-8 pb-8'>
-                    <h4 className='text-2xl'>Edit profile</h4>
+            <div className=''>
+                <div className='max-w-2xl mx-auto p-4 sm:p-8 border border-second rounded-xl mb-2 md:mt-4 pb-8'>
+                    <h4 className='font-medium text-2xl'>Edit profile</h4>
                     <div className='mt-10 md:px-20'>
                         <div className='flex gap-4 md:gap-8 mt-7'>
                             <div className='md:w-1/4 md:flex justify-end'>
@@ -149,12 +148,12 @@ const EditProfile = () => {
                             </div>
                         </div>
                         <div className='md:flex gap-4 md:gap-8 mt-4 md:mt-7'>
-                            <p className='font-semibold mb-2 md:mb-0 md:w-1/4 md:text-right'>Bio</p>
+                            <p className='mb-2 md:mb-0 md:w-1/4 md:text-right'>Bio</p>
                             <div className='flex-1'>
                                 <textarea
                                     value={formData.bio}
                                     onChange={handleChange('bio')}
-                                    className='w-full border rounded-md p-1 outline-none'
+                                    className='w-full border border-second rounded-md p-1.5 outline-none bg-transparent'
                                     rows={2}
                                 >
                                     {formData.bio}
@@ -162,61 +161,65 @@ const EditProfile = () => {
                             </div>
                         </div>
                         <div className='md:flex md:gap-8 mt-4 md:mt-7'>
-                            <p className='font-semibold w-1/4 mb-1 md:mb-0 md:text-right'>Email</p>
+                            <p className='w-1/4 mb-1 md:mb-0 md:text-right'>Email</p>
                             <div className='flex-1'>
                                 <input
                                     disabled
                                     type='text'
                                     value={state.email}
-                                    className='border w-full pl-1 py-1 outline-none rounded-md'
+                                    className='border border-second bg-transparent w-full pl-1 py-1 outline-none rounded-md'
                                 />
                             </div>
                         </div>
                         <div className='md:flex md:gap-8 mt-4 md:mt-7'>
-                            <p className='font-semibold w-1/4 mb-1 md:mb-0 md:text-right'>Mobile number</p>
+                            <p className='w-1/4 mb-1 md:mb-0 md:text-right'>Mobile number</p>
                             <div className='flex-1'>
                                 <input
                                     disabled
                                     type='text'
                                     value={state.numberPhone}
-                                    className='border w-full pl-1 py-1 outline-none rounded-md'
+                                    className='border border-second bg-transparent w-full pl-1 py-1 outline-none rounded-md'
                                 />
                             </div>
                         </div>
                         <div className='md:flex gap-8 mt-4 md:mt-7'>
-                            <p className='font-semibold w-1/4 mb-1 md:mb-0 md:text-right'>Full name</p>
+                            <p className='w-1/4 mb-1 md:mb-0 md:text-right'>Full name</p>
                             <div className='flex-1'>
                                 <input
                                     onChange={handleChange('fullName')}
                                     type='text'
                                     value={formData.fullName}
-                                    className='border w-full pl-1 py-1 outline-none rounded-md'
+                                    className='border border-second bg-transparent w-full pl-1.5 py-1 outline-none rounded-md'
                                 />
                             </div>
                         </div>
                         <div className='flex gap-7 md:block'>
                             <div className='md:flex gap-8 mt-4 md:mt-7 flex-1'>
-                                <p className='font-semibold w-1/4 mb-1 md:mb-0 md:text-right'>Gender</p>
+                                <p className='w-1/4 mb-1 md:mb-0 md:text-right'>Gender</p>
                                 <div className='flex-1'>
                                     <select
-                                        className='border rounded-md w-full h-8'
+                                        className='border border-second bg-transparent rounded-md w-full h-8'
                                         value={formData.gender}
                                         onChange={handleChange('gender')}
                                     >
-                                        <option hidden></option>
-                                        <option value='Male'>Male</option>
-                                        <option value='Female'>Female</option>
+                                        <option className='bg-main' hidden></option>
+                                        <option className='bg-main' value='Male'>
+                                            Male
+                                        </option>
+                                        <option className='bg-main' value='Female'>
+                                            Female
+                                        </option>
                                     </select>
                                 </div>
                             </div>
                             <div className='md:flex gap-8 mt-4 md:mt-7 flex-[2]'>
-                                <p className='font-semibold w-1/4 mb-1 md:mb-0 md:text-right'>Birthday</p>
+                                <p className='w-1/4 mb-1 md:mb-0 md:text-right'>Birthday</p>
                                 <div className='flex-1'>
                                     <input
                                         onChange={handleChange('birthday')}
                                         type='date'
                                         value={formData.birthday}
-                                        className='border w-full pl-1 py-1 outline-none rounded-md'
+                                        className='border border-second bg-transparent w-full pl-1 py-1 outline-none rounded-md'
                                     />
                                 </div>
                             </div>

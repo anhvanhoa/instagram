@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Icon } from '@iconify/react'
 import useDebounce from '~/hooks/useDebounce'
+import classNames from 'classnames'
 interface Props {
     value: string
     setValue: (value: React.SetStateAction<string>) => void
@@ -18,12 +19,15 @@ const SearchInput = ({ value, setValue, isLoading }: Props) => {
     const handleValue = (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.target.value)
     return (
         <div className='mx-4'>
-            <div className='mb-6 h-10 relative overflow-hidden rounded-md bg-gray-100'>
+            <div className='mb-4 h-10 relative overflow-hidden rounded-md border border-second'>
                 {iconSearch || (
                     <input
                         autoFocus
                         type='text'
-                        className='py-1 px-4 bg-gray-100 w-full outline-none h-full border-none z-10 text-black placeholder:font-thin'
+                        className={classNames(
+                            'py-1 px-4 bg-transparent w-full outline-none h-full',
+                            'border-none z-10 placeholder:font-thin border border-second',
+                        )}
                         placeholder='Tìm kiếm'
                         value={value}
                         onChange={handleValue}
@@ -34,15 +38,13 @@ const SearchInput = ({ value, setValue, isLoading }: Props) => {
                 )}
                 {iconSearch && (
                     <div
-                        className='absolute top-0 left-3 flex items-center w-full h-full text-[#909090] cursor-text'
+                        className='absolute top-0 left-3 flex items-center w-full h-full dark:text-second cursor-text'
                         onClick={handleSearch}
                     >
                         <span className='mt-[2px] mr-[10px]'>
                             <Icon className='text-2xl' icon='basil:search-solid' />
                         </span>
-                        <span className='overflow-hidden w-28 text-ellipsis font-thin text-[#909090] select-none '>
-                            {value || 'Tìm kiếm'}
-                        </span>
+                        <span className='overflow-hidden w-28 text-ellipsis select-none '>{value || 'Tìm kiếm'}</span>
                         <span className='w-8 flex-shrink'></span>
                     </div>
                 )}

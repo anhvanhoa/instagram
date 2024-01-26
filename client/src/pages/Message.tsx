@@ -34,41 +34,43 @@ const Message = () => {
         enabled: Boolean(params.username) || Boolean(params.id),
     })
     return (
-        <main className='w-full h-screen flex flex-col'>
+        <main className='w-full h-full flex flex-col'>
             <HeaderMobile
                 title='Chat'
                 className={classNames('xs:hidden', {
                     hidden: params.id && params.username,
                 })}
             />
-            <div className='grid grid-cols-1 xs:grid-cols-[65px,_1fr] lg:grid-cols-[350px,_1fr] flex-1'>
+            <div className='grid grid-cols-1 xs:grid-cols-[65px,_1fr] lg:grid-cols-[350px,_1fr] flex-1 overflow-hidden'>
                 <div
-                    className={classNames('border-[#ccc] xs:border-r overflow-y-hidden xs:block', {
+                    className={classNames('border-second xs:border-r overflow-y-hidden xs:block', {
                         hidden: params.id && params.username,
                     })}
                 >
                     {isLoadingUser && <AccountChatSkeleton />}
-                    <div className={classNames({ hidden: isLoadingUser })}>
-                        <div className='lg:flex tex items-center justify-between px-6 py-5 hidden border-b'>
+                    <div
+                        className={classNames('h-full flex flex-col overflow-auto scrollbar-hidden', {
+                            hidden: isLoadingUser,
+                        })}
+                    >
+                        <div className='sticky top-0 lg:flex items-center justify-between px-6 py-5 hidden border-b border-second bg-[rgba(var(--background-third-rgb),0.8)] backdrop-blur-md z-10'>
                             <h2 className='text-xl font-bold'>{state.fullName}</h2>
                             <div className='px-2 cursor-pointer'>
                                 <IconApp type='pen' />
                             </div>
                         </div>
-                        {dataUser && <ListAccountChat dataUser={dataUser} />}
+                        <div className=''>{dataUser && <ListAccountChat dataUser={dataUser} />}</div>
                     </div>
                 </div>
                 <div
-                    className={classNames('xs:block', {
+                    className={classNames('xs:block overflow-hidden', {
                         hidden: !params.id || !params.username,
                     })}
                 >
                     {(isLoading || isLoadingUser) && !data._id && <NotMessageSkeleton />}
                     {(!params.id || !params.username) && !data._id && dataUser && <NotMessage />}
                     {params.id && params.username && dataChat && (
-                        <div>
-                            <BoxChat idUser={state._id} dataChat={dataChat} userChat={data} />
-                        </div>
+                        <BoxChat idUser={state._id} dataChat={dataChat} userChat={data} />
                     )}
                 </div>
             </div>

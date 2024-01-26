@@ -26,7 +26,7 @@ const InputComment: React.FC<Props> = ({ comment, setComment, apiComment, positi
                                 render={() => <Emoij onSelect={changeEmoij}></Emoij>}
                             >
                                 <div className='mt-[1px] cursor-pointer transition-all w-6 hover:scale-110'>
-                                    <IconApp type='smile' className='w-5 h-5' />
+                                    <IconApp type='smile' className='w-5 h-5 fill-white' />
                                 </div>
                             </Tippy>
                         </div>
@@ -35,7 +35,7 @@ const InputComment: React.FC<Props> = ({ comment, setComment, apiComment, positi
                         <input
                             value={comment}
                             onChange={changeComment}
-                            className='text-sm w-full outline-none'
+                            className='text-sm w-full outline-none bg-transparent'
                             type='text'
                             placeholder='Add a comment'
                         />
@@ -54,8 +54,8 @@ const InputComment: React.FC<Props> = ({ comment, setComment, apiComment, positi
                                 placement={'top-end'}
                                 render={() => <Emoij height={200} onSelect={changeEmoij}></Emoij>}
                             >
-                                <div className='mt-[1px] cursor-pointer transition-all w-6 hover:scale-110'>
-                                    <IconApp type='smile' className='w-5 h-5' />
+                                <div className='mt-[1px] cursor-pointer transition-all w-6 hover:scale-110 ml-1'>
+                                    <IconApp type='smile' className='w-5 h-5 dark:fill-white' />
                                 </div>
                             </Tippy>
                         )}

@@ -17,7 +17,7 @@ interface Props {
 const TippyUser = ({ data, onFollow, onUnFollow, isFollow, loading }: Props) => {
     return (
         <Wrapper>
-            <div className='bg-white w-[350px] rounded-xl'>
+            <div className='bg-main border border-second w-[300px] rounded-xl'>
                 <div className='flex items-center p-4'>
                     <Img className='w-12 h-12 rounded-[50%]' src={data.avatar || images.noAvatar} alt='' />
                     <div className='pl-4'>
@@ -25,21 +25,21 @@ const TippyUser = ({ data, onFollow, onUnFollow, isFollow, loading }: Props) => 
                         <p className='text-gray-500 text-sm font-normal'>{data.fullName}</p>
                     </div>
                 </div>
-                <div className='flex items-center justify-between mb-4 mx-5 text-sm'>
+                <div className='flex items-center justify-between mb-4 mx-5 text-xs *:font-medium'>
                     <div className='text-center'>
-                        <p className='font-bold'>{data.posts.length}</p>
+                        <p className='text-sm'>{data.posts.length}</p>
                         <p>posts</p>
                     </div>
                     <div className='text-center'>
-                        <p className='font-bold'>{data.followers.length}</p>
+                        <p className='text-sm'>{data.followers.length}</p>
                         <p>followers</p>
                     </div>
                     <div className='text-center'>
-                        <p className='font-bold'>{data.following.length}</p>
+                        <p className='text-sm'>{data.following.length}</p>
                         <p>following</p>
                     </div>
                 </div>
-                <div className='grid grid-cols-3 gap-1'>
+                <div className='grid grid-cols-3 gap-1 px-1'>
                     {data.posts.length > 0 &&
                         data.posts.map((element, index) => (
                             <Link key={index} to='/' className='aspect-square'>
@@ -54,19 +54,19 @@ const TippyUser = ({ data, onFollow, onUnFollow, isFollow, loading }: Props) => 
                             iconL={loading && <Icon icon='nonicons:loading-16' className='animate-spin text-white' />}
                             className='w-full'
                         >
-                            {!loading && <>{!isFollow && 'Theo dõi'}</>}
+                            {!loading && <>{!isFollow && 'Follow'}</>}
                         </Button>
                     )}
                     {isFollow && (
                         <div className='flex items-center gap-4'>
                             <div className='w-full'>
                                 <Link to={`/message/${data.userName}/t/${data._id}`}>
-                                    <Button iconL={<IconApp type='message' />} className='w-full'>
+                                    <Button iconL={<IconApp type='message' className='w-4' />} className='w-full'>
                                         Message
                                     </Button>
                                 </Link>
                             </div>
-                            <Button onClick={onUnFollow} type={'second'} className='w-full hover:bg-[#dbdbdb]'>
+                            <Button onClick={onUnFollow} type={'second'} className='w-full'>
                                 Following
                             </Button>
                         </div>

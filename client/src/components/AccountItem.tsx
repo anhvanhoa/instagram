@@ -66,7 +66,7 @@ const AccountItem: React.FC<Props> = ({ user, size = 'medium' }) => {
                     <Link to={`/${user.userName}`}>
                         <Img
                             className={classNames(
-                                'rounded-[50%] aspect-square object-cover relative z-10',
+                                'rounded-[50%] aspect-square object-cover relative z-10 mt-[2px]',
                                 avatarSize[size],
                             )}
                             src={user.avatar}
@@ -76,7 +76,8 @@ const AccountItem: React.FC<Props> = ({ user, size = 'medium' }) => {
                 </div>
                 <div
                     className={classNames({
-                        'ml-5': size === 'medium' || size === 'big',
+                        'ml-5': size === 'big',
+                        'ml-3.5': size === 'medium',
                         'ml-2': size === 'small',
                     })}
                 >

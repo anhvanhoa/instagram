@@ -56,7 +56,7 @@ const UploadFile = memo(({ setStep, setImages, hiddenHead }: Props) => {
         <div className='flex flex-col justify-center h-full'>
             <div className='flex flex-col justify-center h-full'>
                 <div
-                    className={classNames('flex justify-center items-center h-11 border-b border-[#ccc] border-solid', {
+                    className={classNames('flex justify-center items-center h-11 border-b border-second', {
                         hidden: hiddenHead,
                     })}
                 >
