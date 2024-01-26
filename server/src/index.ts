@@ -6,7 +6,7 @@ import morgan from 'morgan'
 import { configDotenv } from 'dotenv'
 import dbRedis from './config/dbRedis'
 import cookieParser from 'cookie-parser'
-import { join } from 'path'
+import path, { join } from 'path'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import {
@@ -15,8 +15,9 @@ import {
     InterServerEvents,
     SocketData,
 } from './types'
-// configDotenv({ path: '.env.production' })
-configDotenv({ path: '.env.local' })
+import fs from 'fs'
+const mode = 'dev'
+configDotenv({ path: mode === 'dev' ? '.env.local' : '.env.production' })
 const app = express()
 const port = 8008
 const httpServer = createServer(app)
@@ -31,10 +32,12 @@ const io = new Server<
     SocketData
 >(httpServer, { cors: configCors })
 ioEvent(io)
-
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {
+    flags: 'a',
+})
 app.use(express.static(join(__dirname, '../public')))
 app.use(express.json())
-app.use(morgan('tiny'))
+app.use(morgan('tiny', { stream: mode === 'dev' ? undefined : accessLogStream }))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors(configCors))
