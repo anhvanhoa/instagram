@@ -29,6 +29,16 @@ body {
     background-color: rgb(var(--background-rgb));
     color: rgb(var(--text-rgb));
 }
+html::-webkit-scrollbar {
+    width: 5px;
+}
+html::-webkit-scrollbar-track {
+    background-color: rgb(var(--background-rgb));
+}
+html::-webkit-scrollbar-thumb {
+    background-color: rgb(var(--background-second-rgb));
+    border-radius: 50px;
+}
 
 @layer components {
     .scrollbar-hidden {

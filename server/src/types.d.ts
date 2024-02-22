@@ -37,6 +37,11 @@ export interface Posts extends DocumentModel<Posts> {
     contents: []
     isDelete: boolean
 }
+export interface Token extends DocumentModel<Posts> {
+    _id: string
+    username: string
+    token: string
+}
 
 export interface ResUser extends Omit<User, 'password'> {
     accessToken: string

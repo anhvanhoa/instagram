@@ -54,7 +54,7 @@ const NavbarMobile = () => {
         }
     }, [])
     return (
-        <div className='md:hidden'>
+        <div className='md:hidden mt-16'>
             <div className='fixed w-full bottom-0 bg-main border-second border-t z-50'>
                 <div className='grid grid-cols-6 px-1 xs:px-2 md:px-4 py-4'>
                     {dataNavbar.map((navbar) => (

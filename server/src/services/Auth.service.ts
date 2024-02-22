@@ -1,6 +1,7 @@
 import { RegisterDto } from '~/services/types'
 import { UserModel } from '~/models/index.model'
-import { Info, LoginFB, LoginType, ResUser, User, UserFacebook } from '~/types'
+import TokenModel from '~/models/Token.model'
+import { Info, LoginFB, LoginType, ResUser, User } from '~/types'
 import { hash, compare } from 'bcrypt'
 import isEmail from 'validator/lib/isEmail'
 import isTell from 'validator/lib/isMobilePhone'
@@ -93,7 +94,9 @@ export class AuthService {
             })
             const accessToken = Token.createToken({ userName: user.userName }, '120s')
             const refreshToken = Token.createToken({ userName: user.userName }, '1h')
-            await redis.set(user.userName, refreshToken)
+            await TokenModel.findOneAndDelete({ username: user.userName })
+            await TokenModel.create({ token: refreshToken, username: user.userName })
+            // await redis.set(user.userName, refreshToken)
             const { password: pass, ...newUser } = user._doc
             const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
             return httpResponse(HttpStatus.OK, dataUser)
@@ -103,7 +106,9 @@ export class AuthService {
             throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, { msg: 'Server error' })
         const accessToken = Token.createToken({ userName: user.userName }, '120s')
         const refreshToken = Token.createToken({ userName: user.userName }, '1h')
-        await redis.set(user.userName, refreshToken)
+        // await redis.set(user.userName, refreshToken)
+        await TokenModel.findOneAndDelete({ username: user.userName })
+        await TokenModel.create({ token: refreshToken, username: user.userName })
         const { password: pass, ...newUser } = user._doc
         const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
         return httpResponse(HttpStatus.OK, dataUser)
@@ -135,14 +140,17 @@ export class AuthService {
             })
         const accessToken = Token.createToken({ userName: user.userName }, '120s')
         const refreshToken = Token.createToken({ userName: user.userName }, '1h')
-        await redis.set(user.userName, refreshToken)
+        // await redis.set(user.userName, refreshToken)
+        await TokenModel.findOneAndDelete({ username: user.userName })
+        await TokenModel.create({ token: refreshToken, username: user.userName })
         const { password: pass, ...newUser } = user._doc
         const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
         return httpResponse(HttpStatus.OK, dataUser)
     }
     //
     async logout(userName: string) {
-        await redis.del(userName)
+        // await redis.del(userName)
+        await TokenModel.deleteOne({ username: userName })
         return httpResponse(HttpStatus.OK, { msg: 'Logout success' })
     }
     //
@@ -158,7 +166,8 @@ export class AuthService {
                 userName = data.userName
             }
         })
-        const tokenDb = await redis.get(userName)
+        // const tokenDb = await redis.get(userName)
+        const tokenDb = await TokenModel.findOne()
         if (!tokenDb) {
             throw httpResponse(HttpStatus.UNAUTHORIZED, {
                 msg: 'Login please !',
@@ -166,7 +175,9 @@ export class AuthService {
         }
         const accessToken = Token.createToken({ userName }, '120s')
         const refreshToken = Token.createToken({ userName }, '7d')
-        await redis.set(userName, refreshToken)
+        // await redis.set(userName, refreshToken)
+        await TokenModel.findOneAndDelete({ username: userName })
+        await TokenModel.create({ token: refreshToken, username: userName })
         return httpResponse(HttpStatus.OK, { accessToken, refreshToken })
     }
 }

@@ -15,7 +15,7 @@ const LayoutMain = () => {
     return (
         <div className='flex group min-h-dvh'>
             {nav && <Sidebar />}
-            <div className='md:p-6 md:pl-0 p-0 max-h-screen w-full'>
+            <div className='md:p-6 md:pl-0 p-0 scrollbar max-h-screen w-full'>
                 <div
                     className={classNames(
                         'flex-1 relative w-full h-full md:border dark:border-second',

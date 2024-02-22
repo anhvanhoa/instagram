@@ -94,7 +94,7 @@ const Posts = () => {
         }
     }, [posts])
     return (
-        <div>
+        <div className='h-full overflow-auto scrollbar'>
             {edit && posts && <EditPosts onSuccess={refetch} onClose={handleCloseEdit} posts={posts} />}
             {posts && confirm && (
                 <Alert onCancel={cancel} title='Delete posts' textAgree='Delete' onAgree={apiDelete(posts._id)} />

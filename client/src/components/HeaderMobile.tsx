@@ -21,7 +21,7 @@ const HeaderMobile: React.FC<Props> = ({ onNext, title, contextNext, className }
                         />
                     </div>
                     <div>
-                        <p className='font-semibold'>{title}</p>
+                        <p className='font-semibold line-clamp-1 px-4'>{title}</p>
                     </div>
                     <div className='min-w-[25px]' onClick={onNext}>
                         {contextNext}

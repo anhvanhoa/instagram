@@ -10,7 +10,7 @@ const dbRedis = () => {
         console.log('Connect redis fail!')
         redisConnect.quit()
     })
-    redis = redisConnect.on('connect', () => console.log('Connect redis success!'))
+    redis = redisConnect.on('connect', () => console.log('connect redis success!'))
 }
 export { redis }
 export default dbRedis
