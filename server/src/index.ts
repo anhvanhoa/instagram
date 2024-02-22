@@ -16,8 +16,7 @@ import {
     SocketData,
 } from './types'
 import fs from 'fs'
-const mode = 'dev'
-configDotenv({ path: mode === 'dev' ? '.env.local' : '.env.production' })
+configDotenv({ path: '.env.production' }) //.env.local
 const app = express()
 const port = 8008
 const httpServer = createServer(app)
@@ -37,7 +36,7 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
 })
 app.use(express.static(join(__dirname, '../public')))
 app.use(express.json())
-app.use(morgan('tiny', { stream: mode === 'dev' ? undefined : accessLogStream }))
+app.use(morgan('tiny', { stream: accessLogStream }))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors(configCors))
