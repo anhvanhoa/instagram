@@ -1,7 +1,7 @@
 import { RegisterDto } from '~/services/types'
 import { UserModel } from '~/models'
 import TokenModel from '~/models/Token.model'
-import { LoginFB, LoginType, ResUser } from '~/types'
+import { LoginFB, LoginType, ResUser } from '~/type'
 import { hash, compare, genSalt } from 'bcrypt'
 import isEmail from 'validator/lib/isEmail'
 import isTell from 'validator/lib/isMobilePhone'

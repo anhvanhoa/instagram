@@ -3,7 +3,7 @@ import { HttpStatus } from '~/http-status.enum'
 import NotificationModel from '~/models/Notification.model'
 import PostsModel from '~/models/Post.model'
 import UserModel from '~/models/User.model'
-import { NotificationEmit } from '~/types'
+import { NotificationEmit } from '~/type'
 import { httpResponse } from '~/utils/HandleRes'
 
 export class Notification {

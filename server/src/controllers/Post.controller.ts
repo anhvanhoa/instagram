@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 import postsProvider from '~/services/Post.service'
-import { JwtData } from '~/types'
+import { JwtData } from '~/type'
 class PostsController {
     async posts(req: Request, res: Response) {
         try {

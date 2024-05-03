@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 import userProvider from '~/services/User.service'
-import { JwtData } from '~/types'
+import { JwtData } from '~/type'
 
 class UserController {
     async search({ query, user }: Request, res: Response) {

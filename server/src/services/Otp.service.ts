@@ -1,6 +1,6 @@
 import { CodeModel } from '~/models'
 import { randomCode, sendMail } from '~/utils/Otp'
-import { Code } from '~/types'
+import { Code } from '~/type'
 import { AuthService } from './Auth.service'
 import { httpResponse } from '~/utils/HandleRes'
 import { HttpStatus } from '~/http-status.enum'

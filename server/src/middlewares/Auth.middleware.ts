@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 import otpProvider from '~/services/Otp.service'
-import { Code } from '~/types'
+import { Code } from '~/type'
 import { httpResponse } from '~/utils/HandleRes'
 class AuthMiddleware {
     public async verifyOtp(req: Request, res: Response, next: NextFunction) {

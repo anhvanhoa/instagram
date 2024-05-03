@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 import notificationProvider from '~/services/Notification.service'
-import { JwtData } from '~/types'
+import { JwtData } from '~/type'
 
 class NotifyController {
     async notification({ user }: Request, res: Response) {

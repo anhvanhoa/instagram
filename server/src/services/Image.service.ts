@@ -1,6 +1,6 @@
 import Jimp from 'jimp'
 import { HttpStatus } from '~/http-status.enum'
-import { SizeCrop } from '~/types'
+import { SizeCrop } from '~/type'
 import cloudinaryProvider from '~/utils/Cloudnary'
 import { httpResponse } from '~/utils/HandleRes'
 import fs from 'fs'

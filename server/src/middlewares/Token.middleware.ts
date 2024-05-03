@@ -4,7 +4,7 @@ import isJWT from 'validator/lib/isJWT'
 import { HttpStatus } from '~/http-status.enum'
 import { UserModel } from '~/models'
 import TokenModel from '~/models/Token.model'
-import { JwtData, SocketIo } from '~/types'
+import { JwtData, SocketIo } from '~/type'
 import Token from '~/utils/Token'
 
 class TokenMiddleware {

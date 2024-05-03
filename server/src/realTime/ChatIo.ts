@@ -1,5 +1,5 @@
 import chatProvider from '~/services/Chat.service'
-import { SocketIo } from '~/types'
+import { SocketIo } from '~/type'
 
 class ChatIo {
     joinRoom = (socket: SocketIo) =>
