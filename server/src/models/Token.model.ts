@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import { Token } from '~/type'
+import { Token } from '~/types/token'
 
 const tokenSchema = new Schema<Token>(
     {

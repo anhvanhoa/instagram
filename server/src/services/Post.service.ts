@@ -3,7 +3,7 @@ import { HttpStatus } from '~/http-status.enum'
 import CommentModel from '~/models/Comment.model'
 import PostModel from '~/models/Post.model'
 import UserModel from '~/models/User.model'
-import { Post } from '~/type'
+import { Post } from '~/types/post'
 import { httpResponse } from '~/utils/HandleRes'
 
 export class PostsService {

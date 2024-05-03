@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 import postsProvider from '~/services/Post.service'
-import { JwtData } from '~/type'
 class PostsController {
     async posts(req: Request, res: Response) {
         try {
@@ -14,7 +13,7 @@ class PostsController {
     }
     async getOnePosts({ params, user }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const { id } = params
             const response = await postsProvider.getOnePosts(id, userName)
             return res.status(response.httpStatus).json(response.data)
@@ -40,7 +39,7 @@ class PostsController {
     }
     async dislike({ user, body }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await postsProvider.dislike(userName, body)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -53,7 +52,7 @@ class PostsController {
     }
     async comment({ user, body }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await postsProvider.comment(userName, body)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -66,7 +65,7 @@ class PostsController {
     }
     async deleteComment({ user, body }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await postsProvider.deleteComment(userName, body)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -79,7 +78,7 @@ class PostsController {
     }
     async upload({ body, user }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await postsProvider.upload(body, userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -107,7 +106,7 @@ class PostsController {
     }
     async checkLike({ params, user }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await postsProvider.checkLike(userName, params.id)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -120,7 +119,7 @@ class PostsController {
     }
     async deletePosts({ params, user }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await postsProvider.deletePosts(params.id, userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -133,7 +132,7 @@ class PostsController {
     }
     async editPosts({ body, user }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await postsProvider.editPosts(body, userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {

@@ -6,7 +6,11 @@ import postsRoute from './postsRoute'
 import imageRoute from './imageRoute'
 import ChatIo from '~/realTime/ChatIo'
 import chatRoute from './chatRoute'
-import { ServerToClientEvents, ClientToServerEvents, InterServerEvents } from '~/type'
+import {
+    ServerToClientEvents,
+    ClientToServerEvents,
+    InterServerEvents,
+} from '~/types/socket'
 import Notify from '~/realTime/Notify'
 import notifyRoute from './notifyRoute'
 import ImageController from '~/controllers/Image.controller'

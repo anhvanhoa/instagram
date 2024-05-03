@@ -4,8 +4,8 @@ import isJWT from 'validator/lib/isJWT'
 import { HttpStatus } from '~/http-status.enum'
 import { UserModel } from '~/models'
 import TokenModel from '~/models/Token.model'
-import { JwtData, SocketIo } from '~/type'
-import Token from '~/utils/Token'
+import { SocketIo } from '~/types/socket'
+import Token, { JwtData } from '~/utils/Token'
 
 class TokenMiddleware {
     async accuracy(req: Request, res: Response, next: NextFunction) {

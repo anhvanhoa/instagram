@@ -1,7 +1,5 @@
-import { RegisterDto } from '~/services/types'
 import { UserModel } from '~/models'
 import TokenModel from '~/models/Token.model'
-import { LoginFB, LoginType, ResUser } from '~/type'
 import { hash, compare, genSalt } from 'bcrypt'
 import isEmail from 'validator/lib/isEmail'
 import isTell from 'validator/lib/isMobilePhone'
@@ -9,11 +7,10 @@ import { HttpStatus } from '~/http-status.enum'
 import { isNotEmptyObject } from '~/utils/Validate'
 import { httpResponse } from '~/utils/HandleRes'
 import Token from '~/utils/Token'
-import slugify from 'slugify'
-import otp from '~/utils/Otp'
-import { Info, ResInfo } from '~/types/register'
-import { User } from '~/types/user'
+import { Info, Register, ResInfo } from '~/types/register'
+import { ResUser, User } from '~/types/user'
 import { isMongoServerError } from '~/utils/Errors'
+import { LoginType } from '~/types/login'
 export class AuthService {
     //
     async uniqueEmail(email: string): Promise<boolean> {
@@ -54,7 +51,7 @@ export class AuthService {
         throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
     }
     //
-    async register(data: RegisterDto) {
+    async register(data: Register) {
         if (data.email && (await this.uniqueEmail(data.email)))
             throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Email not valid !' })
         if (data.numberPhone && (await this.uniqueTell(data.numberPhone)))
@@ -70,51 +67,51 @@ export class AuthService {
         })
     }
     //
-    async loginFacebook(data: LoginFB) {
-        const { email, displayName, phoneNumber, photoURL, uid } = data
-        if ((!email && !phoneNumber) || !uid)
-            throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, {
-                msg: 'Data not valid',
-            })
-        const isEmail = email && (await this.uniqueEmail(email))
-        const isTell = phoneNumber && (await this.uniqueTell(phoneNumber))
-        const password = await hash(uid, 10)
-        if (!isEmail && !isTell) {
-            const user = await UserModel.create({
-                userName: `${slugify(displayName, {
-                    replacement: '',
-                    lower: true,
-                    trim: true,
-                })}${otp.randomCode(3)}`,
-                email,
-                numberPhone: phoneNumber,
-                fullName: displayName,
-                avatar: photoURL,
-                fbId: uid,
-                password,
-                birthday: '1-1-1997',
-            })
-            const accessToken = Token.createToken({ userName: user.userName }, '120s')
-            const refreshToken = Token.createToken({ userName: user.userName }, '1h')
-            await TokenModel.findOneAndDelete({ username: user.userName })
-            await TokenModel.create({ token: refreshToken, username: user.userName })
-            // await redis.set(user.userName, refreshToken)
-            const { password: pass, ...newUser } = user._doc
-            const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
-            return httpResponse(HttpStatus.OK, dataUser)
-        }
-        const user = await UserModel.findOne({ fbId: uid })
-        if (!user)
-            throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, { msg: 'Server error' })
-        const accessToken = Token.createToken({ userName: user.userName }, '120s')
-        const refreshToken = Token.createToken({ userName: user.userName }, '1h')
-        // await redis.set(user.userName, refreshToken)
-        await TokenModel.findOneAndDelete({ username: user.userName })
-        await TokenModel.create({ token: refreshToken, username: user.userName })
-        const { password: pass, ...newUser } = user._doc
-        const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
-        return httpResponse(HttpStatus.OK, dataUser)
-    }
+    // async loginFacebook(data: LoginFB) {
+    //     const { email, displayName, phoneNumber, photoURL, uid } = data
+    //     if ((!email && !phoneNumber) || !uid)
+    //         throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, {
+    //             msg: 'Data not valid',
+    //         })
+    //     const isEmail = email && (await this.uniqueEmail(email))
+    //     const isTell = phoneNumber && (await this.uniqueTell(phoneNumber))
+    //     const password = await hash(uid, 10)
+    //     if (!isEmail && !isTell) {
+    //         const user = await UserModel.create({
+    //             userName: `${slugify(displayName, {
+    //                 replacement: '',
+    //                 lower: true,
+    //                 trim: true,
+    //             })}${otp.randomCode(3)}`,
+    //             email,
+    //             numberPhone: phoneNumber,
+    //             fullName: displayName,
+    //             avatar: photoURL,
+    //             fbId: uid,
+    //             password,
+    //             birthday: '1-1-1997',
+    //         })
+    //         const accessToken = Token.createToken({ userName: user.userName }, '120s')
+    //         const refreshToken = Token.createToken({ userName: user.userName }, '1h')
+    //         await TokenModel.findOneAndDelete({ username: user.userName })
+    //         await TokenModel.create({ token: refreshToken, username: user.userName })
+    //         // await redis.set(user.userName, refreshToken)
+    //         const { password: pass, ...newUser } = user._doc
+    //         const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
+    //         return httpResponse(HttpStatus.OK, dataUser)
+    //     }
+    //     const user = await UserModel.findOne({ fbId: uid })
+    //     if (!user)
+    //         throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, { msg: 'Server error' })
+    //     const accessToken = Token.createToken({ userName: user.userName }, '120s')
+    //     const refreshToken = Token.createToken({ userName: user.userName }, '1h')
+    //     // await redis.set(user.userName, refreshToken)
+    //     await TokenModel.findOneAndDelete({ username: user.userName })
+    //     await TokenModel.create({ token: refreshToken, username: user.userName })
+    //     const { password: pass, ...newUser } = user._doc
+    //     const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
+    //     return httpResponse(HttpStatus.OK, dataUser)
+    // }
     //
     async login(data: LoginType) {
         const { email, password, numberPhone, userName } = data

@@ -1,7 +1,7 @@
 import { JwtPayload, verify, sign } from 'jsonwebtoken'
 import envConfig from '~/config/env'
 type TimeExpires = '120s' | '1h' | '7d' | string
-interface JwtData extends JwtPayload {
+export interface JwtData extends JwtPayload {
     userName: string
 }
 class Token {

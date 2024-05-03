@@ -21,3 +21,8 @@ export interface User extends DocumentModel<User> {
 }
 
 export type UserNoPassword = Omit<User, 'password'>
+
+export interface ResUser extends Omit<User, 'password'> {
+    accessToken: string
+    refreshToken: string
+}

@@ -1,6 +1,5 @@
 import { model, Schema } from 'mongoose'
-import { Post } from '~/type'
-
+import { Post } from '~/types/post'
 const postSchema = new Schema<Post>(
     {
         author: { ref: 'user', type: Schema.Types.ObjectId },

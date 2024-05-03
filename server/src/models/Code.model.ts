@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose'
-import { Code } from '~/type'
+import { Code } from '~/types/code'
 
 const codeSchema = new Schema<Code>(
     {

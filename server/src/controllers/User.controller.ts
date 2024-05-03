@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 import userProvider from '~/services/User.service'
-import { JwtData } from '~/type'
 
 class UserController {
     async search({ query, user }: Request, res: Response) {
@@ -21,7 +20,7 @@ class UserController {
     }
     async userUpdate({ body, user }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await userProvider.userUpdate(userName, body)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -60,7 +59,7 @@ class UserController {
     async follow({ body, user }: Request, res: Response) {
         try {
             const idFollow: string = body.idFollow
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await userProvider.follow(idFollow, userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -75,7 +74,7 @@ class UserController {
     async unfollow({ body, user }: Request, res: Response) {
         try {
             const idFollow: string = body.idFollow
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await userProvider.unfollow(idFollow, userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -88,7 +87,7 @@ class UserController {
     }
     async info({ user, params }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await userProvider.info(userName, params.username)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {

@@ -1,3 +1,12 @@
+export type Register = {
+    userName: string
+    password: string
+    birthday: string
+    email?: string
+    numberPhone?: string
+    fullName: string
+}
+
 export interface Info {
     email?: string
     numberPhone?: string

@@ -1,6 +1,10 @@
 import { Socket } from 'socket.io'
 import notificationProvider from '~/services/Notification.service'
-import { ClientToServerEvents, InterServerEvents, ServerToClientEvents } from '~/type'
+import {
+    ClientToServerEvents,
+    InterServerEvents,
+    ServerToClientEvents,
+} from '~/types/socket'
 import { UserNoPassword } from '~/types/user'
 
 class Notify {

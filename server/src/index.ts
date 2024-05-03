@@ -9,7 +9,11 @@ import path, { join } from 'path'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import '~/config/cloudinary'
-import { ServerToClientEvents, ClientToServerEvents, InterServerEvents } from './type'
+import {
+    ServerToClientEvents,
+    ClientToServerEvents,
+    InterServerEvents,
+} from '~/types/socket'
 import fs from 'fs'
 import { UserNoPassword } from './types/user'
 
