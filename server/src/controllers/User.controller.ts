@@ -98,10 +98,11 @@ class UserController {
             return res.status(error.httpStatus).json(error.data)
         }
     }
-    async suggest({ user }: Request, res: Response) {
+    async suggest({ user, query }: Request, res: Response) {
         try {
+            const limit = Number(query.limit ?? 5)
             const { userName } = user!
-            const response = await userProvider.suggest(userName)
+            const response = await userProvider.suggest(userName, limit)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus)
