@@ -16,7 +16,6 @@ import { TypeImgCrop } from '~/types/posts'
 let contents: string[] = []
 export const CreatePosts = () => {
     const [images, setImages] = useState<TypeImgCrop[]>([])
-    console.log(images)
     const [step, setStep] = useState<number>(1)
     const [overlay, setOverlay] = useState(false)
     const [description, setDescription] = useState<string>('')

@@ -9,11 +9,11 @@ export const dataFooter = [
         title: 'About',
         to: '/introduce',
     },
-    {
-        id: 3,
-        title: 'Blog',
-        to: '/blog',
-    },
+    // {
+    //     id: 3,
+    //     title: 'Blog',
+    //     to: '/blog',
+    // },
     {
         id: 4,
         title: 'Jobs',
@@ -44,16 +44,16 @@ export const dataFooter = [
         title: 'Locations',
         to: '/Location',
     },
-    {
-        id: 11,
-        title: 'Instagram Lite',
-        to: '/web/lite',
-    },
-    {
-        id: 12,
-        title: 'Contact uploading and non-users',
-        to: '/help/id',
-    },
+    // {
+    //     id: 11,
+    //     title: 'Instagram Lite',
+    //     to: '/web/lite',
+    // },
+    // {
+    //     id: 12,
+    //     title: 'Contact uploading and non-users',
+    //     to: '/help/id',
+    // },
     {
         id: 13,
         title: 'Meta verified',

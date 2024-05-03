@@ -1,11 +1,7 @@
 import { Socket } from 'socket.io'
 import notificationProvider from '~/services/Notification.service'
-import {
-    ClientToServerEvents,
-    InterServerEvents,
-    ServerToClientEvents,
-    SocketData,
-} from '~/types'
+import { ClientToServerEvents, InterServerEvents, ServerToClientEvents } from '~/types'
+import { UserNoPassword } from '~/types/user'
 
 class Notify {
     notificationLike = (
@@ -13,7 +9,7 @@ class Notify {
             ServerToClientEvents,
             ClientToServerEvents,
             InterServerEvents,
-            SocketData
+            UserNoPassword
         >,
     ) =>
         socket.on('like', async (data) => {
@@ -29,7 +25,7 @@ class Notify {
             ServerToClientEvents,
             ClientToServerEvents,
             InterServerEvents,
-            SocketData
+            UserNoPassword
         >,
     ) =>
         socket.on('comment', async (data) => {

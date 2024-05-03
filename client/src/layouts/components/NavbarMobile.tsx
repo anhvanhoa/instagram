@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import IconApp from '~/assets/icons/IconApp'
 import Img from '~/components/Img'
 import socket from '~/socketIo'
@@ -45,14 +45,15 @@ const dataNavbar: NavbarItem[] = [
     },
 ]
 const NavbarMobile = () => {
-    const { state: user } = useContextUser()
+    const { user } = useContextUser()
     const [notifys, setNotifys] = useState(false)
+    const location = useLocation()
     useEffect(() => {
-        socket.on(`notifyMessage`, () => setNotifys(true))
+        if (!location.pathname.startsWith('/message')) socket.on(`notifyMessage`, () => setNotifys(true))
         return () => {
-            socket.off('notifyMessage')
+            if (!location.pathname.startsWith('/message')) socket.off('notifyMessage')
         }
-    }, [])
+    }, [location.pathname])
     return (
         <div className='md:hidden mt-16'>
             <div className='fixed w-full bottom-0 bg-main border-second border-t z-50'>

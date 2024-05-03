@@ -3,11 +3,14 @@ import Img from './Img'
 import UserName from './UserName'
 import { User } from '~/types/auth'
 import { Icon } from '@iconify/react/dist/iconify.js'
+import formatTimeAgo from '~/utils/handleTime'
 interface Props {
     comment: string
+    time: string
     user: User
 }
-const Comments: React.FC<Props> = ({ comment, user }) => {
+const Comments: React.FC<Props> = ({ comment, user, time }) => {
+    const timeFormatted = formatTimeAgo(time)
     return (
         <div>
             <div className='px-4 mt-3 flex gap-3 mb-4'>
@@ -22,9 +25,9 @@ const Comments: React.FC<Props> = ({ comment, user }) => {
                         </div>
                         {comment}
                     </div>
-                    <div className='gap-2 text-gray-500 mt-1 hidden'>
-                        <p>now</p>
-                        <p className='font-medium'>reply</p>
+                    <div className='flex items-center text-xs gap-2 text-gray-500'>
+                        <p className=''>{timeFormatted}</p>
+                        {/* <p className='font-medium'>reply</p> */}
                     </div>
                 </div>
             </div>

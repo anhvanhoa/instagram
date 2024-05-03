@@ -4,6 +4,7 @@ export interface Comment {
     _id: string
     content: string
     userId: User
+    createdAt: string
 }
 export interface Posts {
     _id: string

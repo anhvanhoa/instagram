@@ -1,29 +1,17 @@
-import { timeStamp } from 'console'
 import mongoose, { model, Schema } from 'mongoose'
-import { RoomChat } from '~/types'
+import { RoomChat } from '~/types/roomChat'
 
 const roomChatSchema = new Schema<RoomChat>(
     {
-        notification: {
-            type: Boolean,
-            default: true,
+        members: {
+            type: [{ type: mongoose.Types.ObjectId, ref: 'user' }],
+            minlength: 2,
+            maxlength: 50,
         },
-        name: {
-            type: String,
-            default: '',
-        },
-        members: [
-            {
-                idUser: { type: mongoose.Types.ObjectId, ref: 'users' },
-                joinTime: { default: Date.now, type: Date },
-                outTime: { default: '', type: Date },
-                isOut: { type: Boolean, default: false },
-            },
-        ],
     },
     {
         timestamps: true,
     },
 )
 
-export default model('roomChats', roomChatSchema)
+export default model('roomChat', roomChatSchema, 'roomChat')

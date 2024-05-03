@@ -1,4 +1,3 @@
-import useContextUser from '~/store/hook'
 import AccountItem from './AccountItem'
 import { Link } from 'react-router-dom'
 import SkeletonUser from './SkeletonUser'
@@ -10,23 +9,29 @@ import IconApp from '~/assets/icons/IconApp'
 import TippyHeadLess from '@tippyjs/react/headless'
 import Wrapper from './Wrapper'
 import BoxMenu from '~/layouts/components/BoxMenu'
+import profile from '~/apis/profile'
+import { initializeUser } from '~/store/constant'
 
 const Suggest = () => {
-    const { state: user } = useContextUser()
     // stank
-    const { data, isLoading } = useQuery({
+    const currentUser = useQuery({
+        queryKey: ['user'],
+        queryFn: () => profile(),
+        initialData: initializeUser,
+    })
+    const apiSugges = useQuery({
         queryKey: ['suggest'],
         queryFn: () => suggestUsers(),
         refetchOnWindowFocus: false,
-        enabled: Boolean(user.following.length),
+        enabled: Boolean(currentUser.data.following.length),
     })
     return (
         <div className='max-w-[300px] mx-8'>
-            <div className='sticky top-0 py-4 flex flex-col justify-center border-b border-second'>
-                {!user._id && <SkeletonUser />}
-                {user._id && (
+            <div className='sticky top-0 py-4 pb-6 flex flex-col justify-center border-b border-second'>
+                {!currentUser.data._id && <SkeletonUser />}
+                {currentUser.data._id && (
                     <div className='flex justify-between items-center'>
-                        <AccountItem user={user} />
+                        <AccountItem user={currentUser.data} />
                         <TippyHeadLess
                             trigger='click'
                             interactive
@@ -46,17 +51,17 @@ const Suggest = () => {
             </div>
             <div>
                 <div className='flex items-center justify-between mt-3.5'>
-                    {!!data?.length && <span className='text-sm font-medium'>Suggested for you</span>}
+                    {Boolean(apiSugges.data?.length) && <span className='text-sm font-medium'>Suggested for you</span>}
                 </div>
                 <div className='py-2'>
-                    {isLoading && (
+                    {apiSugges.isLoading && (
                         <>
                             <SkeletonUser />
                             <SkeletonUser />
                             <SkeletonUser />
                         </>
                     )}
-                    {data?.map((element) => <SuggestAccount key={element._id} userP={element} />)}
+                    {apiSugges.data?.map((element) => <SuggestAccount key={element._id} user={element} />)}
                 </div>
             </div>
             <div className='mt-3 pb-9'>

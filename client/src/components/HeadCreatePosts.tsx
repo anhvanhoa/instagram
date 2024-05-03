@@ -10,8 +10,8 @@ interface Props {
 const HeadCreatePosts = ({ onPrev, title, onNext, isLoading, textNext = 'Next' }: Props) => {
     return (
         <div>
-            <div className='flex justify-between items-center h-11 border-b border-gray-50/20'>
-                <Button onClick={onPrev} type='custom' className='w-max text-white px-2'>
+            <div className='flex justify-between items-center h-11 border-b border-second'>
+                <Button onClick={onPrev} type='custom' className='w-max  dark:text-white text-black px-2'>
                     <Icon icon='ep:back' className='text-2xl cursor-pointer' />
                 </Button>
                 <h4 className='font-medium'>{title}</h4>

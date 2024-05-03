@@ -6,6 +6,7 @@ import BoxMessage from './BoxMessage'
 import InputChat from '~/components/InputChat'
 import HeaderChat from './HeaderChat'
 import socket from '~/socketIo'
+import { useParams } from 'react-router-dom'
 
 interface Props {
     userChat: User
@@ -16,11 +17,12 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
     const contentRef = useRef<HTMLDivElement>(null)
     const [message, setMessage] = useState<string>('')
     const [messageNew, setMessageNew] = useState<ContentChat[]>(dataChat)
+    const params = useParams()
+
     const handleSend = () => {
-        socket.emit(`chat`, {
+        socket.emit(`chat`, params.id!, {
             message,
-            idUser,
-            idUserChat: userChat._id,
+            type: 'text',
         })
         setMessage('')
     }
@@ -31,24 +33,26 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
         }
     }, [messageNew, dataChat, userChat._id])
     useEffect(() => {
-        socket.emit(`joinRoom`, userChat._id)
+        socket.emit(`joinRoom`, params.id!)
         socket.on(`notifyDelete`, (data) => {
-            if (data._id !== userChat._id) return
-            setMessageNew((prev) => prev.filter((item) => item._id !== data.chat._id))
+            setMessageNew((prev) =>
+                prev.map((item) => {
+                    if (item._id === data._id) return data
+                    return item
+                }),
+            )
         })
-        socket.on(`sendMessage`, (data) => {
-            if (data.idUserChat === userChat._id || data.idUser === userChat._id) {
-                setMessageNew((prev) => [...prev, data])
-                if (data.idUser === userChat._id) socket.emit(`seen`, { idUser: data.idUser, idContentChat: data._id })
-            }
+        socket.on(`message`, (data) => {
+            setMessageNew((prev) => [...prev, data])
+            if (data.idUser === userChat._id) socket.emit(`seen`, data._id)
         })
         setMessageNew(dataChat)
         return () => {
-            socket.emit(`leaveRoom`, userChat._id)
-            socket.off('sendMessage')
+            socket.emit(`leaveRoom`, params.id!)
+            socket.off('message')
             socket.off('notifyDelete')
         }
-    }, [dataChat, idUser, userChat._id])
+    }, [dataChat, idUser, params.id, userChat._id])
     return (
         <section className='flex flex-col h-full justify-between'>
             <div className='flex-1 overflow-auto scrollbar' ref={contentRef}>
@@ -65,6 +69,11 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
                             message={item.message}
                             idChat={item._id}
                             idUser={userChat._id}
+                            time={item.createdAt}
+                            isDelete={
+                                (item.isDeleteReceive && item.idUser === userChat._id) ||
+                                (item.isDeleteSend && item.idUser !== userChat._id)
+                            }
                         />
                     ))}
                 </div>

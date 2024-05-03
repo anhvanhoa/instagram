@@ -22,13 +22,13 @@ export const navbarDesk: NavbarItem[] = [
         link: '/explore',
         name: 'Explore',
     },
-    {
-        id: 4,
-        icon: 'reels-thin',
-        iconActive: 'reels-solid',
-        link: '/reels',
-        name: 'Reels',
-    },
+    // {
+    //     id: 4,
+    //     icon: 'reels-thin',
+    //     iconActive: 'reels-solid',
+    //     link: '/reels',
+    //     name: 'Reels',
+    // },
     {
         id: 5,
         icon: 'meaagae-thin',

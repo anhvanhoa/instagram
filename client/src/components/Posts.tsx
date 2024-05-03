@@ -19,11 +19,11 @@ import AccountPosts from './AccountPosts'
 import InteractPosts from './InteractPosts'
 import InputComment from './InputComment'
 interface Props {
-    user: User
+    author: User
     posts: PostsType
 }
-const Posts: React.FC<Props> = ({ user, posts }) => {
-    const { state } = useContextUser()
+const Posts: React.FC<Props> = ({ author, posts }) => {
+    const { user } = useContextUser()
     const navigate = useNavigate()
     const [like, setLike] = useState<boolean>(false)
     const [comment, setComment] = useState<string>('')
@@ -40,14 +40,14 @@ const Posts: React.FC<Props> = ({ user, posts }) => {
     const apiLike = (idPosts: string) => () => {
         mutate(idPosts)
         setLike(true)
-        socket.emit('like', { idPosts, fromUser: state._id, toUser: user._id })
+        socket.emit('like', { idPosts, fromUser: user._id, toUser: author._id })
     }
     const apiDislike = (idPosts: string) => () => {
         mutateDis(idPosts)
         setLike(false)
     }
     const apiComment = (idPosts: string, content: string) => () => {
-        socket.emit('comment', { idPosts, fromUser: state._id, toUser: user._id })
+        socket.emit('comment', { idPosts, fromUser: user._id, toUser: author._id })
         mutateComment(
             { content, idPosts },
             {
@@ -63,15 +63,15 @@ const Posts: React.FC<Props> = ({ user, posts }) => {
             preventScrollReset: true,
         })
     useEffect(() => {
-        socket.emit('joinRoom', user._id)
+        socket.emit('joinRoom', author._id)
         return () => {
-            socket.emit('leaveRoom', user._id)
+            socket.emit('leaveRoom', author._id)
         }
     })
     return (
         <div className={classNames('mt-4 py-4 border-b border-second mb-8 sm:mb-6')}>
             <div className='px-2 pb-3 flex justify-between items-center'>
-                <AccountPosts time={posts.createdAt} user={user} />
+                <AccountPosts time={posts.createdAt} user={author} />
                 <OptionPost viewPosts={viewPosts(posts._id)} id={posts._id}>
                     <Icon
                         icon='solar:menu-dots-bold'
@@ -116,7 +116,7 @@ const Posts: React.FC<Props> = ({ user, posts }) => {
                     })}
                 >
                     <div className='inline-block pr-1'>
-                        <UserName user={user} dropDow />
+                        <UserName user={author} dropDow />
                     </div>
                     <span>{posts.title}</span>
                 </div>
@@ -127,7 +127,7 @@ const Posts: React.FC<Props> = ({ user, posts }) => {
                 >
                     {listComment.map((item, i) => (
                         <div className='text-sm py-1'>
-                            <span className='font-semibold mr-1'>{state.userName}</span>
+                            <span className='font-semibold mr-1'>{user.userName}</span>
                             <span key={i} onClick={viewPosts(posts._id)}>
                                 {item}
                             </span>

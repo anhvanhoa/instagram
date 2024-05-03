@@ -1,14 +1,14 @@
 import { model, Schema } from 'mongoose'
 import { Comment } from '~/types'
 
-export const comment = new Schema<Comment>(
+export const commentSchema = new Schema<Comment>(
     {
         content: String,
-        userId: { ref: 'users', type: Schema.Types.ObjectId },
+        userId: { ref: 'user', type: Schema.Types.ObjectId },
     },
     {
         timestamps: true,
     },
 )
 
-export default model('comments', comment)
+export default model('comment', commentSchema, 'comment')

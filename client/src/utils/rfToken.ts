@@ -1,18 +1,23 @@
 import { AES, enc } from 'crypto-js'
-function rfToken() {
-    const rfToken = localStorage.getItem('rf_token')
+function manageToken() {
+    const rfToken = localStorage.getItem('cr_token')
     const key = import.meta.env.VITE_KEY_TOKEN
     return {
-        rfTokenEncode: (token: string) => {
+        crTokenEncode: (token: string) => {
             const encodeToken = AES.encrypt(token, key).toString()
-            localStorage.setItem('rf_token', encodeToken)
+            localStorage.setItem('cr_token', encodeToken)
         },
-        rfTokenDecode: () => {
-            if (!rfToken) return false
-            return AES.decrypt(rfToken, key).toString(enc.Utf8)
+        crTokenDecode: () => {
+            try {
+                if (!rfToken) return undefined
+                const decodeToken = AES.decrypt(rfToken, key).toString(enc.Utf8)
+                return decodeToken
+            } catch (error) {
+                return ''
+            }
         },
-        rfTokenRemove: () => localStorage.removeItem('rf_token'),
+        crTokenRemove: () => localStorage.removeItem('cr_token'),
     }
 }
 
-export default rfToken
+export default manageToken

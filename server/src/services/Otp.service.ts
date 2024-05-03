@@ -1,4 +1,4 @@
-import { CodeModel } from '~/models/index.model'
+import { CodeModel } from '~/models'
 import { randomCode, sendMail } from '~/utils/Otp'
 import { Code } from '~/types'
 import { AuthService } from './Auth.service'
@@ -8,8 +8,6 @@ import { HttpStatus } from '~/http-status.enum'
 export class OtpService extends AuthService {
     //
     public async signCode(email: string) {
-        if (await this.uniqueEmail(email))
-            throw httpResponse(HttpStatus.CONFLICT, { msg: 'Email not valid!' })
         const code = randomCode(6)
         await CodeModel.create({ email, otp: code })
         this.deleteCode(code)
@@ -20,9 +18,12 @@ export class OtpService extends AuthService {
         return await CodeModel.findOneAndDelete(data)
     }
     protected deleteCode(code: string) {
-        setTimeout(async () => {
-            await CodeModel.deleteOne({ otp: code })
-        }, 60000)
+        setTimeout(
+            async () => {
+                await CodeModel.deleteOne({ otp: code })
+            },
+            1000 * 60 * 3,
+        )
     }
 }
 const otpProvider = new OtpService()

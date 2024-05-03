@@ -8,13 +8,12 @@ interface Props {
     user: UserChat
 }
 const AccountChat = ({ user }: Props) => {
-    const seen = ({ idContentChat, idUser }: SeenChat) => socket.emit('seen', { idUser, idContentChat })
+    const seen = ({ idContentChat }: SeenChat) => socket.emit('seen', idContentChat)
     const handleSeen = () => {
-        console.log(user.chat)
-        if (!user.chat) return
+        if (!user.message) return
         seen({
             idUser: user._id,
-            idContentChat: user.chat._id,
+            idContentChat: user.message._id,
         })
     }
     return (
@@ -27,7 +26,7 @@ const AccountChat = ({ user }: Props) => {
             onClick={handleSeen}
         >
             <div className='flex items-center w-full relative'>
-                {user.chat && !user.chat.isSeen && user.chat.idUser === user._id && (
+                {user.message && !user.message.isSeen && user.message.idUser === user._id && (
                     <Icon
                         className='w-8 h-8 text-primary absolute -top-3 -right-2 lg:hidden xs:block hidden'
                         icon='radix-icons:dot-filled'
@@ -43,16 +42,16 @@ const AccountChat = ({ user }: Props) => {
                             {user.verify && <Icon className='text-primary text-sm' icon='ph:seal-check-fill' />}
                         </span>
                     </div>
-                    {user.chat && (
+                    {user.message && (
                         <p className='text-xs text-[#737373] whitespace-nowrap text-ellipsis overflow-hidden'>
-                            <span className='font-medium'>{user.chat.idUser !== user._id ? 'You:' : ''}</span>
+                            <span className='font-medium'>{user.message.idUser !== user._id ? 'You:' : ''}</span>
                             <span className='px-px'></span>
-                            {user.chat.message}
+                            {user.message.message}
                         </p>
                     )}
                 </div>
             </div>
-            {user.chat && !user.chat.isSeen && user.chat.idUser === user._id && (
+            {user.message && !user.message.isSeen && user.message.idUser === user._id && (
                 <Icon className='text-3xl text-primary block xs:hidden lg:block' icon='radix-icons:dot-filled' />
             )}
         </div>

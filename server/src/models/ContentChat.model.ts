@@ -1,10 +1,10 @@
 import mongoose, { model, Schema } from 'mongoose'
-import { ContentChat } from '~/types'
+import { ContentChat } from '~/types/chat'
 
 const contentChatSchema = new Schema<ContentChat>(
     {
-        idBoxChat: { type: mongoose.Types.ObjectId, ref: 'boxChats' },
-        idUser: { type: mongoose.Types.ObjectId, ref: 'boxChats' },
+        idBoxChat: { type: mongoose.Types.ObjectId, ref: 'boxChat' },
+        idUser: { type: mongoose.Types.ObjectId, ref: 'boxChat' },
         message: String,
         image: String,
         isDeleteReceive: { type: Boolean, default: false },
@@ -16,4 +16,4 @@ const contentChatSchema = new Schema<ContentChat>(
     },
 )
 
-export default model('contentChats', contentChatSchema)
+export default model('contentChat', contentChatSchema, 'contentChat')

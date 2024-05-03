@@ -19,7 +19,7 @@ interface AvatarClient {
     }
 }
 const EditProfile = () => {
-    const { state, dispatch } = useContextUser()
+    const { user, dispatch } = useContextUser()
     const [disable, setDisable] = useState(true)
     const inputAvatar = useRef<HTMLInputElement>(null)
     const [avatarClient, setAvatarClient] = useState<AvatarClient>({
@@ -28,11 +28,11 @@ const EditProfile = () => {
         sizeCrop: { height: 1, width: 1, x: 0, y: 0 },
     })
     const [formData, setFormData] = useState<UserUpdate>({
-        avatar: state.avatar,
-        bio: state.bio,
-        fullName: state.fullName,
-        gender: state.gender,
-        birthday: state.birthday,
+        avatar: user.avatar,
+        bio: user.bio,
+        fullName: user.fullName,
+        gender: user.gender,
+        birthday: user.birthday,
     })
     const handleChange =
         (name: keyof User) =>
@@ -50,7 +50,7 @@ const EditProfile = () => {
     })
     const { refetch } = useQuery({
         queryKey: ['user'],
-        queryFn: () => profile(state._id),
+        queryFn: () => profile(user._id),
         enabled: false,
     })
     const handleClick = () => inputAvatar.current?.click()
@@ -140,7 +140,7 @@ const EditProfile = () => {
                                 )}
                             </div>
                             <div className='flex-1'>
-                                <h3 className='leading-5'>{state.userName}</h3>
+                                <h3 className='leading-5'>{user.userName}</h3>
                                 <input onChange={changeImage} ref={inputAvatar} type='file' hidden />
                                 <Button onClick={handleClick} type='text' className='-ml-2'>
                                     Change profile photo
@@ -166,7 +166,7 @@ const EditProfile = () => {
                                 <input
                                     disabled
                                     type='text'
-                                    value={state.email}
+                                    value={user.email}
                                     className='border border-second bg-transparent w-full pl-1 py-1 outline-none rounded-md'
                                 />
                             </div>
@@ -177,7 +177,7 @@ const EditProfile = () => {
                                 <input
                                     disabled
                                     type='text'
-                                    value={state.numberPhone}
+                                    value={user.numberPhone}
                                     className='border border-second bg-transparent w-full pl-1 py-1 outline-none rounded-md'
                                 />
                             </div>

@@ -27,7 +27,7 @@ const CreatePosts = ({ handleClose }: Props) => {
                     {step === 2 && <CropImage onStep={setStep} setImages={setImages} listImage={images} />}
                     {/* {step === 3 && <EditImg onStep={setStep} listImage={images} />} */}
                     {step === 3 && <PreviewImg onStep={setStep} listImage={images} />}
-                    {step === 4 && <ConfirmPost success={step} />}
+                    {(step === 4 || step === 5) && <ConfirmPost success={step} />}
                 </div>
             </OverLay>
         </>

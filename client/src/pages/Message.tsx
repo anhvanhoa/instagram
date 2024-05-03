@@ -10,27 +10,27 @@ import NotMessage from '~/components/NotMessage'
 import classNames from 'classnames'
 import NotMessageSkeleton from '~/components/NotMessageSkeleton'
 import AccountChatSkeleton from '~/components/AccountChatSkeleton'
-import userChat from '~/apis/userChat'
+import usersChatRequest from '~/apis/usersChatRequest'
 import ListAccountChat from '~/components/ListAccountChat'
 import HeaderMobile from '~/components/HeaderMobile'
 
 const Message = () => {
-    const { state } = useContextUser()
+    const { user } = useContextUser()
     const params = useParams()
-    const { data } = useQuery({
+    const userChatRes = useQuery({
         queryKey: ['user-chat', params.username, params.id],
         queryFn: () => getUser(params.username || ''),
         enabled: Boolean(params.username) || Boolean(params.id),
         initialData: initializeUser,
     })
-    const { data: dataUser, isLoading: isLoadingUser } = useQuery({
+    const usersChat = useQuery({
         queryKey: ['users-chat'],
-        queryFn: () => userChat(),
+        queryFn: () => usersChatRequest(),
         refetchOnMount: 'always',
     })
-    const { data: dataChat, isLoading } = useQuery({
+    const dataChat = useQuery({
         queryKey: ['chat-data', params.username, params.id],
-        queryFn: () => getChat(params.id || ''),
+        queryFn: () => getChat(params.id!),
         enabled: Boolean(params.username) || Boolean(params.id),
     })
     return (
@@ -47,19 +47,19 @@ const Message = () => {
                         hidden: params.id && params.username,
                     })}
                 >
-                    {isLoadingUser && <AccountChatSkeleton />}
+                    {usersChat.isLoading && <AccountChatSkeleton />}
                     <div
                         className={classNames('h-full flex flex-col overflow-auto scrollbar', {
-                            hidden: isLoadingUser,
+                            hidden: usersChat.isLoading,
                         })}
                     >
                         <div className='sticky top-0 lg:flex items-center justify-between px-6 py-5 hidden border-b border-second bg-[rgba(var(--background-third-rgb),0.8)] backdrop-blur-md z-10'>
-                            <h2 className='text-xl font-bold'>{state.fullName}</h2>
+                            <h2 className='text-xl font-bold'>{user.fullName}</h2>
                             <div className='px-2 cursor-pointer'>
                                 <IconApp type='pen' />
                             </div>
                         </div>
-                        <div className=''>{dataUser && <ListAccountChat dataUser={dataUser} />}</div>
+                        <div className=''>{usersChat.data && <ListAccountChat dataUser={usersChat.data} />}</div>
                     </div>
                 </div>
                 <div
@@ -67,10 +67,10 @@ const Message = () => {
                         hidden: !params.id || !params.username,
                     })}
                 >
-                    {(isLoading || isLoadingUser) && !data._id && <NotMessageSkeleton />}
-                    {(!params.id || !params.username) && !data._id && dataUser && <NotMessage />}
-                    {params.id && params.username && dataChat && (
-                        <BoxChat idUser={state._id} dataChat={dataChat} userChat={data} />
+                    {(dataChat.isLoading || usersChat.isLoading) && userChatRes.isFetching && <NotMessageSkeleton />}
+                    {(!params.id || !params.username) && !userChatRes.isLoading && <NotMessage />}
+                    {params.id && params.username && dataChat.data && (
+                        <BoxChat idUser={user._id} dataChat={dataChat.data} userChat={userChatRes.data} />
                     )}
                 </div>
             </div>

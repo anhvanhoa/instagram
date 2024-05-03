@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose'
 import { Code } from '~/types'
 
-const codes = new Schema<Code>(
+const codeSchema = new Schema<Code>(
     {
         email: {
             type: String,
@@ -15,6 +15,7 @@ const codes = new Schema<Code>(
         otp: {
             type: String,
             required: true,
+            unique: true,
         },
     },
     {
@@ -22,4 +23,4 @@ const codes = new Schema<Code>(
     },
 )
 
-export default model('codes', codes)
+export default model('code', codeSchema, 'code')

@@ -12,7 +12,7 @@ import isMobilePhone from 'validator/lib/isMobilePhone'
 import { useNavigate } from 'react-router-dom'
 import useContextUser from '~/store/hook'
 import registerFacebook from '~/apis/registerFacebook'
-import rfToken from '~/utils/rfToken'
+import socket from '~/socketIo'
 const initData: LoginData = {
     emailTellName: '',
     email: null,
@@ -23,14 +23,18 @@ const initData: LoginData = {
 const Login = () => {
     const navigation = useNavigate()
     const { dispatch } = useContextUser()
-    const { rfTokenEncode } = rfToken()
     const [formData, setFormData] = useState<LoginData>(initData)
     // handle change input
     const handleChange = (name: keyof LoginData) => (event: React.ChangeEvent<HTMLInputElement>) =>
         setFormData((prev) => ({ ...prev, [name]: event.target.value }))
     // tanStack
-    const { mutate, isError, isPending } = useMutation({
+    const requetLogin = useMutation({
         mutationFn: (body: LoginData) => login(body),
+        onSuccess(user) {
+            dispatch({ payload: user, type: 'LOGIN' })
+            socket.connect().auth = { token: user.accessToken }
+            setTimeout(() => navigation('/'), 400)
+        },
     })
     // Handle login
     const handleLogin = () => {
@@ -39,13 +43,7 @@ const Login = () => {
         const regex = /^[^\s!@#$%^&*()_+{}[\]:;<>,.?~\\/-]+$/
         if (!isMobilePhone(formData.emailTellName) && regex.test(formData.emailTellName))
             formData.userName = formData.emailTellName
-        mutate(formData, {
-            onSuccess: (user) => {
-                dispatch({ payload: user, type: 'LOGIN' })
-                rfTokenEncode(user.refreshToken)
-                setTimeout(() => navigation('/'), 400)
-            },
-        })
+        requetLogin.mutate(formData)
         setFormData((prev) => ({ ...initData, emailTellName: prev.emailTellName, password: prev.password }))
     }
     // handle login facebook
@@ -53,7 +51,6 @@ const Login = () => {
         try {
             const user = await registerFacebook()
             dispatch({ payload: user, type: 'LOGIN' })
-            rfTokenEncode(user.refreshToken)
             setTimeout(() => navigation('/'), 400)
         } catch (error) {
             console.log(error)
@@ -69,7 +66,12 @@ const Login = () => {
                 <InputAuth value={formData.password} onChange={handleChange('password')} type='password'>
                     Password
                 </InputAuth>
-                <Button loading={isPending} onClick={handleLogin} className='mx-auto mt-4' size='extraLarge'>
+                <Button
+                    loading={requetLogin.isPending}
+                    onClick={handleLogin}
+                    className='mx-auto mt-4'
+                    size='extraLarge'
+                >
                     Login
                 </Button>
             </form>
@@ -90,7 +92,7 @@ const Login = () => {
                         Login with Facebook
                     </Button>
                 </div>
-                {isError && (
+                {requetLogin.isError && (
                     <p className='text-red-600 text-center text-sm px-10 pt-2'>
                         Sorry, your password is incorrect. Please check your password again.
                     </p>

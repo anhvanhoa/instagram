@@ -1,34 +1,18 @@
 import { JwtPayload } from 'jsonwebtoken'
-import { DocumentModel } from './models/types'
 import { ObjectId } from 'mongoose'
 import { Socket } from 'socket.io'
-export type Gender = 'nam' | 'nữ' | 'khác'
-export interface User extends DocumentModel<User> {
-    _id: string
-    fbId: string
-    gender: Gender
-    userName: string
-    fullName: string
-    email: string
-    avatar: string
-    numberPhone: string
-    birthday: string
-    password: string
-    bio: string
-    posts: []
-    followers: []
-    following: []
-    stories: []
-    verify: boolean
-    notifications: []
-}
+import { Info } from './types/register'
+import { DocumentModel } from '~/models'
+import { User, UserNoPassword } from '~/types/user'
+import { ContentChat, ResUsersChat } from './types/chat'
+import { NotificationSchema } from './types/notification'
 
 export interface Comment extends DocumentModel<Comment> {
     _id: string
     content: string
     userId: ObjectId
 }
-export interface Posts extends DocumentModel<Posts> {
+export interface Post extends DocumentModel<Post> {
     _id: string
     title: string
     likes: []
@@ -39,7 +23,7 @@ export interface Posts extends DocumentModel<Posts> {
 }
 export interface Token extends DocumentModel<Posts> {
     _id: string
-    username: string
+    idUser: string
     token: string
 }
 
@@ -54,50 +38,13 @@ export interface Code {
     numberPhone?: string
     otp: string
 }
-export interface RoomChat {
-    _id: string
-    notification: boolean
-    name: string
-    members: {
-        idUser: string
-        joinTime: Date
-        outTime: Date
-        isOut: boolean
-    }[]
-}
-export interface BoxChat {
-    _id: string
-    idRoom: ObjectId
-    idUser: ObjectId
-    idUserChat: ObjectId
-    nickname: string
-    contentChat: ContentChat[]
-    isDelete: boolean
-}
-export interface ContentChat extends DocumentModel<ContentChat> {
-    _id: string
-    idBoxChat: ObjectId
-    idUser: ObjectId | string
-    message: string
-    image: string
-    isDeleteSend: boolean
-    isDeleteReceive: boolean
-    isSeen: boolean
-    createdAt: Date
-}
-export interface ContentChatIO extends ContentChat {
-    idUserChat: string
-}
-export interface DetailChat {
-    idUser: string
-    idUserChat: string
-    message: string
-}
 
-export interface Info {
-    email?: string
-    numberPhone?: string
-    userName?: string
+// export interface ContentChatIO extends ContentChat {
+//     idUserChat: string
+// }
+export interface DetailChat {
+    message: string
+    type: string
 }
 
 export interface LoginType extends Info {
@@ -134,23 +81,11 @@ export interface UserChat extends User {
     chat: ContentChat
 }
 
-export interface SeenChat {
-    idUser: string
-    idContentChat: string
-}
-export interface DeleteChat extends SeenChat {
-    idUserisDeleteReceive: boolean
-    isDeleteSend: boolean
+export interface DeleteChat {
+    idUserisDeleteReceive?: boolean
+    isDeleteSend?: boolean
 }
 
-export interface Notification extends DocumentModel<Notification> {
-    _id: string
-    fromUser: ObjectId
-    toUser: ObjectId
-    idPosts: ObjectId
-    content: string
-    createdAt: string
-}
 export interface NotificationEmit {
     fromUser: string
     toUser: string
@@ -158,40 +93,39 @@ export interface NotificationEmit {
 }
 
 export interface ServerToClientEvents {
-    joinRoom: (idUser: string) => void
-    leaveRoom: (idUser: string) => void
-    chat: (data: DetailChat) => void
-    seen: (data: SeenChat) => void
+    joinRoom: (idRoom: string | string[]) => void
+    leaveRoom: (idRoom: string) => void
+    chat: (room: string, data: DetailChat) => void
+    seen: (idContentChat: string) => void
     like: (data: NotificationEmit) => void
     comment: (data: NotificationEmit) => void
-    delete: (data: DeleteChat) => void
+    delete: (idContentChat: string, data: DeleteChat) => void
+    recall: (idContentChat: string, idRoom: string, data: DeleteChat) => void
 }
 
 export interface ClientToServerEvents {
-    sendMessage: (data: ContentChatIO) => void
-    notifyMessage: (data: UserChat) => void
-    notifyDelete: (data: UserChat) => void
-    newMessage: (data: DetailChat) => void
+    notifyMessage: (data: ResUsersChat) => void
+    message: (data: ContentChat) => void
+    notifyDelete: (data: ContentChat) => void
     connect_server: (id: string) => void
     notify_error: (message: string) => void
-    notification: (data: Notification) => void
+    notification: (data: NotificationSchema) => void
 }
 
 export interface InterServerEvents {
     ping: () => void
 }
 
-interface SocketData {
-    userName: string
-}
-
-export interface UserChat extends User {
-    chat: ContentChat
-}
-
 export type SocketIo = Socket<
     ServerToClientEvents,
     ClientToServerEvents,
     InterServerEvents,
-    SocketData
+    UserNoPassword
 >
+
+declare module 'express' {
+    interface Request {
+        user?: Omit<User, 'password'>
+        cookies: { [key: string]: string | undefined; refreshToken?: string }
+    }
+}

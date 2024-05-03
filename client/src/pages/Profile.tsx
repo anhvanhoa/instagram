@@ -11,14 +11,14 @@ import { initializeUser } from '~/store/constant'
 import follow from '~/apis/follow'
 import unfollow from '~/apis/unfollow'
 import SkeletonExploreItem from '~/components/SkeletonExploreItem'
-// import NotFound from './NotFound'
 import Tippy from '@tippyjs/react/headless'
 import BoxMenu from '~/layouts/components/BoxMenu'
 import HeaderMobile from '~/components/HeaderMobile'
+import roomRequest from '~/apis/roomRequest'
 
 const Profile = () => {
     const navigate = useNavigate()
-    const { state } = useContextUser()
+    const { user } = useContextUser()
     const { username } = useParams<{ username: string }>()
     const { data, isLoading } = useQuery({
         queryKey: ['profile', username],
@@ -41,6 +41,12 @@ const Profile = () => {
         mutationFn: (id: string) => unfollow(id),
         onSuccess: handleApi,
     })
+    const room = useMutation({
+        mutationFn: (id: string) => roomRequest(id),
+        onSuccess: (idRoom) => {
+            navigate(`/message/${data?.userName}/t/${idRoom}`)
+        },
+    })
     const apiFollow = (id: string) => () => mutate(id)
     const apiUnFollow = (id: string) => () => mutateUn(id)
     const viewPosts = (link: string) => async () =>
@@ -49,7 +55,6 @@ const Profile = () => {
         })
     return (
         <div>
-            {/* {(!data || isLoading) && <NotFound />} */}
             {data && (
                 <div className='max-w-[975px] mx-auto md:pt-[30px] flex flex-col h-screen'>
                     <HeaderMobile
@@ -64,7 +69,7 @@ const Profile = () => {
                         }
                     />
                     <div className='mb-6 bg-white flex justify-between px-4 md:hidden'></div>
-                    <div className='flex justify-start md:justify-center px-4 sm:px-8 mb-4 sm:mb-11'>
+                    <div className='flex px-4 sm:px-8 mb-4 sm:mb-11'>
                         <div className='mr-7 sm:mr-16 relative'>
                             <div className='w-20 h-20 sm:w-[170px] sm:h-[170px] mx-auto'>
                                 <Img
@@ -94,31 +99,33 @@ const Profile = () => {
                         <div>
                             <div className='flex-col flex sm:flex-row gap-3 items-start sm:items-center'>
                                 <div className='sm:font-semibold flex items-center pr-6'>
-                                    <h2 className='text-xl md:text-2xl'>{data.userName}</h2>
+                                    <h2 className='text-xl font-normal'>{data.userName}</h2>
                                     <span className='ml-1 mt-0.5'>
                                         {data.verify && (
-                                            <Icon className='text-primary text-sm mt-1' icon='ph:seal-check-fill' />
+                                            <Icon className='text-primary text-lg' icon='ph:seal-check-fill' />
                                         )}
                                     </span>
                                 </div>
                                 <div className='flex gap-3'>
-                                    <div>
-                                        {data.userName === state.userName && (
+                                    <div className='flex gap-3'>
+                                        {data.userName === user.userName && (
                                             <Link to='/accounts/edit'>
                                                 <Button type='second'>Edit profile</Button>
                                             </Link>
                                         )}
-                                        {!isFollowing && data.userName !== state.userName && (
+                                        {data.userName !== user.userName && (
+                                            <Button
+                                                onClick={() => room.mutate(data._id)}
+                                                type={isFollowing ? 'primary' : 'second'}
+                                                size='small'
+                                            >
+                                                Message
+                                            </Button>
+                                        )}
+                                        {!isFollowing && data.userName !== user.userName && (
                                             <Button onClick={apiFollow(data._id)} size='small'>
                                                 Follow
                                             </Button>
-                                        )}
-                                        {data.userName !== state.userName && (
-                                            <Link to={`/message/${data.userName}/t/${data._id}`}>
-                                                <Button type={isFollowing ? 'primary' : 'second'} size='small'>
-                                                    Message
-                                                </Button>
-                                            </Link>
                                         )}
                                     </div>
                                     {isFollowing && (

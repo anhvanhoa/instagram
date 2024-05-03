@@ -48,7 +48,7 @@ const UserName: React.FC<Props> = ({ dropDow, user }) => {
                         onFollow={apiFollow(user._id)}
                         onUnFollow={apiUnFollow(user._id)}
                         loading={isPending || isPending2}
-                        data={user}
+                        account={user}
                     />
                 )}
             >

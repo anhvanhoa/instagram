@@ -6,13 +6,11 @@ import { User } from '~/types/auth'
 import React, { useState } from 'react'
 import unfollow from '~/apis/unfollow'
 import AlertUnfollow from './AlertUnfollow'
-type ButtonType = 'custom' | 'primary' | 'text' | 'second'
 
 interface Props {
-    userP: User
-    type?: ButtonType
+    user: User
 }
-const SuggestAccount: React.FC<Props> = ({ userP, type = 'text' }) => {
+const SuggestAccount: React.FC<Props> = ({ user }) => {
     const [stateFollow, setStateFollow] = useState(false)
     const [stateAlert, setAlert] = useState(false)
     const { mutate, isPending } = useMutation({
@@ -33,16 +31,15 @@ const SuggestAccount: React.FC<Props> = ({ userP, type = 'text' }) => {
     return (
         <div>
             {stateAlert && (
-                <AlertUnfollow user={userP} handleUnfollow={apiUnFollow(userP._id)} handleClose={hiddenUnfollow} />
+                <AlertUnfollow user={user} handleUnfollow={apiUnFollow(user._id)} handleClose={hiddenUnfollow} />
             )}
             <div className='py-2 flex justify-between items-center'>
-                <AccountItem user={userP} />
+                <AccountItem user={user} />
                 <Button
                     loading={isPending || isPending2}
-                    onClick={stateFollow ? showUnfollow : apiFollow(userP._id)}
-                    type={type}
+                    onClick={stateFollow ? showUnfollow : apiFollow(user._id)}
                     size='small'
-                    className='text-xs'
+                    className='text-xs !w-20'
                 >
                     {stateFollow ? 'Following' : 'Follow'}
                 </Button>

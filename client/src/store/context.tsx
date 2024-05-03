@@ -2,7 +2,7 @@ import { Dispatch, createContext } from 'react'
 import { ActionType, initializeUser } from './constant'
 import { User } from '~/types/auth'
 interface ContextType {
-    state: User
+    user: User
     dispatch: Dispatch<ActionType>
 }
-export const contextUser = createContext<ContextType>({ state: initializeUser, dispatch: () => {} })
+export const contextUser = createContext<ContextType>({ user: initializeUser, dispatch: () => {} })

@@ -1,20 +1,21 @@
 import { Icon } from '@iconify/react/dist/iconify.js'
 import { useMutation } from '@tanstack/react-query'
 import classNames from 'classnames'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import logout from '~/apis/logout'
 import IconApp from '~/assets/icons/IconApp'
 import { dataMenu } from '~/mock/menu'
 import { initializeUser } from '~/store/constant'
 import useContextUser from '~/store/hook'
+import manageToken from '~/utils/rfToken'
 
 const BoxMenu = () => {
     const { dispatch } = useContextUser()
-    const navigate = useNavigate()
     const handleSuccess = () => {
         dispatch({ payload: initializeUser, type: 'LOGOUT' })
-        localStorage.removeItem('rf_token')
-        setTimeout(() => navigate('/'), 100)
+        manageToken().crTokenRemove()
+        location.href = '/'
+        console.log('logout success')
     }
     const { mutate, isPending } = useMutation({
         onSuccess: handleSuccess,

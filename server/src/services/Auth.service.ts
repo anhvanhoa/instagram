@@ -1,18 +1,19 @@
 import { RegisterDto } from '~/services/types'
-import { UserModel } from '~/models/index.model'
+import { UserModel } from '~/models'
 import TokenModel from '~/models/Token.model'
-import { Info, LoginFB, LoginType, ResUser, User } from '~/types'
-import { hash, compare } from 'bcrypt'
+import { LoginFB, LoginType, ResUser } from '~/types'
+import { hash, compare, genSalt } from 'bcrypt'
 import isEmail from 'validator/lib/isEmail'
 import isTell from 'validator/lib/isMobilePhone'
 import { HttpStatus } from '~/http-status.enum'
 import { isNotEmptyObject } from '~/utils/Validate'
 import { httpResponse } from '~/utils/HandleRes'
 import Token from '~/utils/Token'
-import { redis } from '~/config/dbRedis'
 import slugify from 'slugify'
 import otp from '~/utils/Otp'
-
+import { Info, ResInfo } from '~/types/register'
+import { User } from '~/types/user'
+import { isMongoServerError } from '~/utils/Errors'
 export class AuthService {
     //
     async uniqueEmail(email: string): Promise<boolean> {
@@ -40,17 +41,17 @@ export class AuthService {
             throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
         if (data.email) {
             const unique = await this.uniqueEmail(data.email)
-            return httpResponse(HttpStatus.OK, { type: 'email', unique })
+            return httpResponse<ResInfo>(HttpStatus.OK, { type: 'email', unique })
         }
         if (data.numberPhone) {
             const unique = await this.uniqueTell(data.numberPhone)
-            return httpResponse(HttpStatus.OK, { type: 'tell', unique })
+            return httpResponse<ResInfo>(HttpStatus.OK, { type: 'tell', unique })
         }
         if (data.userName) {
             const unique = await this.uniqueUsername(data.userName)
-            return httpResponse(HttpStatus.OK, { type: 'userName', unique })
+            return httpResponse<ResInfo>(HttpStatus.OK, { type: 'userName', unique })
         }
-        throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, { msg: 'Server error' })
+        throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
     }
     //
     async register(data: RegisterDto) {
@@ -58,9 +59,10 @@ export class AuthService {
             throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Email not valid !' })
         if (data.numberPhone && (await this.uniqueTell(data.numberPhone)))
             throw httpResponse(HttpStatus.BAD_REQUEST, {
-                msg: 'Tell or Tell not valid !',
+                msg: 'Tell not valid !',
             })
-        data.password = await hash(data.password, 10)
+        const salt = await genSalt(10)
+        data.password = await hash(data.password, salt)
         const user = await UserModel.create(data)
         return httpResponse(HttpStatus.OK, {
             msg: 'Register success',
@@ -125,10 +127,25 @@ export class AuthService {
             throw httpResponse(HttpStatus.UNAUTHORIZED, {
                 msg: 'Login information is incorrect',
             })
-        const user = await UserModel.findOne<User>(
-            { $or: [{ userName }, { email }, { numberPhone }] },
-            { createdAt: false, updatedAt: false },
-        ).populate('posts')
+        let user: null | User = null
+        if (email) {
+            user = await UserModel.findOne<User>(
+                { email },
+                { createdAt: false, updatedAt: false },
+            ).populate('posts')
+        }
+        if (numberPhone) {
+            user = await UserModel.findOne<User>(
+                { numberPhone },
+                { createdAt: false, updatedAt: false },
+            ).populate('posts')
+        }
+        if (userName) {
+            user = await UserModel.findOne<User>(
+                { userName },
+                { createdAt: false, updatedAt: false },
+            ).populate('posts')
+        }
         if (!user)
             throw httpResponse(HttpStatus.UNAUTHORIZED, {
                 msg: 'Login information is incorrect',
@@ -138,47 +155,38 @@ export class AuthService {
             throw httpResponse(HttpStatus.UNAUTHORIZED, {
                 msg: 'Login information is incorrect',
             })
-        const accessToken = Token.createToken({ userName: user.userName }, '120s')
-        const refreshToken = Token.createToken({ userName: user.userName }, '1h')
-        // await redis.set(user.userName, refreshToken)
-        await TokenModel.findOneAndDelete({ username: user.userName })
-        await TokenModel.create({ token: refreshToken, username: user.userName })
+        const payload = { userName: user.userName }
+        const accessToken = Token.createToken(payload, '120s')
+        const refreshToken = Token.createToken(payload, '7d')
+        await TokenModel.create({ token: refreshToken, idUser: user._id })
         const { password: pass, ...newUser } = user._doc
         const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
         return httpResponse(HttpStatus.OK, dataUser)
     }
     //
-    async logout(userName: string) {
-        // await redis.del(userName)
-        await TokenModel.deleteOne({ username: userName })
+    async logout(token: string) {
+        await TokenModel.deleteOne({ token })
         return httpResponse(HttpStatus.OK, { msg: 'Logout success' })
     }
     //
-    async refreshJwt(token: string) {
-        let userName = ''
-        Token.verifyToken(token, (error, data) => {
-            if (error) {
-                console.log(error)
-                throw httpResponse(HttpStatus.UNAUTHORIZED, {
-                    msg: 'Login please !',
-                })
-            } else {
-                userName = data.userName
+    delay(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    }
+    async refreshJwt(user: Omit<User, 'password'>) {
+        const accessToken = Token.createToken({ userName: user.userName }, '120s')
+        const refreshToken = Token.createToken({ userName: user.userName }, '7d')
+        try {
+            await TokenModel.create({ token: refreshToken, idUser: user._id })
+            return httpResponse(HttpStatus.OK, { accessToken, refreshToken })
+        } catch (error: any) {
+            if (isMongoServerError(error)) {
+                if (error.code === 11000)
+                    return httpResponse(HttpStatus.OK, { accessToken, refreshToken })
             }
-        })
-        // const tokenDb = await redis.get(userName)
-        const tokenDb = await TokenModel.findOne()
-        if (!tokenDb) {
-            throw httpResponse(HttpStatus.UNAUTHORIZED, {
-                msg: 'Login please !',
+            throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, {
+                msg: 'Server error',
             })
         }
-        const accessToken = Token.createToken({ userName }, '120s')
-        const refreshToken = Token.createToken({ userName }, '7d')
-        // await redis.set(userName, refreshToken)
-        await TokenModel.findOneAndDelete({ username: userName })
-        await TokenModel.create({ token: refreshToken, username: userName })
-        return httpResponse(HttpStatus.OK, { accessToken, refreshToken })
     }
 }
 const authProvider = new AuthService()

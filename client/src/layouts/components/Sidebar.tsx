@@ -47,7 +47,7 @@ const Sidebar = () => {
                 className={classNames(
                     'transition-all duration-100 ease-linear px-3 pt-2 pb-5 sticky top-0 h-screen',
                     'flex flex-col justify-between z-[99] bg-main w-[76px] lg:w-60',
-                    'group-[.is-cllapse]:w-[76px]',
+                    'group-[.is-cllapse]:w-[76px] border-r border-second overflow-y-auto scrollbar',
                 )}
             >
                 <div>
@@ -63,7 +63,7 @@ const Sidebar = () => {
                 className={classNames(
                     'h-screen w-96 bg-main top-0 -translate-x-full rounded-e-3xl fixed',
                     'shadow-sidebar  dark:shadow-gray-50/5 group-[.is-side]:translate-x-0 group-[.is-side]:left-full',
-                    'transition-all z-50 border-l-2 border-second absolute -ml-px duration-300',
+                    'transition-all z-50 absolute -ml-px duration-300',
                 )}
             >
                 {id === 2 && <Search handleClickOutside={handleClickOutside} />}

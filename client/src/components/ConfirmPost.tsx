@@ -19,7 +19,7 @@ const ConfirmPost: React.FC<Props> = ({ success }) => {
                 )}
                 {success === 5 && (
                     <div className='flex items-center justify-center flex-col h-full gap-3'>
-                        <IconApp type='share-fail' className='w-20 h-20' />
+                        <IconApp type='share-fail' className='w-20 h-20 dark:fill-white' />
                         <p className='text-xl'>Your post cannot be shared. Please try again.</p>
                     </div>
                 )}

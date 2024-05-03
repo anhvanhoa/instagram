@@ -1,27 +1,25 @@
 import { model, Schema } from 'mongoose'
-import { User } from '~/types'
+import { User } from '~/types/user'
 
-const users = new Schema<User>(
+const userSchema = new Schema<User>(
     {
-        fbId: { type: String, default: '' },
         userName: {
             type: String,
             unique: true,
             required: true,
             lowercase: true,
-            validate: [
-                (email: string) => /^[^\s!@#$%^&*()_+{}\\[\]:;<>,.?~\\/-]+$/.test(email),
-                'userName not valid',
-            ],
+            index: true,
         },
         email: {
             type: String,
             default: null,
             lowercase: true,
+            index: true,
         },
         numberPhone: {
             type: String,
             default: null,
+            index: true,
         },
         password: {
             type: String,
@@ -35,18 +33,18 @@ const users = new Schema<User>(
         },
         bio: { type: String },
         birthday: { type: String },
-        gender: { type: String },
-        notifications: { type: [] },
-        posts: { type: [{ ref: 'posts', type: Schema.Types.ObjectId }] },
+        gender: { type: String, enum: ['nam', 'nữ', 'khác'] },
+        notifications: { type: [{ ref: 'notification', type: Schema.Types.ObjectId }] },
+        posts: { type: [{ ref: 'post', type: Schema.Types.ObjectId }] },
         stories: { type: [] },
         verify: { type: Boolean },
-        followers: { type: [{ ref: 'users', type: Schema.Types.ObjectId }] },
-        following: { type: [{ ref: 'users', type: Schema.Types.ObjectId }] },
-        avatar: { type: String },
+        followers: { type: [{ ref: 'user', type: Schema.Types.ObjectId }] },
+        following: { type: [{ ref: 'user', type: Schema.Types.ObjectId }] },
+        avatar: { type: String, default: '' },
     },
     {
         timestamps: true,
     },
 )
-
-export default model<User>('users', users)
+userSchema.index({ userName: 'text', fullName: 'text' })
+export default model<User>('user', userSchema, 'user')

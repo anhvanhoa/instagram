@@ -1,5 +1,5 @@
 import express from 'express'
-import PostsController from '~/controllers/Posts.controller'
+import PostsController from '~/controllers/Post.controller'
 import { accuracy } from '~/middlewares/Token.middleware'
 const postsRoute = express.Router()
 

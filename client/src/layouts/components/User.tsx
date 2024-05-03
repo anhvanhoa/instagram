@@ -10,12 +10,12 @@ interface Props {
     handleId: (id: number) => () => void
 }
 const User: React.FC<Props> = memo(({ handleId }) => {
-    const { state } = useContextUser()
+    const { user } = useContextUser()
     return (
         <Tippy content={`Profile`} placement='right' delay={[1000, 0]} theme='light' animation='scale'>
             <div className='hover:bg-gray-100/80 hover:dark:bg-second rounded-md'>
                 <NavLink
-                    to={state ? state.userName : ''}
+                    to={user ? user.userName : ''}
                     className={({ isActive }) =>
                         classNames(
                             'rounded-md grid items-center grid-cols-[24px,1fr]',
@@ -32,7 +32,7 @@ const User: React.FC<Props> = memo(({ handleId }) => {
                         )}
                     >
                         <Img
-                            src={state.avatar}
+                            src={user.avatar}
                             alt='Profile'
                             className={classNames(
                                 'border-[2px] border-solid group-[.active-avatar]:border-pink-600',

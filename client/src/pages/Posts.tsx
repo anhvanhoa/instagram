@@ -29,11 +29,16 @@ import NotFound from './NotFound'
 
 const Posts = () => {
     const params = useParams()
-    const { state: user } = useContextUser()
+    const { user } = useContextUser()
     const [comment, setComment] = useState('')
     const [confirm, setConfirm] = useState(false)
     const [edit, setEdit] = useState(false)
-    const [listComment, setListComment] = useState<string[]>([])
+    const [listComment, setListComment] = useState<
+        {
+            comment: string
+            createdAt: string
+        }[]
+    >([])
     const [like, setLike] = useState(false)
     const navigate = useNavigate()
     const url = `${location.origin}/p/${params.id}`
@@ -78,7 +83,13 @@ const Posts = () => {
             {
                 onSuccess: () => {
                     setComment('')
-                    setListComment((pre) => [...pre, comment])
+                    setListComment((pre) => [
+                        ...pre,
+                        {
+                            comment,
+                            createdAt: new Date().toISOString(),
+                        },
+                    ])
                 },
             },
         )
@@ -191,10 +202,20 @@ const Posts = () => {
                             <div className='pb-4 flex-1'>
                                 <div className=''>
                                     {listComment.map((comment, index) => (
-                                        <Comments key={index} comment={comment} user={user} />
+                                        <Comments
+                                            key={index}
+                                            time={comment.createdAt}
+                                            comment={comment.comment}
+                                            user={user}
+                                        />
                                     ))}
                                     {posts.comments.map((comment) => (
-                                        <Comments key={comment._id} comment={comment.content} user={comment.userId} />
+                                        <Comments
+                                            key={comment._id}
+                                            time={comment.createdAt}
+                                            comment={comment.content}
+                                            user={comment.userId}
+                                        />
                                     ))}
                                 </div>
                             </div>

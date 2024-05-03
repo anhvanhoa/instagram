@@ -13,34 +13,33 @@ import { navbarDesk } from '~/mock/navbar'
 interface Props {
     active: { id: number; handleId: (id: number) => () => void }
 }
+interface Notify {
+    message: boolean
+    notification: boolean
+}
 const Navbar: React.FC<Props> = memo(({ active }) => {
-    const [notifys, setNotifys] = useState({
+    const [notifys, setNotifys] = useState<Notify>({
         message: false,
         notification: false,
     })
     const navigate = useNavigate()
     const { id, handleId } = active
+    const handleNotify = (name: keyof Notify, value: boolean) => setNotifys((prev) => ({ ...prev, [name]: value }))
     useEffect(() => {
-        socket.on(`notifyMessage`, () =>
-            setNotifys((prev) => ({
-                ...prev,
-                message: true,
-            })),
-        )
-        socket.on(`notification`, () =>
-            setNotifys((prev) => ({
-                ...prev,
-                notification: true,
-            })),
-        )
+        if (id !== 5) {
+            socket.on(`notifyMessage`, () => {
+                handleNotify('message', true)
+            })
+        }
+        if (id !== 6) socket.on(`notification`, () => handleNotify('notification', true))
         return () => {
-            socket.off('notifyMessage')
-            socket.off('notification')
+            if (id !== 5) socket.off('notifyMessage')
+            if (id !== 6) socket.off('notification')
         }
     }, [id])
     const handleActive = (link: string, id: number) => () => {
-        if (id === 5) setNotifys((prev) => ({ ...prev, message: false }))
-        if (id === 6) setNotifys((prev) => ({ ...prev, notification: false }))
+        if (id === 5) handleNotify('message', false)
+        if (id === 6) handleNotify('notification', false)
         handleId(id)()
         if (link !== '/#') navigate(link)
     }
@@ -65,7 +64,7 @@ const Navbar: React.FC<Props> = memo(({ active }) => {
                             <div
                                 className={classNames(
                                     'rounded-md flex items-center p-3 overflow-hidden border border-transparent',
-                                    { 'font-medium text-pink-600': element.id === id },
+                                    { 'font-semibold text-pink-600': element.id === id },
                                 )}
                             >
                                 <span className='group-hover/item:scale-105 transition-all flex-shrink-0 relative'>

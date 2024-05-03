@@ -3,12 +3,19 @@ import { Token } from '~/types'
 
 const tokenSchema = new Schema<Token>(
     {
-        token: String,
-        username: String,
+        token: {
+            type: String,
+            unique: true,
+            required: true,
+        },
+        idUser: {
+            type: String,
+            required: true,
+        },
     },
     {
         timestamps: true,
     },
 )
 
-export default model('token', tokenSchema)
+export default model('token', tokenSchema, 'token')

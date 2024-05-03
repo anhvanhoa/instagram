@@ -10,7 +10,10 @@ class Otp {
         }
         return code
     }
-    async sendMail(data: { codeverify: string; email: string }, template: string = Template.REGISTER): Promise<void> {
+    async sendMail(
+        data: { codeverify: string; email: string },
+        template: string = Template.REGISTER,
+    ): Promise<void> {
         try {
             const courier = CourierClient(configMail)
             await courier.send({
@@ -23,7 +26,10 @@ class Otp {
                 },
             })
         } catch (error) {
-            throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, { msg: 'Server mail error' })
+            console.log(error)
+            throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, {
+                msg: 'Server mail error',
+            })
         }
     }
 }

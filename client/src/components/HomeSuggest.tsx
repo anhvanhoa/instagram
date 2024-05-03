@@ -22,7 +22,7 @@ const HomeSuggest = () => {
                     <SkeletonUser />
                 </div>
             )}
-            {data && data.map((user) => <SuggestAccount key={user._id} type='primary' userP={user} />)}
+            {data && data.map((user) => <SuggestAccount key={user._id} user={user} />)}
         </div>
     )
 }

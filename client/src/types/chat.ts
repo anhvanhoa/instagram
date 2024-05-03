@@ -9,25 +9,24 @@ export interface ContentChat {
     isDeleteSend: boolean
     isDeleteReceive: boolean
     isSeen: boolean
-    createdAt: Date
+    createdAt: string
 }
-export interface ContentChatIO extends ContentChat {
-    idUserChat: string
-}
+// export interface ContentChatIO extends ContentChat {
+//     idUserChat: string
+// }
 
 export interface DetailChat {
-    idUser: string
-    idUserChat: string
     message: string
+    type: string
 }
 export interface SeenChat {
     idUser: string
     idContentChat: string
 }
 
-export interface DeleteChat extends SeenChat {
-    idUserisDeleteReceive: boolean
-    isDeleteSend: boolean
+export interface DeleteChat {
+    isDeleteReceive?: boolean
+    isDeleteSend?: boolean
 }
 
 export interface Notification {
@@ -47,24 +46,25 @@ export interface NotificationEmit {
 export interface ClientToServerEvents {
     joinRoom: (idUser: string) => void
     leaveRoom: (idUser: string) => void
-    chat: (data: DetailChat) => void
-    seen: (data: SeenChat) => void
+    chat: (room: string, data: DetailChat) => void
+    seen: (idContentChat: string) => void
     like: (data: NotificationEmit) => void
     comment: (data: NotificationEmit) => void
-    delete: (data: DeleteChat) => void
+    delete: (idContentChat: string, data: DeleteChat) => void
+    recall: (idContentChat: string, idRoom: string, data: DeleteChat) => void
 }
 
 export interface ServerToClientEvents {
-    notifyMessage: (data: UserChatSocket) => void
-    sendMessage: (data: ContentChatIO) => void
+    message: (data: ContentChat) => void
+    notifyMessage: (data: UserChat) => void
     connect_server: (id: string) => void
     notify_error: (message: string) => void
-    notifyDelete: (data: UserChatSocket) => void
+    notifyDelete: (data: ContentChat) => void
     notification: (data: Notification) => void
+    like: (data: string) => void
 }
-export interface UserChatSocket extends User {
-    chat: ContentChat
-}
+
 export interface UserChat extends User {
-    chat: ContentChat | null
+    message: ContentChat | null
+    idRoom: string
 }

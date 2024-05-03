@@ -9,48 +9,48 @@ import Img from './Img'
 import useContextUser from '~/store/hook'
 
 interface Props {
-    data: User
+    account: User
     isFollow: boolean
     loading: boolean
     onFollow: () => void
     onUnFollow: () => void
 }
-const TippyUser = ({ data, onFollow, onUnFollow, isFollow, loading }: Props) => {
-    const { state } = useContextUser()
+const TippyUser = ({ account, onFollow, onUnFollow, isFollow, loading }: Props) => {
+    const { user } = useContextUser()
     return (
         <Wrapper>
             <div className='bg-main border border-second w-[300px] rounded-xl'>
                 <div className='flex items-center p-4'>
-                    <Img className='w-12 h-12 rounded-[50%]' src={data.avatar || images.noAvatar} alt='' />
+                    <Img className='w-12 h-12 rounded-[50%]' src={account.avatar || images.noAvatar} alt='' />
                     <div className='pl-4'>
-                        <h4 className='font-bold'>{data.userName}</h4>
-                        <p className='text-gray-500 text-sm font-normal'>{data.fullName}</p>
+                        <h4 className='font-bold'>{account.userName}</h4>
+                        <p className='text-gray-500 text-sm font-normal'>{account.fullName}</p>
                     </div>
                 </div>
                 <div className='flex items-center justify-between mb-4 mx-5 text-xs *:font-medium'>
                     <div className='text-center'>
-                        <p className='text-sm'>{data.posts.length}</p>
+                        <p className='text-sm'>{account.posts.length}</p>
                         <p>posts</p>
                     </div>
                     <div className='text-center'>
-                        <p className='text-sm'>{data.followers.length}</p>
+                        <p className='text-sm'>{account.followers.length}</p>
                         <p>followers</p>
                     </div>
                     <div className='text-center'>
-                        <p className='text-sm'>{data.following.length}</p>
+                        <p className='text-sm'>{account.following.length}</p>
                         <p>following</p>
                     </div>
                 </div>
                 <div className='grid grid-cols-3 gap-1 px-1'>
-                    {data.posts.length > 0 &&
-                        data.posts.map((element, index) => (
+                    {account.posts.length > 0 &&
+                        account.posts.map((element, index) => (
                             <Link key={index} to='/' className='aspect-square'>
                                 <Img src={element.contents[0]} alt='' className='w-full h-full object-cover' />
                             </Link>
                         ))}
                 </div>
                 <div className='p-3'>
-                    {!isFollow && state._id !== data._id && (
+                    {!isFollow && user._id !== account._id && (
                         <Button
                             onClick={onFollow}
                             iconL={loading && <Icon icon='nonicons:loading-16' className='animate-spin text-white' />}
@@ -59,10 +59,10 @@ const TippyUser = ({ data, onFollow, onUnFollow, isFollow, loading }: Props) => 
                             {!loading && <>{!isFollow && 'Follow'}</>}
                         </Button>
                     )}
-                    {isFollow && state._id !== data._id && (
+                    {isFollow && user._id !== account._id && (
                         <div className='flex items-center gap-4'>
                             <div className='w-full'>
-                                <Link to={`/message/${data.userName}/t/${data._id}`}>
+                                <Link to={`/message/${account.userName}/t/${account._id}`}>
                                     <Button iconL={<IconApp type='message' className='w-4' />} className='w-full'>
                                         Message
                                     </Button>

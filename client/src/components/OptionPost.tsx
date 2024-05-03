@@ -16,7 +16,7 @@ const OptionPost: React.FC<Props> = ({ children, viewPosts, id }) => {
             {overlay && (
                 <OverLay onClose={changeOverlay(false)}>
                     <div className='min-w-[320px] px-8 xs:px-0 border border-second rounded-xl'>
-                        <div className='bg-main xs:w-96 rounded-xl flex flex-col'>
+                        <div className='bg-third xs:w-96 rounded-xl flex flex-col'>
                             <Button onClick={handleCopy} type='text' className='py-3'>
                                 Copy link
                             </Button>

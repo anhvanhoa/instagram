@@ -1,16 +1,21 @@
 import { PopulateOption } from 'mongoose'
 import { HttpStatus } from '~/http-status.enum'
 import UserModel from '~/models/User.model'
-import { User } from '~/types'
+import { User } from '~/types/user'
 import { httpResponse } from '~/utils/HandleRes'
-import Token from '~/utils/Token'
 
 export class UserService {
     async search(q: string, userName: string) {
-        const searchRegex = new RegExp(q, 'i')
+        // const searchRegex = new RegExp(q, 'i')
         const users = await UserModel.find(
-            { userName: { $ne: userName, $regex: searchRegex } },
-            { password: false },
+            // { userName: { $ne: userName, $regex: searchRegex } },
+            {
+                $text: {
+                    $search: q,
+                },
+                userName: { $ne: userName },
+            },
+            { password: false, email: false, numberPhone: false },
         ).populate('posts')
         return httpResponse(HttpStatus.OK, users)
     }
@@ -20,14 +25,12 @@ export class UserService {
         return httpResponse(HttpStatus.OK, { msg: 'Update success' })
     }
     //
-    async userCurrent(id: string, userName: string) {
-        const user = await UserModel.findOne(
-            { _id: id, userName },
-            { password: false },
-        ).populate('posts')
+    async profile(id: string) {
+        const user = await UserModel.findOne({ _id: id }, { password: false }).populate(
+            'posts',
+        )
         if (!user) return httpResponse(HttpStatus.NOT_FOUND, { msg: 'User not found' })
-        const accessToken = Token.createToken({ userName }, '120s')
-        return httpResponse(HttpStatus.OK, { ...user._doc, accessToken })
+        return httpResponse(HttpStatus.OK, user)
     }
     //
     async user(userName: string) {

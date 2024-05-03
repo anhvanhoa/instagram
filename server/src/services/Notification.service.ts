@@ -1,7 +1,7 @@
-import { PopulateOption, PopulateOptions } from 'mongoose'
+import { PopulateOption } from 'mongoose'
 import { HttpStatus } from '~/http-status.enum'
 import NotificationModel from '~/models/Notification.model'
-import PostsModel from '~/models/Posts.model'
+import PostsModel from '~/models/Post.model'
 import UserModel from '~/models/User.model'
 import { NotificationEmit } from '~/types'
 import { httpResponse } from '~/utils/HandleRes'
@@ -19,11 +19,11 @@ export class Notification {
             .populate<PopulateOption>([
                 {
                     path: 'fromUser',
-                    model: 'users',
+                    model: 'user',
                 },
                 {
                     path: 'toUser',
-                    model: 'users',
+                    model: 'user',
                 },
             ])
             .sort({

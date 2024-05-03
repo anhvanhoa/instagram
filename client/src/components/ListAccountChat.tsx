@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useEffect, useLayoutEffect, useState } from 'react'
 import AccountChat from './AccountChat'
 import { NavLink } from 'react-router-dom'
 import classNames from 'classnames'
@@ -11,43 +11,47 @@ interface Props {
 }
 const ListAccountChat: React.FC<Props> = memo(({ dataUser }) => {
     const [data, setData] = useState(dataUser)
-    const { state } = useContextUser()
+    const { user } = useContextUser()
     useEffect(() => {
         socket.on('notifyMessage', (dataChat) => {
             setData((prev) => {
-                const a = prev.some((item) => item._id === dataChat._id)
+                const a = prev.some((item) => item.idRoom === dataChat.idRoom)
                 if (!a) return [dataChat, ...prev]
                 return prev.map((item) => {
-                    if (item._id === dataChat._id) {
+                    if (item.idRoom === dataChat.idRoom) {
                         return {
                             ...item,
-                            chat: dataChat.chat,
+                            message: dataChat.message,
                         }
                     }
                     return item
                 })
             })
         })
-        setData(dataUser)
         return () => {
             socket.off('notifyMessage')
         }
-    }, [state._id, dataUser])
+    }, [user._id])
+    useLayoutEffect(() => {
+        setData(dataUser)
+    }, [dataUser])
     return (
         <div className='h-full'>
-            {data.map((user) => (
-                <NavLink
-                    key={user._id}
-                    to={`/message/${user.userName}/t/${user._id}`}
-                    className={({ isActive }) =>
-                        classNames({
-                            'border-l-4 border-sky-500 block': isActive,
-                        })
-                    }
-                >
-                    <AccountChat user={user} key={user._id} />
-                </NavLink>
-            ))}
+            {data.map((user) => {
+                return (
+                    <NavLink
+                        key={user._id}
+                        to={`/message/${user.userName}/t/${user.idRoom}`}
+                        className={({ isActive }) =>
+                            classNames({
+                                'border-l-4 border-sky-500 block': isActive,
+                            })
+                        }
+                    >
+                        <AccountChat user={user} key={user._id} />
+                    </NavLink>
+                )
+            })}
         </div>
     )
 })

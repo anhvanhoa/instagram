@@ -1,11 +1,12 @@
 import { model, Schema } from 'mongoose'
-import { Notification } from '~/types'
+import { NotificationSchema } from '~/types/notification'
 
-const notificationSchema = new Schema<Notification>(
+const notificationSchema = new Schema<NotificationSchema>(
     {
-        fromUser: { ref: 'users', type: Schema.Types.ObjectId },
-        toUser: { ref: 'users', type: Schema.Types.ObjectId },
-        idPosts: { ref: 'posts', type: Schema.Types.ObjectId },
+        fromUser: { ref: 'user', type: Schema.Types.ObjectId },
+        toUser: { ref: 'user', type: Schema.Types.ObjectId },
+        idPosts: { ref: 'post', type: Schema.Types.ObjectId },
+        isNotification: { type: Boolean, default: false },
         content: String,
     },
     {
@@ -13,4 +14,4 @@ const notificationSchema = new Schema<Notification>(
     },
 )
 
-export default model('notifications', notificationSchema)
+export default model('notification', notificationSchema, 'notification')

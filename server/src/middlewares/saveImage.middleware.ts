@@ -1,21 +1,18 @@
-import { randomUUID } from 'crypto'
 import multer from 'multer'
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, `${__dirname}/../../public/images`)
-    },
-    filename: async (req, file, cb) => {
-        const name = randomUUID()
-        const start = file.mimetype.indexOf('image/') + 6
-        const extension = file.mimetype.slice(start)
-        cb(null, `${name}.${extension}`)
+import { CloudinaryStorage } from 'multer-storage-cloudinary'
+import { v2 as cloudinary, UploadApiOptions } from 'cloudinary'
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: (): UploadApiOptions => {
+        return {
+            folder: 'instagram',
+        }
     },
 })
+
+const MAX_SIZE = 1024 * 1024 * 4
 const saveImage = multer({
     storage,
-    fileFilter(req, file, callback) {
-        if (!file.mimetype.includes('image/')) return callback(null, false)
-        callback(null, true)
-    },
+    limits: { fileSize: MAX_SIZE },
 }).single('images')
 export default saveImage

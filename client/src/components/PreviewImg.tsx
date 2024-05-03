@@ -18,7 +18,7 @@ interface Props {
 }
 let contents: string[] = []
 const PreviewImg = ({ listImage, onStep }: Props) => {
-    const { state: user } = useContextUser()
+    const { user } = useContextUser()
     const [description, setDescription] = useState<string>('')
     const [isUploadPosts, setIsUploadPosts] = useState<boolean>(false)
     const [indexSlide, setIndexSlide] = useState(0)
@@ -44,6 +44,7 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
                 contents = []
             }
         },
+        onError: () => onStep(5),
         mutationFn: (data: FormData) => uploadImg(data),
     })
     function formData(fileCrop: File, serverSize: CroppedRect) {
@@ -55,9 +56,9 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
         formData.append('y', String(serverSize.y))
         return formData
     }
-    const apiCrop = async () => {
+    const apiCrop = () => {
         setIsUploadPosts(true)
-        listImage.forEach(async ({ serverSize, fileCrop }) => {
+        listImage.forEach(({ serverSize, fileCrop }) => {
             const data = formData(fileCrop, serverSize)
             mutate(data)
         })

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express-serve-static-core'
+import { Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 import userProvider from '~/services/User.service'
 import { JwtData } from '~/types'
@@ -7,12 +7,8 @@ class UserController {
     async search({ query, user }: Request, res: Response) {
         try {
             const q = query.q as string
-            if (!user)
-                return res
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .json({ msg: 'You are not authorized to access this resource' })
             if (!q) return res.status(HttpStatus.OK).json([])
-            const { userName } = user as { userName: string }
+            const { userName } = user!
             const response = await userProvider.search(q, userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
@@ -36,10 +32,10 @@ class UserController {
             return res.status(error.httpStatus).json(error.data)
         }
     }
-    async userCurrent({ params: { id }, user }: Request, res: Response) {
+    async profile({ user }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
-            const response = await userProvider.userCurrent(id, userName)
+            const { _id } = user!
+            const response = await userProvider.profile(_id)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {
             if (!error.httpStatus)
@@ -105,7 +101,7 @@ class UserController {
     }
     async suggest({ user }: Request, res: Response) {
         try {
-            const { userName } = user as JwtData
+            const { userName } = user!
             const response = await userProvider.suggest(userName)
             return res.status(response.httpStatus).json(response.data)
         } catch (error: any) {

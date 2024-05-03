@@ -1,163 +1,168 @@
-import { PopulateOption } from 'mongoose'
+// import { PopulateOption } from 'mongoose'
 import { HttpStatus } from '~/http-status.enum'
 import BoxChatModel from '~/models/BoxChat.model'
 import ContentChatModel from '~/models/ContentChat.model'
 import RoomChatModel from '~/models/RoomChat.model'
 import UserModel from '~/models/User.model'
-import { ContentChat, User } from '~/types'
+import { DeleteChat, DetailChat } from '~/types'
+import { BoxChat } from '~/types/boxChat'
+import { ResUsersChat } from '~/types/chat'
+import { User } from '~/types/user'
 import { httpResponse } from '~/utils/HandleRes'
 
 export class ChatService {
-    async users(userName: string) {
-        const user = await UserModel.findOne({ userName })
-        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
-        const users = (
-            await BoxChatModel.find<{ idUserChat: User }>({
-                idUser: user._id,
-                isDelete: false,
+    async users(user: Omit<User, 'password'>) {
+        const boxChats = await BoxChatModel.find<{
+            idUserChat: User
+            idRoom: string
+        }>({
+            idUser: user._id,
+            isDelete: false,
+        })
+            .populate({
+                path: 'idUserChat',
+                select: {
+                    _id: true,
+                    userName: true,
+                    fullName: true,
+                    avatar: true,
+                    verify: true,
+                },
             })
-                .populate({
-                    path: 'idUserChat',
-                    select: {
-                        _id: true,
-                        userName: true,
-                        fullName: true,
-                        avatar: true,
-                        verify: true,
-                    },
-                })
-                .sort({ createdAt: 'desc' })
-        ).map((item) => item.idUserChat._doc)
+            .sort({ createdAt: 'desc' })
+            .select({
+                idUserChat: true,
+                idRoom: true,
+            })
+        if (boxChats.length === 0) return httpResponse(HttpStatus.OK, [])
+        const users = boxChats.map((item) => ({
+            ...item.idUserChat._doc,
+            idRoom: item.idRoom,
+        }))
         const userChat = await Promise.all(
             users.map(async (item) => {
-                const chat = await this.recentlyChat(item._id, user._id)
-                if (!chat)
+                const message = await this.recentlyChat(item.idRoom)
+                if (!message)
                     return {
-                        chat: null,
+                        message: null,
                         ...item,
                     }
                 return {
-                    chat,
+                    message,
                     ...item,
                 }
             }),
         )
-        const userChats = userChat.filter((chat) => chat)
+        const userChats: ResUsersChat[] = userChat.filter((chat) => chat)
         return httpResponse(HttpStatus.OK, userChats)
     }
     async idRoom(idUserChat: string, idUser: string) {
-        const user = await UserModel.findOne({ _id: idUser })
         const userChat = await UserModel.findOne({ _id: idUserChat })
-        if (!user || !userChat)
+        if (!userChat)
             throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
         const roomChat = await RoomChatModel.findOne(
             {
-                $and: [
-                    { members: { $elemMatch: { idUser: user._id } } },
-                    { members: { $elemMatch: { idUser: userChat._id } } },
-                    { members: { $size: 2 } },
-                ],
+                $and: [{ members: userChat._id }, { members: userChat._id }],
             },
             { _id: true },
         )
         if (roomChat) return roomChat._id
         const room = await RoomChatModel.create({
-            members: [{ idUser: user._id }, { idUser: userChat._id }],
+            members: [idUser, userChat._id],
         })
         return room._id
     }
-    protected async createBoxChat(idUserChat: string, idUser: string, idRoom: string) {
+    protected async findOrCreateBoxChat(
+        idUser: string,
+        idUserChat: string,
+        idRoom: string,
+    ) {
         const boxChat = await BoxChatModel.findOne({
             idRoom: idRoom,
-            idUser: idUser,
-            idUserChat: idUserChat,
+            idUser,
+            idUserChat,
         })
         if (boxChat) return boxChat
         const newBoxChat = await BoxChatModel.create({
             idRoom: idRoom,
-            idUser: idUser,
-            idUserChat: idUserChat,
+            idUser,
+            idUserChat,
         })
         return newBoxChat
     }
-    protected async createBoxChatAndUpdate(
-        idUserChat: string,
-        idUser: string,
-        idRoom: string,
-        message: string,
-    ) {
-        const boxChat = await this.createBoxChat(idUserChat, idUser, idRoom)
+    protected async createBoxChatAndUpdate(boxChat: BoxChat, detailChat: DetailChat) {
         const content = await ContentChatModel.create({
-            message: message,
-            idUser: idUser,
+            message: detailChat.message,
+            idUser: boxChat.idUser,
             idBoxChat: boxChat._id,
         })
-        await boxChat.updateOne({ $push: { contentChat: content._id } })
-    }
-    async chat(idUserChat: string, idUser: string, message: string) {
-        const idRoom = await this.idRoom(idUserChat, idUser)
-        await this.createBoxChat(idUser, idUserChat, idRoom)
-        await this.createBoxChatAndUpdate(idUserChat, idUser, idRoom, message)
-    }
-    async boxChat(userName: string, idUserChat: string) {
-        const user = await UserModel.findOne({ userName })
-        const userChat = await UserModel.findOne({ _id: idUserChat })
-        if (!user || !userChat)
-            throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
-        const roomChat = await RoomChatModel.findOne(
-            {
-                $and: [
-                    { members: { $elemMatch: { idUser: user._id } } },
-                    { members: { $elemMatch: { idUser: userChat._id } } },
-                    { members: { $size: 2 } },
-                ],
-            },
-            { _id: true },
+        BoxChatModel.updateOne(
+            { _id: boxChat._id },
+            { $push: { contentChat: content._id } },
         )
-        if (!roomChat) return httpResponse(HttpStatus.OK, [])
-        const boxchatSender = await BoxChatModel.findOne({
-            idRoom: roomChat._id,
-            idUser: user._id,
-        }).populate<PopulateOption>({
-            path: 'contentChat',
-            match: { isDeleteSend: false },
+        return content
+    }
+    async chat(idUser: string, room: string, detailChat: DetailChat) {
+        const roomChat = await RoomChatModel.findOne({ _id: room }).select({
+            members: true,
         })
-        const boxchatReceiver = await BoxChatModel.findOne({
-            idRoom: roomChat._id,
-            idUser: userChat._id,
-        }).populate<PopulateOption>({
-            path: 'contentChat',
-            match: { isDeleteReceive: false },
-        })
-        if (!boxchatSender || !boxchatReceiver) return httpResponse(HttpStatus.OK, [])
-        const boxChats = boxchatSender.contentChat.concat(boxchatReceiver.contentChat)
-        if (boxChats.length === 0) return httpResponse(HttpStatus.OK, [])
-        const boxChat = boxChats.sort(
+        if (!roomChat) throw httpResponse(HttpStatus.NOT_FOUND, { msg: 'Room not found' })
+        const members = roomChat.members.map((item) => item.toString())
+        const idUserChat = members.find((item) => item !== idUser)
+        const userChat = (await UserModel.findById(idUserChat).select({
+            password: false,
+        }))!
+        const boxChat = await this.findOrCreateBoxChat(idUser, userChat._id, room)
+        const contentChat = await this.createBoxChatAndUpdate(boxChat, detailChat)
+        return { contentChat, members, userChat }
+    }
+    async boxChat(idRoom: string) {
+        // const boxChats = await BoxChatModel.find({ idRoom }).populate('contentChat')
+        // const contentChats = boxChats.reduce<ContentChat[]>((init, boxChat) => {
+        //     return init.concat(boxChat.contentChat)
+        // }, [])
+        const idBoxChats = (
+            await BoxChatModel.find({ idRoom }).select({ _id: true })
+        ).map((item) => item._id)
+        const contentChats = await ContentChatModel.find({
+            idBoxChat: {
+                $in: idBoxChats,
+            },
+        }).sort({ createdAt: -1 })
+        const contentChatsSort = contentChats.sort(
             (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
         )
-        return httpResponse(HttpStatus.OK, boxChat)
+        return httpResponse(HttpStatus.OK, contentChatsSort)
     }
-    async recentlyChat(idUserChat: string, idUser: string) {
-        const user = await UserModel.findOne({ _id: idUser })
-        const userChat = await UserModel.findOne({ _id: idUserChat })
-        if (!user || !userChat)
-            throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
-        const { data: boxChats } = await this.boxChat(user.userName, idUserChat)
+    async recentlyChat(idRoom: string) {
+        const { data: boxChats } = await this.boxChat(idRoom)
         if (boxChats.length === 0) return false
         if (boxChats.length === 0) return false
         const chat = boxChats[boxChats.length - 1]
         return chat._doc
     }
-    async seen(_id: string) {
-        await ContentChatModel.updateOne({ _id }, { $set: { isSeen: true } })
-        return (await ContentChatModel.findById(_id))?._doc
+    async seen(_id: string, idMe: string) {
+        const contentChat = await ContentChatModel.findById(_id)
+        if (!contentChat)
+            throw httpResponse(HttpStatus.NOT_FOUND, { msg: 'Content chat not found' })
+        await contentChat.updateOne({ $set: { isSeen: true } })
+        const contentChatSeen = (await ContentChatModel.findById(_id))!
+        const user = (await UserModel.findById(contentChat.idUser).select({
+            password: false,
+        }))!
+        const idRoom = await this.idRoom(user._id, idMe)
+        return {
+            contentChat: contentChatSeen._doc,
+            idRoom,
+            user,
+        }
     }
-    async delete(_id: string, isDeleteReceive: boolean, isDeleteSend: boolean) {
-        await ContentChatModel.updateOne(
-            { _id },
-            { $set: { isDeleteSend, isDeleteReceive } },
-        )
-        return (await ContentChatModel.findById(_id))?._doc
+    async delete(_id: string, data: DeleteChat) {
+        const contentChat = await ContentChatModel.findById(_id)
+        if (!contentChat)
+            throw httpResponse(HttpStatus.NOT_FOUND, { msg: 'Content chat not found' })
+        await contentChat.updateOne({ $set: data })
+        return (await ContentChatModel.findById(_id))!._doc
     }
 }
 

@@ -1,10 +1,11 @@
 import { User } from '~/types/auth'
+import manageToken from '~/utils/rfToken'
 
 export const initializeUser: User = {
     _id: '',
     email: '',
     numberPhone: '',
-    accessToken: '',
+    accessToken: manageToken().crTokenDecode() || '',
     avatar: '',
     bio: '',
     birthday: '',

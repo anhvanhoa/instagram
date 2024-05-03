@@ -1,13 +1,17 @@
 import mongoose, { model, Schema } from 'mongoose'
-import { BoxChat } from '~/types'
+import { BoxChat } from '~/types/boxChat'
 
 const boxChatSchema = new Schema<BoxChat>(
     {
-        idUser: { type: mongoose.Types.ObjectId, ref: 'users' },
-        idUserChat: { type: mongoose.Types.ObjectId, ref: 'users' },
-        idRoom: { type: mongoose.Types.ObjectId, ref: 'roomChats' },
+        idUser: {
+            type: mongoose.Types.ObjectId,
+            ref: 'user',
+            required: true,
+        },
+        idUserChat: { type: mongoose.Types.ObjectId, ref: 'user', required: true },
+        idRoom: { type: mongoose.Types.ObjectId, ref: 'roomChat' },
         nickname: String,
-        contentChat: [{ type: mongoose.Types.ObjectId, ref: 'contentChats' }],
+        contentChat: [{ type: mongoose.Types.ObjectId, ref: 'contentChat' }],
         isDelete: { type: Boolean, default: false },
     },
     {
@@ -15,4 +19,4 @@ const boxChatSchema = new Schema<BoxChat>(
     },
 )
 
-export default model('boxChats', boxChatSchema)
+export default model('boxChat', boxChatSchema, 'boxChat')
