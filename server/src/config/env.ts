@@ -1,19 +1,19 @@
 import z from 'zod'
 import { config } from 'dotenv'
-import fs from 'fs'
+// import fs from 'fs'
 
 const configOption = {
     path: `.env.${process.env.NODE_ENV || 'development'}`,
 }
 config(configOption)
 
-function checkFileEnv() {
-    if (!fs.existsSync(configOption.path)) {
-        throw new Error(`Không tìm thấy file ${configOption.path}`)
-    }
-}
+// function checkFileEnv() {
+//     if (!fs.existsSync(configOption.path)) {
+//         throw new Error(`Không tìm thấy file ${configOption.path}`)
+//     }
+// }
 
-checkFileEnv()
+// checkFileEnv()
 
 const envSchema = z
     .object({
