@@ -50,7 +50,7 @@ const EditProfile = () => {
     })
     const { refetch } = useQuery({
         queryKey: ['user'],
-        queryFn: () => profile(user._id),
+        queryFn: () => profile(),
         enabled: false,
     })
     const handleClick = () => inputAvatar.current?.click()
