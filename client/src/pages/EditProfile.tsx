@@ -76,7 +76,7 @@ const EditProfile = () => {
                     sizeCrop: {
                         ...sizeCrop,
                         width: height / width,
-                        y: (1 - height / width) / 2,
+                        x: (1 - height / width) / 2,
                     },
                 }))
             }
