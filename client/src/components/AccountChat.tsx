@@ -8,7 +8,9 @@ interface Props {
     user: UserChat
 }
 const AccountChat = ({ user }: Props) => {
-    const seen = ({ idContentChat }: SeenChat) => socket.emit('seen', idContentChat)
+    const seen = ({ idContentChat }: SeenChat) => {
+        socket.emit('seen', idContentChat)
+    }
     const handleSeen = () => {
         if (!user.message) return
         seen({

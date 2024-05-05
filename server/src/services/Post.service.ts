@@ -1,16 +1,14 @@
 import { PopulateOption } from 'mongoose'
-import { HttpStatus } from '~/http-status.enum'
 import CommentModel from '~/models/Comment.model'
 import PostModel from '~/models/Post.model'
 import UserModel from '~/models/User.model'
 import { Post } from '~/types/post'
-import { httpResponse } from '~/utils/HandleRes'
+import { UserNoPassword } from '~/types/user'
+import { BadRequestError } from '~/utils/Errors'
 
 export class PostsService {
-    async posts(userName: string) {
-        const user = await UserModel.findOne({ userName })
+    async posts(user: UserNoPassword) {
         const idFollowing = user?.following
-        if (!idFollowing || !idFollowing.length) return httpResponse(HttpStatus.OK, [])
         const userFollowing = (
             await UserModel.find({ _id: { $in: idFollowing } }).select({
                 _id: true,
@@ -30,7 +28,7 @@ export class PostsService {
                 },
             })
             .sort({ createdAt: 'desc' })
-        return httpResponse(HttpStatus.OK, posts)
+        return posts
     }
     async getOnePosts(id: string, userName: string) {
         const user = await this.checkLike(userName, id)
@@ -60,43 +58,44 @@ export class PostsService {
                 path: 'likes',
                 model: 'user',
                 select: { _id: true },
-                match: { _id: { $ne: user.data?._id } },
+                match: { _id: { $ne: user?._id } },
             })
-        if (!posts) throw httpResponse(HttpStatus.NOT_FOUND, { msg: 'Not found' })
-        return httpResponse(HttpStatus.OK, {
+        if (!posts)
+            throw new BadRequestError({
+                message: 'Post not found',
+            })
+        return {
             ...posts._doc,
-            like: user.data,
-        })
+            like: user,
+        }
     }
     async like(userName: string, { idPosts }: { idPosts: string }) {
         const author = await UserModel.findOne({ userName })
-        if (!author) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
-        await PostModel.updateOne(
+        if (!author) throw new BadRequestError({ message: 'Unauthorized' })
+        return await PostModel.updateOne(
             { _id: idPosts, likes: { $nin: author._id } },
             { $push: { likes: author._id } },
         )
-        return httpResponse(HttpStatus.OK, { msg: 'Like posts success !' })
     }
     async dislike(userName: string, { idPosts }: { idPosts: string }) {
         const author = await UserModel.findOne({ userName })
-        if (!author) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
-        await PostModel.updateOne(
+        if (!author) throw new BadRequestError({ message: 'Unauthorized' })
+        return await PostModel.updateOne(
             { _id: idPosts, likes: { $in: author._id } },
             { $pull: { likes: author._id } },
         )
-        return httpResponse(HttpStatus.OK, { msg: 'Dislike posts success !' })
     }
     async comment(
         userName: string,
         { idPosts, content }: { idPosts: string; content: string },
     ) {
         const author = await UserModel.findOne({ userName })
-        if (!author) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        if (!author) throw new BadRequestError({ message: 'Unauthorized' })
         const comment = await CommentModel.create({
             content,
             userId: author._id,
         })
-        await PostModel.updateOne(
+        return await PostModel.updateOne(
             { _id: idPosts },
             {
                 $push: {
@@ -104,16 +103,15 @@ export class PostsService {
                 },
             },
         )
-        return httpResponse(HttpStatus.OK, { msg: 'Comment posts success !' })
     }
     async deleteComment(
         userName: string,
         { idPosts, idComment }: { idPosts: string; idComment: string },
     ) {
         const author = await UserModel.findOne({ userName })
-        if (!author) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        if (!author) throw new BadRequestError({ message: 'Unauthorized' })
         await CommentModel.deleteOne({ _id: idComment, userId: author._id })
-        await PostModel.updateOne(
+        return await PostModel.updateOne(
             { _id: idPosts },
             {
                 $pull: {
@@ -121,11 +119,10 @@ export class PostsService {
                 },
             },
         )
-        return httpResponse(HttpStatus.OK, { msg: 'Delete comment posts success !' })
     }
     async upload(posts: Omit<Post, '_id' | '_doc' | 'author'>, userName: string) {
         const author = await UserModel.findOne({ userName })
-        if (!author) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        if (!author) throw new BadRequestError({ message: 'Unauthorized' })
         const post = await PostModel.create({ ...posts, author: author._id })
         await UserModel.updateOne(
             { _id: author._id },
@@ -133,55 +130,54 @@ export class PostsService {
                 $push: { posts: post._id },
             },
         )
-        return httpResponse(HttpStatus.OK, post)
+        return post
     }
     async suggests(userName: string, limit: number = 12) {
         const user = await UserModel.findOne({
             userName,
         })
-        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        if (!user) throw new BadRequestError({ message: 'Unauthorized' })
         const posts = await PostModel.find()
             .limit(limit)
             .ne('author', user?._id)
             .populate('author', { password: false })
             .sort({ createdAt: 'desc' })
-        return httpResponse(HttpStatus.OK, posts)
+        return posts
     }
     async checkLike(userName: string, id: string) {
         const user = await UserModel.findOne({
             userName,
         })
-        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        if (!user) throw new BadRequestError({ message: 'Unauthorized' })
+
         const posts = await PostModel.findOne({
             _id: id,
             likes: { $in: user._id },
         })
-        return httpResponse(HttpStatus.OK, posts ? user._doc : null)
+        return posts ? user._doc : null
     }
     async deletePosts(id: string, userName: string) {
         const user = await UserModel.findOne({
             userName,
         })
-        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        if (!user) throw new BadRequestError({ message: 'Unauthorized' })
         await PostModel.deleteOne({
             _id: id,
             author: user._id,
         })
-        await UserModel.updateOne(
+        return await UserModel.updateOne(
             { _id: user._id },
             {
                 $pull: { posts: id },
             },
         )
-        return httpResponse(HttpStatus.OK, { msg: 'Delete success' })
     }
     async editPosts(posts: Post, userName: string) {
         const user = await UserModel.findOne({
             userName,
         })
-        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
-        await PostModel.updateOne({ _id: posts._id }, posts)
-        return httpResponse(HttpStatus.OK, { msg: 'Edit success' })
+        if (!user) throw new BadRequestError({ message: 'Unauthorized' })
+        return await PostModel.updateOne({ _id: posts._id }, posts)
     }
 }
 const postsProvider = new PostsService()

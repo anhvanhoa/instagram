@@ -1,22 +1,20 @@
-import { isNotEmptyObject } from '~/utils/Validate'
 import { Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 import imageProvider from '~/services/Image.service'
 import { v2 as cloudinary } from 'cloudinary'
+import { isError } from '~/utils/Errors'
 
 class ImageController {
     async uploadImage({ body, file }: Request, res: Response) {
         try {
-            const isZize = isNotEmptyObject(body)
-            if (isZize) res.status(HttpStatus.OK).json({ msg: 'Upload success' })
             const response = await imageProvider.crop(body, file)
-            return res.status(response.httpStatus).json(response.data)
+            return res.status(HttpStatus.OK).json({
+                message: 'Upload success',
+                data: response,
+            })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async handleImage(req: Request, res: Response) {

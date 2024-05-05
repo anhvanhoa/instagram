@@ -8,7 +8,7 @@ const serachUser = async (q: string) => {
         },
     })
 
-    return payload
+    return payload.data
 }
 
 export default serachUser

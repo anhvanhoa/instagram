@@ -6,9 +6,9 @@ export interface PostsUpload {
     contents: string[]
 }
 
-const uploadPosts = async (posts: PostsUpload) => {
+const uploadPostRequest = async (posts: PostsUpload) => {
     const { payload } = await http.post<Posts>('/posts/upload', posts)
-    return payload
+    return payload.data
 }
 
-export default uploadPosts
+export default uploadPostRequest

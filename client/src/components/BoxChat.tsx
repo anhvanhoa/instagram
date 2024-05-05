@@ -44,7 +44,7 @@ const BoxChat: React.FC<Props> = ({ userChat, dataChat, idUser }) => {
         })
         socket.on(`message`, (data) => {
             setMessageNew((prev) => [...prev, data])
-            if (data.idUser === userChat._id) socket.emit(`seen`, data._id)
+            if (data.idUser === userChat._id) setTimeout(() => socket.emit(`seen`, data._id), 3000)
         })
         setMessageNew(dataChat)
         return () => {

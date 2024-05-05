@@ -1,8 +1,7 @@
 import { PopulateOption } from 'mongoose'
-import { HttpStatus } from '~/http-status.enum'
 import UserModel from '~/models/User.model'
 import { User } from '~/types/user'
-import { httpResponse } from '~/utils/HandleRes'
+import { BadRequestError } from '~/utils/Errors'
 
 export class UserService {
     async search(q: string, userName: string) {
@@ -17,20 +16,19 @@ export class UserService {
             },
             { password: false, email: false, numberPhone: false },
         ).populate('posts')
-        return httpResponse(HttpStatus.OK, users)
+        return users
     }
     //
     async userUpdate(userName: string, data: User) {
-        await UserModel.updateOne({ userName }, data)
-        return httpResponse(HttpStatus.OK, { msg: 'Update success' })
+        return await UserModel.updateOne({ userName }, data)
     }
     //
     async profile(id: string) {
         const user = await UserModel.findOne({ _id: id }, { password: false }).populate(
             'posts',
         )
-        if (!user) return httpResponse(HttpStatus.NOT_FOUND, { msg: 'User not found' })
-        return httpResponse(HttpStatus.OK, user)
+        if (!user) throw new BadRequestError({ message: 'User not found' })
+        return user
     }
     //
     async user(userName: string) {
@@ -43,51 +41,50 @@ export class UserService {
                 sort: { createdAt: 'desc' },
             },
         })
-        if (!user) return httpResponse(HttpStatus.NOT_FOUND, { msg: 'User not found' })
-        return httpResponse(HttpStatus.OK, user)
+        if (!user) throw new BadRequestError({ message: 'User not found' })
+        return user
     }
     //
     async follow(idFollow: string, userName: string) {
         if (!idFollow || !userName)
-            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
+            throw new BadRequestError({ message: 'Data is not valid' })
         const isFollow = await UserModel.findById(idFollow)
         const isFollower = await UserModel.findOne({ userName })
         if (!isFollow || !isFollower)
-            throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+            throw new BadRequestError({ message: 'Unauthorized' })
         await UserModel.updateOne(
             { _id: idFollow, followers: { $nin: [isFollower._id] } },
             { $push: { followers: isFollower._id } },
         )
-        await UserModel.updateOne(
+        return await UserModel.updateOne(
             { _id: isFollower._id, following: { $nin: [idFollow] } },
             { $push: { following: idFollow } },
         )
-        return httpResponse(HttpStatus.OK, { msg: 'Follow success !' })
     }
     //
     async unfollow(idFollow: string, userName: string) {
         if (!idFollow || !userName)
-            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
+            throw new BadRequestError({ message: 'Data is not valid' })
         const isFollow = await UserModel.findById(idFollow)
         const isFollower = await UserModel.findOne({ userName })
         if (!isFollow || !isFollower)
-            throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+            throw new BadRequestError({ message: 'Unauthorized' })
         await UserModel.updateOne(
             { _id: idFollow, followers: { $in: [isFollower._id] } },
             { $pull: { followers: isFollower._id } },
         )
-        await UserModel.updateOne(
+
+        return await UserModel.updateOne(
             { _id: isFollower._id, following: { $in: [idFollow] } },
             { $pull: { following: idFollow } },
         )
-        return httpResponse(HttpStatus.OK, { msg: 'Unfollow success !' })
     }
     //
     async info(userName: string, usernameF: string) {
         const user = await UserModel.findOne({
             userName: usernameF,
         }).select({ password: false })
-        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        if (!user) throw new BadRequestError({ message: 'Unauthorized' })
         const isFollowing = Boolean(
             await UserModel.findOne({
                 userName,
@@ -100,12 +97,11 @@ export class UserService {
                 followers: { $in: user?._id },
             }),
         )
-        return httpResponse(HttpStatus.OK, { ...user._doc, isFollower, isFollowing })
+        return { ...user._doc, isFollower, isFollowing }
     }
     //
     async suggest(userName: string, limit: number = 6) {
-        if (!userName)
-            throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+        if (!userName) throw new BadRequestError({ message: 'Unauthorized' })
         const user = await UserModel.findOne({ userName })
         const users = await UserModel.find({
             verify: true,
@@ -114,7 +110,7 @@ export class UserService {
         })
             .limit(limit)
             .populate('posts')
-        return httpResponse(HttpStatus.OK, users)
+        return users
     }
 }
 const userProvider = new UserService()

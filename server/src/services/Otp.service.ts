@@ -1,8 +1,6 @@
 import { CodeModel } from '~/models'
 import { randomCode, sendMail } from '~/utils/Otp'
 import { AuthService } from './Auth.service'
-import { httpResponse } from '~/utils/HandleRes'
-import { HttpStatus } from '~/http-status.enum'
 import { Code } from '~/types/code'
 
 export class OtpService extends AuthService {
@@ -11,8 +9,7 @@ export class OtpService extends AuthService {
         const code = randomCode(6)
         await CodeModel.create({ email, otp: code })
         this.deleteCode(code)
-        await sendMail({ email, codeverify: code })
-        return httpResponse(HttpStatus.OK, { msg: 'Send mail success' })
+        return await sendMail({ email, codeverify: code })
     }
     public async verifyCode(data: Omit<Code, '_id'>) {
         return await CodeModel.findOneAndDelete(data)

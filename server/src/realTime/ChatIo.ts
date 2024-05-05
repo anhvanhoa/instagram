@@ -16,23 +16,22 @@ class ChatIo {
                 room,
                 data,
             )
-            socket.to(members).emit('notifyMessage', {
+            socket.emit('notifyMessage', {
                 message: contentChat,
                 idRoom: room,
                 ...userChat._doc,
             })
-            socket.emit('notifyMessage', {
+            socket.emit('message', contentChat)
+            socket.to(members).emit('notifyMessage', {
                 message: contentChat,
                 idRoom: room,
                 ...socket.data,
             })
             socket.to(room).emit('message', contentChat)
-            socket.emit('message', contentChat)
         })
     seen = (socket: SocketIo) =>
         socket.on('seen', async (id) => {
-            const idMe = socket.data._id.toString()
-            const { user, contentChat, idRoom } = await chatProvider.seen(id, idMe)
+            const { user, contentChat, idRoom } = await chatProvider.seen(id)
             socket.emit('notifyMessage', {
                 message: contentChat,
                 idRoom,

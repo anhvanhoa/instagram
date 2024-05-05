@@ -12,9 +12,9 @@ const ProviderUser: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         mutationKey: ['refreshToken'],
         mutationFn: (data: { signal?: AbortSignal }) => refreshToken(data.signal),
         onSuccess: (data) => {
-            Object.assign(user, data.payload)
+            Object.assign(user, data.payload.data)
             // dispatch({ payload: data.payload, type: 'UPDATE' })
-            manageToken().crTokenEncode(data.payload.accessToken)
+            manageToken().crTokenEncode(data.payload.data.accessToken)
         },
         onError: () => {
             manageToken().crTokenRemove()

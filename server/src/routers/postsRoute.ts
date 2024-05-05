@@ -12,6 +12,6 @@ postsRoute.post('/comment', accuracy, PostsController.comment)
 postsRoute.delete('/comment', accuracy, PostsController.deleteComment)
 postsRoute.post('/upload', accuracy, PostsController.upload)
 postsRoute.get('/suggests', accuracy, PostsController.suggests)
-postsRoute.get('/:id', accuracy, PostsController.getOnePosts)
+postsRoute.get('/:id', accuracy, PostsController.getPost)
 
 export default postsRoute

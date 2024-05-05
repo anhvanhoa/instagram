@@ -10,5 +10,6 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(import.met
     auth: {
         token: manageToken().crTokenDecode(),
     },
+    autoConnect: manageToken().crTokenDecode() ? true : false,
 })
 export default socket

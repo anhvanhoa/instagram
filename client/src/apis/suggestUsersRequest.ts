@@ -1,12 +1,12 @@
 import { http } from '~/config/httpAxios'
 import { User } from '~/types/auth'
 
-const suggestUsers = async (limit: number = 5) => {
+const suggestUsersRequest = async (limit: number = 5) => {
     const res = await http.get<User[]>('/user/suggest', {
         params: {
             limit,
         },
     })
-    return res.payload
+    return res.payload.data
 }
-export default suggestUsers
+export default suggestUsersRequest

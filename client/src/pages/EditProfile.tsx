@@ -2,7 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query'
 import { useRef, useState } from 'react'
 import profile from '~/apis/profile'
 import updateUser from '~/apis/updateUser'
-import uploadImg from '~/apis/uploadImg'
+import uploadImgRequest from '~/apis/uploadImgRequest'
 import Button from '~/components/Button'
 import Img from '~/components/Img'
 import useContextUser from '~/store/hook'
@@ -40,9 +40,9 @@ const EditProfile = () => {
             setFormData((prev) => ({ ...prev, [name]: event.target.value }))
             setDisable(false)
         }
-    const { mutate: mutateUpload, isPending: isPending2 } = useMutation({
+    const uploadImg = useMutation({
         mutationKey: [avatarClient.url],
-        mutationFn: (formData: FormData) => uploadImg(formData),
+        mutationFn: (formData: FormData) => uploadImgRequest(formData),
     })
     const { mutate, isPending } = useMutation({
         mutationKey: [formData],
@@ -107,7 +107,7 @@ const EditProfile = () => {
         form.append('height', String(avatarClient.sizeCrop.height))
         form.append('x', String(avatarClient.sizeCrop.x))
         form.append('y', String(avatarClient.sizeCrop.y))
-        mutateUpload(form, {
+        uploadImg.mutate(form, {
             onSuccess: (avatar) => updateUserApi(avatar),
         })
     }
@@ -227,7 +227,11 @@ const EditProfile = () => {
                         <div className='md:flex gap-8 mt-7'>
                             <p className='font-semibold w-1/4 text-right'></p>
                             <div className='flex-1'>
-                                <Button loading={isPending || isPending2} disable={disable} onClick={handleApi}>
+                                <Button
+                                    loading={isPending || uploadImg.isPending}
+                                    disable={disable}
+                                    onClick={handleApi}
+                                >
                                     Submit
                                 </Button>
                             </div>

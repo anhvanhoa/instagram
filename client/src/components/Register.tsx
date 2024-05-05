@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import isEmail from 'validator/lib/isEmail'
 import isTell from 'validator/lib/isMobilePhone'
 import matches from 'validator/lib/matches'
-import uniqueUser, { TypeUniqueUser } from '~/apis/uniqueUser'
+import uniqueUserRequest, { TypeUniqueUser } from '~/apis/uniqueUserRequest'
 import { useMutation } from '@tanstack/react-query'
 import { DataRegister, UniqueUser } from '~/types/auth'
 
@@ -30,8 +30,8 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLo
     const [typePass, setTypePass] = useState<'text' | 'password'>('password')
     const [validate, setValidate] = useState<Omit<Validate, 'numberPhone' | 'birthday' | 'otp'>>(initValidate)
     // tanStack
-    const { mutate } = useMutation({
-        mutationFn: (body: UniqueUser) => uniqueUser(body),
+    const uniqueUser = useMutation({
+        mutationFn: (body: UniqueUser) => uniqueUserRequest(body),
         onSuccess: handleSuccess,
     })
     // Handle disable
@@ -77,10 +77,12 @@ const Register: React.FC<Props> = ({ dataForm, setDataFrom, handleStep, handleLo
         if (is6Char && value) handleValidate(name, true)
         if (name === 'email' && value && !is6Char) {
             const result = handleMatch(value)
-            result && !result.userName ? mutate(result) : setValidate((prev) => ({ ...prev, [name]: 'error' }))
+            result && !result.userName
+                ? uniqueUser.mutate(result)
+                : setValidate((prev) => ({ ...prev, [name]: 'error' }))
         } else if (name === 'userName' && value && !is6Char) {
             const result = handleMatch(value)
-            result ? mutate(result) : setValidate((prev) => ({ ...prev, [name]: 'error' }))
+            result ? uniqueUser.mutate(result) : setValidate((prev) => ({ ...prev, [name]: 'error' }))
         } else if (name === 'fullName' && value && !is6Char) handleValidate(name, false)
         else if (name === 'password' && value && !is6Char) handleValidate(name, false)
     }

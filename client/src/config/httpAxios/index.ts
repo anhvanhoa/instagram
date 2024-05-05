@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosError } from 'axios'
+import { ResponseHttp } from '~/types/response'
 import manageToken from '~/utils/rfToken'
 
 type MethodRequest = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
@@ -19,15 +20,11 @@ class HttpError extends Error {
         this.payload = payload
     }
 }
-const httpRequest = async <Response = any>(
-    method: MethodRequest = 'GET',
-    url: string,
-    options?: AxiosRequestConfig,
-) => {
+const httpRequest = async <T = any>(method: MethodRequest = 'GET', url: string, options?: AxiosRequestConfig) => {
     try {
         const normalPath = url.startsWith('/') ? url : `/${url}`
         const crToken = manageToken().crTokenDecode()
-        const response = await httpInstance.request<Response>({
+        const response = await httpInstance.request<T>({
             method,
             url: normalPath,
             withCredentials: true,
@@ -56,29 +53,29 @@ const httpRequest = async <Response = any>(
 }
 
 const http = {
-    post<Response>(url: string, data: any, options?: AxiosRequestConfig) {
-        return httpRequest<Response>('POST', url, {
+    post<Response = undefined>(url: string, data: any, options?: AxiosRequestConfig) {
+        return httpRequest<ResponseHttp<Response>>('POST', url, {
             ...options,
             data,
         })
     },
-    get<Response>(url: string, options?: AxiosRequestConfig) {
-        return httpRequest<Response>('GET', url, options)
+    get<Response = undefined>(url: string, options?: AxiosRequestConfig) {
+        return httpRequest<ResponseHttp<Response>>('GET', url, options)
     },
-    put<Response>(url: string, data: any, options?: AxiosRequestConfig) {
-        return httpRequest<Response>('PUT', url, {
+    put<Response = undefined>(url: string, data: any, options?: AxiosRequestConfig) {
+        return httpRequest<ResponseHttp<Response>>('PUT', url, {
             ...options,
             data,
         })
     },
-    patch<Response>(url: string, data: any, options?: AxiosRequestConfig) {
-        return httpRequest<Response>('PATCH', url, {
+    patch<Response = undefined>(url: string, data: any, options?: AxiosRequestConfig) {
+        return httpRequest<ResponseHttp<Response>>('PATCH', url, {
             ...options,
             data,
         })
     },
-    postForm<Response>(url: string, data: FormData, options?: AxiosRequestConfig) {
-        return httpRequest<Response>('POST', url, {
+    postForm<Response = undefined>(url: string, data: FormData, options?: AxiosRequestConfig) {
+        return httpRequest<ResponseHttp<Response>>('POST', url, {
             ...options,
             data,
             headers: {
@@ -86,8 +83,8 @@ const http = {
             },
         })
     },
-    delete<Response>(url: string, options?: AxiosRequestConfig) {
-        return httpRequest<Response>('DELETE', url, {
+    delete<Response = undefined>(url: string, options?: AxiosRequestConfig) {
+        return httpRequest<ResponseHttp<Response>>('DELETE', url, {
             ...options,
         })
     },

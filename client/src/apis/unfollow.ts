@@ -1,8 +1,8 @@
 import { http } from '~/config/httpAxios'
-import { Msg } from '~/types'
+import { ResponseMessage } from '~/types/response'
 
 const unfollow = async (idFollow: string) => {
-    const res = await http.post<Msg>('/user/unfollow', { idFollow })
+    const res = await http.post<ResponseMessage>('/user/unfollow', { idFollow })
     return res.httpStatus
 }
 

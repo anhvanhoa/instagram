@@ -7,8 +7,8 @@ import SliderPosts from './SliderPosts'
 import UserName from './UserName'
 import useContextUser from '~/store/hook'
 import { useMutation } from '@tanstack/react-query'
-import uploadImg from '~/apis/uploadImg'
-import uploadPosts, { PostsUpload } from '~/apis/uploadPosts'
+import uploadImgRequest from '~/apis/uploadImgRequest'
+import uploadPostRequest, { PostsUpload } from '~/apis/uploadPostRequest'
 import Img from './Img'
 import { CroppedRect } from 'react-avatar-editor'
 
@@ -23,14 +23,14 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
     const [isUploadPosts, setIsUploadPosts] = useState<boolean>(false)
     const [indexSlide, setIndexSlide] = useState(0)
     const [sizeCrop, setSizeCrop] = useState({ height: 520, width: 520 })
-    const { mutate: mutatePosts, isPending: isPending2 } = useMutation({
-        mutationFn: (posts: PostsUpload) => uploadPosts(posts),
+    const uploadPost = useMutation({
+        mutationFn: (posts: PostsUpload) => uploadPostRequest(posts),
     })
-    const { mutate, isPending } = useMutation({
+    const uploadImg = useMutation({
         onSuccess: (data) => {
             contents.push(data)
             if (contents.length === listImage.length) {
-                mutatePosts(
+                uploadPost.mutate(
                     {
                         title: description,
                         contents,
@@ -45,7 +45,7 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
             }
         },
         onError: () => onStep(5),
-        mutationFn: (data: FormData) => uploadImg(data),
+        mutationFn: (data: FormData) => uploadImgRequest(data),
     })
     function formData(fileCrop: File, serverSize: CroppedRect) {
         const formData = new FormData()
@@ -60,7 +60,7 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
         setIsUploadPosts(true)
         listImage.forEach(({ serverSize, fileCrop }) => {
             const data = formData(fileCrop, serverSize)
-            mutate(data)
+            uploadImg.mutate(data)
         })
     }
     useEffect(() => {
@@ -98,7 +98,7 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
         <div>
             {isUploadPosts && <div className='bg-black/5 fixed inset-0 z-50'></div>}
             <HeadCreatePosts
-                isLoading={isPending || isPending2}
+                isLoading={uploadImg.isPending || uploadPost.isPending}
                 onPrev={() => onStep(2)}
                 onNext={apiCrop}
                 title='Create posts new'

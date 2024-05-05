@@ -18,6 +18,7 @@ import { UserNoPassword } from '~/types/user'
 import { accuracySocket } from '~/middlewares/Token.middleware'
 
 function Routers(app: Express) {
+    app.get('/', (_, res) => res.send('Hello World!'))
     app.get('/images/*', ImageController.handleImage)
     app.use('/api/auth', authRoute)
     app.use('/api/user', userRoute)

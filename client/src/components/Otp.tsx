@@ -4,7 +4,7 @@ import images from '~/assets'
 import { DataRegister } from '~/types/auth'
 import { useEffect, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import register from '~/apis/register'
+import registerRequest from '~/apis/registerRequest'
 import { useNavigate } from 'react-router-dom'
 import { pathPublic } from '~/config/routes'
 import isEmail from 'validator/lib/isEmail'
@@ -29,8 +29,8 @@ const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp, veri
         return () => clearTimeout(timerId)
     }, [btnDisable])
     // tanStack
-    const { mutate, isError } = useMutation({
-        mutationFn: (body: DataRegister) => register(body),
+    const register = useMutation({
+        mutationFn: (body: DataRegister) => registerRequest(body),
     })
     // Handle success
     const handleSuccess = () => navigate(pathPublic.login)
@@ -47,7 +47,7 @@ const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp, veri
                 .then(() => firebaseRegister(dataForm).then(handleSuccess))
                 .catch(() => setError(true))
         } else {
-            mutate(dataForm, {
+            register.mutate(dataForm, {
                 onSuccess: handleSuccess,
             })
         }
@@ -78,7 +78,7 @@ const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp, veri
                 <Button onClick={handleRegister} className='mt-4 mx-auto'>
                     Confirm
                 </Button>
-                {(isError || error) && (
+                {(register.isError || error) && (
                     <p className='text-red-500 text-center px-9 pt-6 text-sm'>
                         Invalid Code. You can request a new code.
                     </p>

@@ -1,15 +1,12 @@
 import { PopulateOption } from 'mongoose'
-import { HttpStatus } from '~/http-status.enum'
 import NotificationModel from '~/models/Notification.model'
 import PostsModel from '~/models/Post.model'
 import UserModel from '~/models/User.model'
 import { NotificationEmit } from '~/types/socket'
-import { httpResponse } from '~/utils/HandleRes'
+import { UserNoPassword } from '~/types/user'
 
 export class Notification {
-    async getNotify(userName: string) {
-        const user = await UserModel.findOne({ userName })
-        if (!user) throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+    async getNotify(user: UserNoPassword) {
         const twentyFourHoursAgo = new Date()
         twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24)
         const notifications = await NotificationModel.find({
@@ -29,7 +26,7 @@ export class Notification {
             .sort({
                 createdAt: 'desc',
             })
-        return httpResponse(HttpStatus.OK, notifications)
+        return notifications
     }
     async notification(data: NotificationEmit, content: string) {
         const user = await UserModel.findById(data.fromUser)

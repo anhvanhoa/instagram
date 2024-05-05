@@ -6,7 +6,7 @@ interface PostsLike extends Posts {
 }
 const getOnePosts = async (id: string) => {
     const res = await http.get<PostsLike>(`/posts/${id}`)
-    return res.payload
+    return res.payload.data
 }
 
 export default getOnePosts

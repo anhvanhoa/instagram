@@ -1,92 +1,85 @@
 import { Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 import postsProvider from '~/services/Post.service'
+import { isError } from '~/utils/Errors'
 class PostsController {
     async posts(req: Request, res: Response) {
         try {
-            const user = req.user!
-            const response = await postsProvider.posts(user.userName)
-            return res.status(response.httpStatus).json(response.data)
+            const response = await postsProvider.posts(req.user!)
+            return res.status(HttpStatus.OK).json({
+                message: 'Get posts success',
+                data: response,
+            })
         } catch (error: any) {
             return res.status(error.httpStatus).json(error.data)
         }
     }
-    async getOnePosts({ params, user }: Request, res: Response) {
+    async getPost({ params, user }: Request, res: Response) {
         try {
             const { userName } = user!
             const { id } = params
             const response = await postsProvider.getOnePosts(id, userName)
-            return res.status(response.httpStatus).json(response.data)
+            return res.status(HttpStatus.OK).json({
+                message: 'Get post success',
+                date: response,
+            })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async like(req: Request, res: Response) {
         try {
-            const response = await postsProvider.like(req.user!.userName, req.body)
-            return res.status(response.httpStatus).json(response.data)
+            await postsProvider.like(req.user!.userName, req.body)
+            return res.status(HttpStatus.OK).json({ message: 'Like posts success !' })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async dislike({ user, body }: Request, res: Response) {
         try {
             const { userName } = user!
-            const response = await postsProvider.dislike(userName, body)
-            return res.status(response.httpStatus).json(response.data)
+            await postsProvider.dislike(userName, body)
+            return res.status(HttpStatus.OK).json({ message: 'Dislike posts success !' })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async comment({ user, body }: Request, res: Response) {
         try {
             const { userName } = user!
-            const response = await postsProvider.comment(userName, body)
-            return res.status(response.httpStatus).json(response.data)
+            await postsProvider.comment(userName, body)
+            return res.status(HttpStatus.OK).json({ message: 'Comment posts success !' })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async deleteComment({ user, body }: Request, res: Response) {
         try {
             const { userName } = user!
-            const response = await postsProvider.deleteComment(userName, body)
-            return res.status(response.httpStatus).json(response.data)
+            await postsProvider.deleteComment(userName, body)
+            return res
+                .status(HttpStatus.OK)
+                .json({ message: 'Delete comment posts success !' })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async upload({ body, user }: Request, res: Response) {
         try {
             const { userName } = user!
             const response = await postsProvider.upload(body, userName)
-            return res.status(response.httpStatus).json(response.data)
+            return res.status(HttpStatus.OK).json({
+                message: 'Upload posts success',
+                data: response,
+            })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async suggests({ query, user }: Request, res: Response) {
@@ -95,52 +88,46 @@ class PostsController {
                 user!.userName,
                 Number(query.limit),
             )
-            return res.status(response.httpStatus).json(response.data)
+            return res.status(HttpStatus.OK).json({
+                message: 'Get posts success',
+                data: response,
+            })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async checkLike({ params, user }: Request, res: Response) {
         try {
             const { userName } = user!
             const response = await postsProvider.checkLike(userName, params.id)
-            return res.status(response.httpStatus).json(response.data)
+            return res.status(HttpStatus.OK).json({
+                message: 'check like success',
+                data: response,
+            })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async deletePosts({ params, user }: Request, res: Response) {
         try {
             const { userName } = user!
-            const response = await postsProvider.deletePosts(params.id, userName)
-            return res.status(response.httpStatus).json(response.data)
+            await postsProvider.deletePosts(params.id, userName)
+            return res.status(HttpStatus.OK).json({ message: 'Delete success' })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async editPosts({ body, user }: Request, res: Response) {
         try {
             const { userName } = user!
-            const response = await postsProvider.editPosts(body, userName)
-            return res.status(response.httpStatus).json(response.data)
+            await postsProvider.editPosts(body, userName)
+            return res.status(HttpStatus.OK).json({ message: 'Edit success' })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
 }

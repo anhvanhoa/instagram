@@ -1,17 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
-import suggestUsers from '~/apis/suggestUsers'
+import suggestUsersRequest from '~/apis/suggestUsersRequest'
 import SkeletonUser from './SkeletonUser'
 import SuggestAccount from './SuggestAccount'
 
 const HomeSuggest = () => {
-    const { data, isLoading } = useQuery({
+    const suggestUsers = useQuery({
         queryKey: ['suggest-home'],
-        queryFn: () => suggestUsers(20),
+        queryFn: () => suggestUsersRequest(20),
     })
 
     return (
         <div className='mt-6 md:mt-14 mx-auto'>
-            {isLoading && (
+            {suggestUsers.isLoading && (
                 <div>
                     <SkeletonUser />
                     <SkeletonUser />
@@ -22,7 +22,7 @@ const HomeSuggest = () => {
                     <SkeletonUser />
                 </div>
             )}
-            {data && data.map((user) => <SuggestAccount key={user._id} user={user} />)}
+            {suggestUsers.data && suggestUsers.data.map((user) => <SuggestAccount key={user._id} user={user} />)}
         </div>
     )
 }

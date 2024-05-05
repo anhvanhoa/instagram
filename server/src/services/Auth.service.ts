@@ -3,68 +3,79 @@ import TokenModel from '~/models/Token.model'
 import { hash, compare, genSalt } from 'bcrypt'
 import isEmail from 'validator/lib/isEmail'
 import isTell from 'validator/lib/isMobilePhone'
-import { HttpStatus } from '~/http-status.enum'
-import { isNotEmptyObject } from '~/utils/Validate'
-import { httpResponse } from '~/utils/HandleRes'
 import Token from '~/utils/Token'
-import { Info, Register, ResInfo } from '~/types/register'
+import { Info, Register, ResInfo, ResponseRegister } from '~/types/register'
 import { ResUser, User } from '~/types/user'
-import { isMongoServerError } from '~/utils/Errors'
+import { isMongoServerError, BadRequestError, ServerRequestError } from '~/utils/Errors'
 import { LoginType } from '~/types/login'
 export class AuthService {
     //
     async uniqueEmail(email: string): Promise<boolean> {
         if (!isEmail(email))
-            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Email not is valid' })
+            throw new BadRequestError({
+                message: 'Email not is valid',
+            })
         return Boolean(await UserModel.findOne({ email }, { email: 1 }))
     }
     //
     async uniqueTell(numberPhone: string): Promise<boolean> {
         if (!isTell(numberPhone, 'vi-VN'))
-            throw httpResponse(HttpStatus.BAD_REQUEST, {
-                msg: 'Number phone not is valid',
+            throw new BadRequestError({
+                message: 'Number phone not is valid',
             })
         return Boolean(await UserModel.findOne({ numberPhone }, { numberPhone: 1 }))
     }
     //
     async uniqueUsername(userName: string): Promise<boolean> {
         if (!/^[^\s!@#$%^&*()_+{}\\[\]:;<>,.?~\\/-]+$/.test(userName))
-            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Username not is valid' })
+            throw new BadRequestError({
+                message: 'Username not is valid',
+            })
         return Boolean(await UserModel.findOne({ userName }, { userName: 1 }))
     }
     //
-    async infoUnique(data: Info) {
-        if (isNotEmptyObject(data))
-            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
+    async infoUnique(data: Info): Promise<ResInfo> {
         if (data.email) {
             const unique = await this.uniqueEmail(data.email)
-            return httpResponse<ResInfo>(HttpStatus.OK, { type: 'email', unique })
+            return {
+                type: 'email',
+                unique,
+            }
         }
         if (data.numberPhone) {
             const unique = await this.uniqueTell(data.numberPhone)
-            return httpResponse<ResInfo>(HttpStatus.OK, { type: 'tell', unique })
+            return {
+                type: 'tell',
+                unique,
+            }
         }
         if (data.userName) {
             const unique = await this.uniqueUsername(data.userName)
-            return httpResponse<ResInfo>(HttpStatus.OK, { type: 'userName', unique })
+            return {
+                type: 'userName',
+                unique,
+            }
         }
-        throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Data is not valid' })
+        throw new BadRequestError({
+            message: 'Data not is valid',
+        })
     }
     //
-    async register(data: Register) {
+    async register(data: Register): Promise<ResponseRegister> {
         if (data.email && (await this.uniqueEmail(data.email)))
-            throw httpResponse(HttpStatus.BAD_REQUEST, { msg: 'Email not valid !' })
+            throw new BadRequestError({
+                message: 'Email not valid !',
+            })
         if (data.numberPhone && (await this.uniqueTell(data.numberPhone)))
-            throw httpResponse(HttpStatus.BAD_REQUEST, {
-                msg: 'Tell not valid !',
+            throw new BadRequestError({
+                message: 'Tell not valid !',
             })
         const salt = await genSalt(10)
         data.password = await hash(data.password, salt)
         const user = await UserModel.create(data)
-        return httpResponse(HttpStatus.OK, {
-            msg: 'Register success',
+        return {
             userName: user.userName,
-        })
+        }
     }
     //
     // async loginFacebook(data: LoginFB) {
@@ -116,13 +127,15 @@ export class AuthService {
     async login(data: LoginType) {
         const { email, password, numberPhone, userName } = data
         if (!email && !numberPhone && !userName)
-            throw httpResponse(HttpStatus.BAD_GATEWAY, { msg: 'Data not valid !' })
+            throw new BadRequestError({
+                message: 'Login information is incorrect',
+            })
         const isEmail = email && (await this.uniqueEmail(email))
         const isTell = numberPhone && (await this.uniqueTell(numberPhone))
         const isUsername = userName && (await this.uniqueUsername(userName))
         if (!isEmail && !isTell && !isUsername)
-            throw httpResponse(HttpStatus.UNAUTHORIZED, {
-                msg: 'Login information is incorrect',
+            throw new BadRequestError({
+                message: 'Login information is incorrect',
             })
         let user: null | User = null
         if (email) {
@@ -144,26 +157,28 @@ export class AuthService {
             ).populate('posts')
         }
         if (!user)
-            throw httpResponse(HttpStatus.UNAUTHORIZED, {
-                msg: 'Login information is incorrect',
+            throw new BadRequestError({
+                message: 'Login information is incorrect',
             })
         const isPass = await compare(password, user.password)
         if (!isPass)
-            throw httpResponse(HttpStatus.UNAUTHORIZED, {
-                msg: 'Login information is incorrect',
+            throw new BadRequestError({
+                message: 'Login information is incorrect',
             })
         const payload = { userName: user.userName }
         const accessToken = Token.createToken(payload, '120s')
         const refreshToken = Token.createToken(payload, '7d')
         await TokenModel.create({ token: refreshToken, idUser: user._id })
         const { password: pass, ...newUser } = user._doc
-        const dataUser: ResUser = { ...newUser, accessToken, refreshToken }
-        return httpResponse(HttpStatus.OK, dataUser)
+        const dataUser: ResUser = { ...newUser, accessToken }
+        return {
+            refreshToken,
+            user: dataUser,
+        }
     }
     //
     async logout(token: string) {
-        await TokenModel.deleteOne({ token })
-        return httpResponse(HttpStatus.OK, { msg: 'Logout success' })
+        return await TokenModel.deleteOne({ token })
     }
     //
     delay(ms: number) {
@@ -174,14 +189,14 @@ export class AuthService {
         const refreshToken = Token.createToken({ userName: user.userName }, '7d')
         try {
             await TokenModel.create({ token: refreshToken, idUser: user._id })
-            return httpResponse(HttpStatus.OK, { accessToken, refreshToken })
+            return { accessToken, refreshToken }
         } catch (error: any) {
             if (isMongoServerError(error)) {
-                if (error.code === 11000)
-                    return httpResponse(HttpStatus.OK, { accessToken, refreshToken })
+                if (error.code === 11000) return { accessToken, refreshToken }
             }
-            throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, {
-                msg: 'Server error',
+            throw new ServerRequestError({
+                message: 'Server error',
+                errors: error,
             })
         }
     }

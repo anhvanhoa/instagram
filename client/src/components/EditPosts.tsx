@@ -6,7 +6,7 @@ import Slider from './Slider'
 import Img from './Img'
 import Button from './Button'
 import { useMutation } from '@tanstack/react-query'
-import editPosts from '~/apis/editPosts'
+import editPostRequest from '~/apis/editPostRequest'
 import { useState } from 'react'
 interface Props {
     posts: Posts
@@ -15,9 +15,9 @@ interface Props {
 }
 const EditPosts: React.FC<Props> = ({ posts, onClose, onSuccess }) => {
     const [title, setTitle] = useState(posts.title)
-    const { mutate, isPending } = useMutation({
+    const editPost = useMutation({
         mutationFn: (title: string) =>
-            editPosts({
+            editPostRequest({
                 _id: posts._id,
                 title,
             }),
@@ -26,19 +26,19 @@ const EditPosts: React.FC<Props> = ({ posts, onClose, onSuccess }) => {
             onClose()
         },
     })
-    const handleEditPost = () => mutate(title)
+    const handleEditPost = () => editPost.mutate(title)
     return (
         <div>
-            <OverLay onClose={isPending ? () => {} : onClose} className='px-4'>
+            <OverLay onClose={editPost.isPending ? () => {} : onClose} className='px-4'>
                 <div className='flex py-2 px-4 justify-between bg-white rounded-t-xl'>
-                    <Button disable={isPending} onClick={onClose} type='text' className='text-red-500'>
+                    <Button disable={editPost.isPending} onClick={onClose} type='text' className='text-red-500'>
                         Cancel
                     </Button>
                     <h3 className='leading-8 font-semibold text-lg'>Edit posts</h3>
                     <Button
                         className='w-8'
-                        disable={isPending}
-                        loading={isPending}
+                        disable={editPost.isPending}
+                        loading={editPost.isPending}
                         onClick={handleEditPost}
                         type='text'
                     >

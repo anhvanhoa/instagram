@@ -1,8 +1,7 @@
 import { http } from '~/config/httpAxios'
-import { Msg } from '~/types'
 
 const follow = async (idFollow: string) => {
-    const res = await http.post<Msg>('/user/follow', { idFollow })
+    const res = await http.post('/user/follow', { idFollow })
     return res.httpStatus
 }
 

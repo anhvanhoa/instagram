@@ -5,9 +5,9 @@ import { User } from '~/types/auth'
 import UserName from './UserName'
 import { Posts as PostsType } from '~/types/posts'
 import { useMutation } from '@tanstack/react-query'
-import likePosts from '~/apis/likePosts'
-import dislikePosts from '~/apis/dislikePosts'
-import commentPosts from '~/apis/commentPosts'
+import likePostRequest from '~/apis/likePostRequest'
+import dislikePostRequest from '~/apis/dislikePostRequest'
+import commentRequest from '~/apis/commentRequest'
 import Img from './Img'
 import Slider from './Slider'
 import classNames from 'classnames'
@@ -28,27 +28,27 @@ const Posts: React.FC<Props> = ({ author, posts }) => {
     const [like, setLike] = useState<boolean>(false)
     const [comment, setComment] = useState<string>('')
     const [listComment, setListComment] = useState<string[]>([])
-    const { mutate } = useMutation({
-        mutationFn: (idPosts: string) => likePosts({ idPosts }),
+    const likePost = useMutation({
+        mutationFn: (idPosts: string) => likePostRequest({ idPosts }),
     })
-    const { mutate: mutateDis } = useMutation({
-        mutationFn: (idPosts: string) => dislikePosts({ idPosts }),
+    const dislikePost = useMutation({
+        mutationFn: (idPosts: string) => dislikePostRequest({ idPosts }),
     })
-    const { mutate: mutateComment } = useMutation({
-        mutationFn: (data: { idPosts: string; content: string }) => commentPosts(data),
+    const commentPost = useMutation({
+        mutationFn: (data: { idPosts: string; content: string }) => commentRequest(data),
     })
     const apiLike = (idPosts: string) => () => {
-        mutate(idPosts)
+        likePost.mutate(idPosts)
         setLike(true)
         socket.emit('like', { idPosts, fromUser: user._id, toUser: author._id })
     }
     const apiDislike = (idPosts: string) => () => {
-        mutateDis(idPosts)
+        dislikePost.mutate(idPosts)
         setLike(false)
     }
     const apiComment = (idPosts: string, content: string) => () => {
         socket.emit('comment', { idPosts, fromUser: user._id, toUser: author._id })
-        mutateComment(
+        commentPost.mutate(
             { content, idPosts },
             {
                 onSuccess: () => {

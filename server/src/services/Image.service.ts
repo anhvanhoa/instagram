@@ -1,15 +1,13 @@
 import Jimp from 'jimp'
-import { HttpStatus } from '~/http-status.enum'
 import cloudinaryProvider from '~/utils/Cloudnary'
-import { httpResponse } from '~/utils/HandleRes'
 import fs from 'fs'
 import { SizeCrop } from '~/types/image'
+import { BadRequestError } from '~/utils/Errors'
 
 class ImageService {
     async crop({ height, width, x, y }: SizeCrop, file?: Express.Multer.File) {
-        if (!file) throw httpResponse(HttpStatus.FORBIDDEN, { msg: 'Forbidden' })
-        if (!height || !width || !x || !y)
-            return httpResponse(HttpStatus.OK, file.filename)
+        if (!file) throw new BadRequestError({ message: 'File not found' })
+        if (!height || !width || !x || !y) return file.filename
         const image = await Jimp.read(file.path)
         const widthImg = image.getWidth()
         const heightImg = image.getHeight()
@@ -23,10 +21,7 @@ class ImageService {
         const imageComplete = await cloudinaryProvider.upload(path)
         await cloudinaryProvider.destroy(file.filename)
         fs.unlinkSync(path)
-        return httpResponse(
-            HttpStatus.OK,
-            `${imageComplete.public_id}.${imageComplete.format}`,
-        )
+        return `${imageComplete.public_id}.${imageComplete.format}`
     }
 }
 const imageProvider = new ImageService()

@@ -5,7 +5,7 @@ const suggestsPosts = async (limit: number = 20) => {
     const { payload } = await http.get<Posts[]>('/posts/suggests', {
         params: { limit },
     })
-    return payload
+    return payload.data
 }
 
 export default suggestsPosts

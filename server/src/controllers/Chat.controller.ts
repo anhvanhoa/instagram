@@ -1,20 +1,20 @@
 import { Request, Response } from 'express'
 import { HttpStatus } from '~/http-status.enum'
 import chatProvider from '~/services/Chat.service'
+import { isError } from '~/utils/Errors'
 
 class ChatController {
     async users({ user }: Request, res: Response) {
         try {
             // Nếu user = undefined thì check trong middleware
             const response = await chatProvider.users(user!)
-            return res.status(response.httpStatus).json(response.data)
+            return res.status(HttpStatus.OK).json({
+                message: 'Get users chat success',
+                data: response,
+            })
         } catch (error: any) {
-            console.log(error)
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async boxChat({ params }: Request, res: Response) {
@@ -22,13 +22,13 @@ class ChatController {
             // Nếu user = undefined thì check trong middleware
             const idRoom = params.idRoom
             const response = await chatProvider.boxChat(idRoom)
-            return res.status(response.httpStatus).json(response.data)
+            return res.status(HttpStatus.OK).json({
+                message: 'Get box chat success',
+                data: response,
+            })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async roomChat({ params, user }: Request, res: Response) {
@@ -36,13 +36,13 @@ class ChatController {
             // Nếu user = undefined thì check trong middleware
             const idUserChat = params.idUser
             const idRoom = await chatProvider.idRoom(idUserChat, user!._id)
-            return res.status(200).json(idRoom)
+            return res.status(200).json({
+                message: 'Get room chat success',
+                data: idRoom,
+            })
         } catch (error: any) {
-            if (!error.httpStatus)
-                return res
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .json({ msg: 'Server error' })
-            return res.status(error.httpStatus).json(error.data)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
 }

@@ -10,7 +10,7 @@ export const initializeUser: User = {
     bio: '',
     birthday: '',
     fullName: '',
-    gender: '',
+    gender: 'khác',
     userName: '',
     verify: false,
     followers: [],

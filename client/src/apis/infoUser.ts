@@ -6,7 +6,7 @@ interface UserInfo extends User {
 }
 const infoUser = async (id: string) => {
     const { payload } = await http.get<UserInfo>(`/user/${id}/info`)
-    return payload
+    return payload.data
 }
 
 export default infoUser

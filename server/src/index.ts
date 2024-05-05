@@ -5,16 +5,16 @@ import cors, { CorsOptions } from 'cors'
 import morgan from 'morgan'
 import envConfig from './config/env'
 import cookieParser from 'cookie-parser'
-import path, { join } from 'path'
+import { join } from 'path'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import '~/config/cloudinary'
+import '~/config/logger'
 import {
     ServerToClientEvents,
     ClientToServerEvents,
     InterServerEvents,
 } from '~/types/socket'
-import fs from 'fs'
 import { UserNoPassword } from './types/user'
 
 const app = express()
@@ -32,18 +32,13 @@ const io = new Server<
 >(httpServer, { cors: configCors })
 //
 ioEvent(io)
-const _accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), {
-    flags: 'a',
-})
 app.use(express.static(join(__dirname, '../public')))
 app.use(express.json())
-// app.use(morgan('tiny', { stream: accessLogStream }))
 app.use(morgan('tiny'))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors(configCors))
 Routers(app)
-// dbRedis()
 const bootstrap = async () => {
     await connectDataBase()
     console.log(`server running port ${port}`)

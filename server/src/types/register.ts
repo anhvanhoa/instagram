@@ -19,3 +19,7 @@ export interface ResInfo {
     type: InfoType
     unique: boolean
 }
+
+export type ResponseRegister = {
+    userName: string
+}

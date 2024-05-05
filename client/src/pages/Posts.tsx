@@ -11,17 +11,17 @@ import UserName from '~/components/UserName'
 import formatTimeAgo from '~/utils/handleTime'
 import InputComment from '~/components/InputComment'
 import { useLayoutEffect, useState } from 'react'
-import commentPosts from '~/apis/commentPosts'
+import commentRequest from '~/apis/commentRequest'
 import useContextUser from '~/store/hook'
-import likePosts from '~/apis/likePosts'
-import dislikePosts from '~/apis/dislikePosts'
+import likePostRequest from '~/apis/likePostRequest'
+import dislikePostRequest from '~/apis/dislikePostRequest'
 import socket from '~/socketIo'
 import Comments from '~/components/Comments'
 import SkeletonPostsPage from '~/components/SkeletonPostsPage'
 import Tippy from '@tippyjs/react/headless'
 import Wrapper from '~/components/Wrapper'
 import Button from '~/components/Button'
-import deletePosts from '~/apis/deletePosts'
+import deletePostRequest from '~/apis/deletePostRequest'
 import Alert from '~/components/Alert'
 import EditPosts from '~/components/EditPosts'
 import HeaderMobile from '~/components/HeaderMobile'
@@ -43,42 +43,38 @@ const Posts = () => {
     const navigate = useNavigate()
     const url = `${location.origin}/p/${params.id}`
     const handleCopy = () => navigator.clipboard.writeText(url)
-    const {
-        data: posts,
-        isError,
-        isLoading,
-        refetch,
-    } = useQuery({
+    const posts = useQuery({
         queryKey: ['posts', params.id],
         queryFn: () => getOnePosts(params.id || ''),
         refetchOnReconnect: false,
     })
-    const { mutate: mutateComment } = useMutation({
-        mutationFn: (data: { idPosts: string; content: string }) => commentPosts(data),
+    const commentPost = useMutation({
+        mutationFn: (data: { idPosts: string; content: string }) => commentRequest(data),
     })
-    const { mutate } = useMutation({
-        mutationFn: (idPosts: string) => likePosts({ idPosts }),
+    const likePost = useMutation({
+        mutationFn: (idPosts: string) => likePostRequest({ idPosts }),
     })
-    const { mutate: mutateDelete } = useMutation({
-        mutationFn: (id: string) => deletePosts(id),
+    const deletePost = useMutation({
+        mutationFn: (id: string) => deletePostRequest(id),
         onError: () => setConfirm(false),
         onSuccess: () => navigate('/'),
     })
-    const { mutate: mutateDis } = useMutation({
-        mutationFn: (idPosts: string) => dislikePosts({ idPosts }),
+
+    const dislikePost = useMutation({
+        mutationFn: (idPosts: string) => dislikePostRequest({ idPosts }),
     })
     const apiLike = (idPosts: string) => () => {
-        mutate(idPosts)
+        likePost.mutate(idPosts)
         setLike(true)
-        socket.emit('like', { idPosts, fromUser: user._id, toUser: posts ? posts?.author._id : '' })
+        socket.emit('like', { idPosts, fromUser: user._id, toUser: posts.data ? posts.data.author._id : '' })
     }
     const apiDislike = (idPosts: string) => () => {
-        mutateDis(idPosts)
+        dislikePost.mutate(idPosts)
         setLike(false)
     }
     const apiComment = (idPosts: string, content: string) => () => {
-        socket.emit('comment', { idPosts, fromUser: user._id, toUser: posts ? posts?.author._id : '' })
-        mutateComment(
+        socket.emit('comment', { idPosts, fromUser: user._id, toUser: posts.data ? posts.data.author._id : '' })
+        commentPost.mutate(
             { content, idPosts },
             {
                 onSuccess: () => {
@@ -94,29 +90,29 @@ const Posts = () => {
             },
         )
     }
-    const apiDelete = (id: string) => () => mutateDelete(id)
+    const apiDelete = (id: string) => () => deletePost.mutate(id)
     const cancel = () => setConfirm(false)
     const handleCloseEdit = () => setEdit(false)
     useLayoutEffect(() => {
-        posts?.like && setLike(true)
-        if (posts) socket.emit('joinRoom', posts.author._id)
+        posts.data?.like && setLike(true)
+        if (posts.data) socket.emit('joinRoom', posts.data.author._id)
         return () => {
-            if (posts) socket.emit('leaveRoom', posts.author._id)
+            if (posts.data) socket.emit('leaveRoom', posts.data.author._id)
         }
     }, [posts])
     return (
         <div className='h-full overflow-auto scrollbar'>
-            {edit && posts && <EditPosts onSuccess={refetch} onClose={handleCloseEdit} posts={posts} />}
-            {posts && confirm && (
-                <Alert onCancel={cancel} title='Delete posts' textAgree='Delete' onAgree={apiDelete(posts._id)} />
+            {edit && posts.data && <EditPosts onSuccess={posts.refetch} onClose={handleCloseEdit} posts={posts.data} />}
+            {posts.data && confirm && (
+                <Alert onCancel={cancel} title='Delete posts' textAgree='Delete' onAgree={apiDelete(posts.data._id)} />
             )}
             <div className='sticky top-0 z-50 md:hidden '>
-                {posts && <HeaderMobile title={posts.title}></HeaderMobile>}
+                {posts.data && <HeaderMobile title={posts.data.title}></HeaderMobile>}
             </div>
             <div className='flex justify-center mx-0.5 xs:mx-4 sm:mx-8 items-center'>
-                {isError && <NotFound />}
-                {isLoading && <SkeletonPostsPage />}
-                {posts && (
+                {posts.isError && <NotFound />}
+                {posts.isLoading && <SkeletonPostsPage />}
+                {posts.data && (
                     <div className='mt-0.5 xs:mt-6 justify-center overflow-hidden flex flex-col md:flex-row'>
                         <div
                             className={classNames(
@@ -124,8 +120,8 @@ const Posts = () => {
                                 'flex items-center md:border border-second border-r-0 border-r-transparent',
                             )}
                         >
-                            <Slider maxElemnt={posts.contents.length}>
-                                {posts.contents.map((img, index) => (
+                            <Slider maxElemnt={posts.data.contents.length}>
+                                {posts.data.contents.map((img, index) => (
                                     <div key={index} className='flex-shrink-0 w-full'>
                                         <Img
                                             src={img}
@@ -144,7 +140,7 @@ const Posts = () => {
                             <div className='sticky top-0'>
                                 <div className='flex justify-between items-center md:px-4 px-2 py-4 md:py-3 border-b border-second'>
                                     <div className='relative'>
-                                        <AccountItem user={posts.author} size='small' />
+                                        <AccountItem user={posts.data.author} size='small' />
                                     </div>
                                     <Tippy
                                         trigger='click'
@@ -156,7 +152,7 @@ const Posts = () => {
                                                     <Button onClick={handleCopy} type='text' className='py-3'>
                                                         Copy link
                                                     </Button>
-                                                    {user._id === posts.author._id && (
+                                                    {user._id === posts.data.author._id && (
                                                         <div>
                                                             <Button
                                                                 onClick={() => setEdit(true)}
@@ -191,12 +187,12 @@ const Posts = () => {
                                 <div className='text-ellipsis whitespace-nowrap overflow-hidden'>
                                     <div
                                         className={classNames('inline-block mr-1', {
-                                            hidden: !posts.title,
+                                            hidden: !posts.data.title,
                                         })}
                                     >
-                                        <UserName user={posts.author} />
+                                        <UserName user={posts.data.author} />
                                     </div>
-                                    {posts.title}
+                                    {posts.data.title}
                                 </div>
                             </div>
                             <div className='pb-4 flex-1'>
@@ -209,7 +205,7 @@ const Posts = () => {
                                             user={user}
                                         />
                                     ))}
-                                    {posts.comments.map((comment) => (
+                                    {posts.data.comments.map((comment) => (
                                         <Comments
                                             key={comment._id}
                                             time={comment.createdAt}
@@ -224,7 +220,7 @@ const Posts = () => {
                                     <div className='flex items-center gap-4'>
                                         <span className='cursor-pointer'>
                                             {!like && (
-                                                <div onClick={apiLike(posts._id)}>
+                                                <div onClick={apiLike(posts.data._id)}>
                                                     <IconApp
                                                         type='heart-posts'
                                                         className={'transition-all w-6 hover:scale-110'}
@@ -232,7 +228,7 @@ const Posts = () => {
                                                 </div>
                                             )}
                                             {like && (
-                                                <div onClick={apiDislike(posts._id)}>
+                                                <div onClick={apiDislike(posts.data._id)}>
                                                     <IconApp
                                                         type='heart-posts-red'
                                                         className={'transition-all w-6 hover:scale-110'}
@@ -251,8 +247,8 @@ const Posts = () => {
                                     </div>
                                 </div>
                                 <div className='py-3 font-medium text-sm px-4 flex justify-between'>
-                                    <p className='inline-block'>{posts.likes.length + (like ? 1 : 0)} likes</p>
-                                    <p className='text-gray-500 text-xs'>{formatTimeAgo(posts.createdAt)}</p>
+                                    <p className='inline-block'>{posts.data.likes.length + (like ? 1 : 0)} likes</p>
+                                    <p className='text-gray-500 text-xs'>{formatTimeAgo(posts.data.createdAt)}</p>
                                 </div>
                             </div>
                             <div className='border-t px-2 py-2.5 border-second'>
@@ -260,7 +256,7 @@ const Posts = () => {
                                     comment={comment}
                                     setComment={setComment}
                                     positionSmile='left'
-                                    apiComment={apiComment(posts._id, comment)}
+                                    apiComment={apiComment(posts.data._id, comment)}
                                 />
                             </div>
                         </div>

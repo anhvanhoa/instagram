@@ -11,9 +11,6 @@ export interface ContentChat {
     isSeen: boolean
     createdAt: string
 }
-// export interface ContentChatIO extends ContentChat {
-//     idUserChat: string
-// }
 
 export interface DetailChat {
     message: string
@@ -37,6 +34,7 @@ export interface Notification {
     content: string
     createdAt: string
 }
+
 export interface NotificationEmit {
     fromUser: string
     toUser: string

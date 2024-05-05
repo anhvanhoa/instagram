@@ -8,7 +8,5 @@ class Validate {
 }
 
 const validate = new Validate()
-const validateEmail = validate.validateEmail
-const isNotEmptyObject = validate.isNotEmptyObject
-export { validateEmail, isNotEmptyObject }
+export const { validateEmail, isNotEmptyObject } = validate
 export default validate

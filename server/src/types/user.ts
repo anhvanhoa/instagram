@@ -24,5 +24,4 @@ export type UserNoPassword = Omit<User, 'password'>
 
 export interface ResUser extends Omit<User, 'password'> {
     accessToken: string
-    refreshToken: string
 }

@@ -1,10 +1,15 @@
 import { NextFunction, Request, Response } from 'express'
-import { JsonWebTokenError } from 'jsonwebtoken'
 import isJWT from 'validator/lib/isJWT'
 import { HttpStatus } from '~/http-status.enum'
 import { UserModel } from '~/models'
 import TokenModel from '~/models/Token.model'
 import { SocketIo } from '~/types/socket'
+import {
+    isError,
+    isJsonWebTokenError,
+    ServerRequestError,
+    UnauthorizedError,
+} from '~/utils/Errors'
 import Token, { JwtData } from '~/utils/Token'
 
 class TokenMiddleware {
@@ -12,9 +17,9 @@ class TokenMiddleware {
         try {
             const { authorization } = req.headers
             if (!authorization)
-                return res
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .json({ msg: 'You are not authorized to access this resource.' })
+                throw new UnauthorizedError({
+                    message: 'You are not authorized to access this resource.',
+                })
             const token = authorization.split(' ')[1]
             const { userName } = Token.verifyToken<JwtData>(token)
             const {
@@ -23,26 +28,26 @@ class TokenMiddleware {
             req.user = user
             next()
         } catch (error) {
-            if (error instanceof JsonWebTokenError)
-                return res.status(401).json({
-                    httpStatus: 401,
-                    msg: 'Token not valid !',
+            if (isJsonWebTokenError(error))
+                return res.status(HttpStatus.UNAUTHORIZED).json({
+                    httpStatus: HttpStatus.UNAUTHORIZED,
+                    message: error.message,
                 })
-            return res.status(500).json(error)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async verifyRefreshToken(req: Request, res: Response, next: NextFunction) {
         try {
             const refreshToken = req.cookies.refreshToken
             if (!refreshToken || !isJWT(refreshToken))
-                return res
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .json({ msg: 'Token is not valid' })
+                throw new UnauthorizedError({
+                    message: 'Token is not valid',
+                })
             const tokenDb = await TokenModel.findOne({ token: refreshToken })
             if (!tokenDb) {
-                return res.status(HttpStatus.UNAUTHORIZED).json({
-                    httpStatus: HttpStatus.UNAUTHORIZED,
-                    msg: 'Token is not valid',
+                throw new UnauthorizedError({
+                    message: 'Token is not valid',
                 })
             }
             const { userName } = Token.verifyToken<JwtData>(refreshToken)
@@ -53,18 +58,24 @@ class TokenMiddleware {
             req.user = user
             next()
         } catch (error) {
-            if (error instanceof JsonWebTokenError)
+            if (isJsonWebTokenError(error))
                 return res.status(HttpStatus.UNAUTHORIZED).json({
                     httpStatus: HttpStatus.UNAUTHORIZED,
-                    msg: 'Token not valid & please login again',
+                    message: error.message,
                 })
-            return res.status(500).json(error)
+            const err = isError(error)
+            return res.status(err.httpStatus).json(err)
         }
     }
     async accuracySocket(socket: SocketIo, next: (err?: Error) => void) {
         try {
             const token = socket.handshake.auth.token as string | undefined
-            if (!token) return next(new Error('token not valid'))
+            if (!token)
+                return next(
+                    new UnauthorizedError({
+                        message: 'Token is not valid',
+                    }),
+                )
             const { userName } = Token.verifyToken<JwtData>(token)
             const {
                 _doc: { password, ...user },
@@ -72,8 +83,8 @@ class TokenMiddleware {
             socket.data = user
             next()
         } catch (error) {
-            if (error instanceof JsonWebTokenError) next(new Error('token not valid'))
-            next(new Error('server error'))
+            if (isJsonWebTokenError(error)) next(new Error('token not valid'))
+            next(new ServerRequestError({ message: 'unknown', errors: error }))
         }
     }
 }

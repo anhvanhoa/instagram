@@ -1,3 +1,3 @@
-import { ResLogin } from './login'
+import { User } from './auth'
 
-export interface ResFreshToken extends ResLogin {}
+export type ResFreshToken = object & User

@@ -1,7 +1,5 @@
 import { CourierClient } from '@trycourier/courier'
 import { Template, configMail } from '~/config/sendMail'
-import { httpResponse } from './HandleRes'
-import { HttpStatus } from '~/http-status.enum'
 class Otp {
     public randomCode(len: number): string {
         let code: string = ''
@@ -13,28 +11,19 @@ class Otp {
     async sendMail(
         data: { codeverify: string; email: string },
         template: string = Template.REGISTER,
-    ): Promise<void> {
-        try {
-            const courier = CourierClient(configMail)
-            await courier.send({
-                message: {
-                    to: {
-                        email: data.email,
-                    },
-                    template,
-                    data,
+    ) {
+        const courier = CourierClient(configMail)
+        return courier.send({
+            message: {
+                to: {
+                    email: data.email,
                 },
-            })
-        } catch (error) {
-            console.log(error)
-            throw httpResponse(HttpStatus.INTERNAL_SERVER_ERROR, {
-                msg: 'Server mail error',
-            })
-        }
+                template,
+                data,
+            },
+        })
     }
 }
 const otp = new Otp()
-const randomCode = otp.randomCode
-const sendMail = otp.sendMail
-export { randomCode, sendMail }
+export const { randomCode, sendMail } = otp
 export default otp

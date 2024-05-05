@@ -1,19 +1,10 @@
 import z from 'zod'
 import { config } from 'dotenv'
-// import fs from 'fs'
 
 const configOption = {
     path: `.env.${process.env.NODE_ENV || 'development'}`,
 }
 config(configOption)
-
-// function checkFileEnv() {
-//     if (!fs.existsSync(configOption.path)) {
-//         throw new Error(`Không tìm thấy file ${configOption.path}`)
-//     }
-// }
-
-// checkFileEnv()
 
 const envSchema = z
     .object({
@@ -31,6 +22,7 @@ const envSchema = z
         PORT: z.string().default('8008'),
         API_SECRET_CLOUDINARY: z.string(),
         API_KEY_CLOUDINARY: z.string(),
+        LOGGER_FILE: z.enum(['true', 'false']).transform((val) => val === 'true'),
     })
     .required()
 

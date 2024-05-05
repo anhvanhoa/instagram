@@ -1,5 +1,3 @@
-// import { PopulateOption } from 'mongoose'
-import { HttpStatus } from '~/http-status.enum'
 import BoxChatModel from '~/models/BoxChat.model'
 import ContentChatModel from '~/models/ContentChat.model'
 import RoomChatModel from '~/models/RoomChat.model'
@@ -8,7 +6,7 @@ import { DeleteChat, DetailChat } from '~/types/socket'
 import { BoxChat } from '~/types/boxChat'
 import { ResUsersChat } from '~/types/chat'
 import { User } from '~/types/user'
-import { httpResponse } from '~/utils/HandleRes'
+import { BadRequestError } from '~/utils/Errors'
 
 export class ChatService {
     async users(user: Omit<User, 'password'>) {
@@ -34,7 +32,7 @@ export class ChatService {
                 idUserChat: true,
                 idRoom: true,
             })
-        if (boxChats.length === 0) return httpResponse(HttpStatus.OK, [])
+        if (boxChats.length === 0) return []
         const users = boxChats.map((item) => ({
             ...item.idUserChat._doc,
             idRoom: item.idRoom,
@@ -54,12 +52,14 @@ export class ChatService {
             }),
         )
         const userChats: ResUsersChat[] = userChat.filter((chat) => chat)
-        return httpResponse(HttpStatus.OK, userChats)
+        return userChats
     }
     async idRoom(idUserChat: string, idUser: string) {
         const userChat = await UserModel.findOne({ _id: idUserChat })
         if (!userChat)
-            throw httpResponse(HttpStatus.UNAUTHORIZED, { msg: 'Unauthorized' })
+            throw new BadRequestError({
+                message: 'Not found user chat',
+            })
         const roomChat = await RoomChatModel.findOne(
             {
                 $and: [{ members: userChat._id }, { members: userChat._id }],
@@ -96,7 +96,7 @@ export class ChatService {
             idUser: boxChat.idUser,
             idBoxChat: boxChat._id,
         })
-        BoxChatModel.updateOne(
+        await BoxChatModel.updateOne(
             { _id: boxChat._id },
             { $push: { contentChat: content._id } },
         )
@@ -106,21 +106,21 @@ export class ChatService {
         const roomChat = await RoomChatModel.findOne({ _id: room }).select({
             members: true,
         })
-        if (!roomChat) throw httpResponse(HttpStatus.NOT_FOUND, { msg: 'Room not found' })
+        if (!roomChat) throw new BadRequestError({ message: 'Room not found' })
         const members = roomChat.members.map((item) => item.toString())
         const idUserChat = members.find((item) => item !== idUser)
         const userChat = (await UserModel.findById(idUserChat).select({
             password: false,
         }))!
+        // Tạo box chat cho người gửi
         const boxChat = await this.findOrCreateBoxChat(idUser, userChat._id, room)
+        // Tạo box chat cho người được gửi
+        await this.findOrCreateBoxChat(userChat._id, idUser, room)
+        // Thêm tin nhắn vào box chat
         const contentChat = await this.createBoxChatAndUpdate(boxChat, detailChat)
         return { contentChat, members, userChat }
     }
     async boxChat(idRoom: string) {
-        // const boxChats = await BoxChatModel.find({ idRoom }).populate('contentChat')
-        // const contentChats = boxChats.reduce<ContentChat[]>((init, boxChat) => {
-        //     return init.concat(boxChat.contentChat)
-        // }, [])
         const idBoxChats = (
             await BoxChatModel.find({ idRoom }).select({ _id: true })
         ).map((item) => item._id)
@@ -132,25 +132,30 @@ export class ChatService {
         const contentChatsSort = contentChats.sort(
             (a, b) => a.createdAt.getTime() - b.createdAt.getTime(),
         )
-        return httpResponse(HttpStatus.OK, contentChatsSort)
+        return contentChatsSort
     }
     async recentlyChat(idRoom: string) {
-        const { data: boxChats } = await this.boxChat(idRoom)
-        if (boxChats.length === 0) return false
-        if (boxChats.length === 0) return false
-        const chat = boxChats[boxChats.length - 1]
+        const result = (await this.boxChat(idRoom))!
+        if (result.length === 0) return false
+        if (result.length === 0) return false
+        const chat = result[result.length - 1]
         return chat._doc
     }
-    async seen(_id: string, idMe: string) {
+    async seen(_id: string) {
         const contentChat = await ContentChatModel.findById(_id)
-        if (!contentChat)
-            throw httpResponse(HttpStatus.NOT_FOUND, { msg: 'Content chat not found' })
+        if (!contentChat) throw new BadRequestError({ message: 'Content chat not found' })
         await contentChat.updateOne({ $set: { isSeen: true } })
         const contentChatSeen = (await ContentChatModel.findById(_id))!
+        const boxChat = (await BoxChatModel.findOne({
+            contentChat: contentChatSeen._id,
+        }).select({
+            idRoom: true,
+        }))!
         const user = (await UserModel.findById(contentChat.idUser).select({
             password: false,
         }))!
-        const idRoom = await this.idRoom(user._id, idMe)
+        // const idRoom = await this.idRoom(user._id, idMe)
+        const idRoom = String(boxChat.idRoom)
         return {
             contentChat: contentChatSeen._doc,
             idRoom,
@@ -159,8 +164,7 @@ export class ChatService {
     }
     async delete(_id: string, data: DeleteChat) {
         const contentChat = await ContentChatModel.findById(_id)
-        if (!contentChat)
-            throw httpResponse(HttpStatus.NOT_FOUND, { msg: 'Content chat not found' })
+        if (!contentChat) throw new BadRequestError({ message: 'Content chat not found' })
         await contentChat.updateOne({ $set: data })
         return (await ContentChatModel.findById(_id))!._doc
     }

@@ -29,7 +29,7 @@ export interface LoginData {
     userName: string | null
     password: string
 }
-type Gender = 'nam' | 'nữ' | 'khác' | ''
+type Gender = 'nam' | 'nữ' | 'khác'
 export interface User {
     _id: string
     gender: Gender

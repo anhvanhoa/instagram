@@ -4,9 +4,9 @@ export type TypeUniqueUser = {
     type: 'email' | 'tell' | 'userName'
     unique: boolean
 }
-const uniqueUser = async (data: UniqueUser) => {
+const uniqueUserRequest = async (data: UniqueUser) => {
     const result = await http.post<TypeUniqueUser>('/auth/unique-info', data)
-    return result.payload
+    return result.payload.data
 }
 
-export default uniqueUser
+export default uniqueUserRequest

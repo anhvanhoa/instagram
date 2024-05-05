@@ -4,8 +4,8 @@ import classNames from 'classnames'
 import { useState } from 'react'
 import { CroppedRect } from 'react-avatar-editor'
 import { Link, useBlocker } from 'react-router-dom'
-import uploadImg from '~/apis/uploadImg'
-import uploadPosts, { PostsUpload } from '~/apis/uploadPosts'
+import uploadImgRequest from '~/apis/uploadImgRequest'
+import uploadPostRequest, { PostsUpload } from '~/apis/uploadPostRequest'
 import Button from '~/components/Button'
 import Crop from '~/components/Crop'
 import HeaderMobile from '~/components/HeaderMobile'
@@ -23,27 +23,21 @@ export const CreatePosts = () => {
         if (e.target.value.length > 2200) return
         setDescription(e.target.value)
     }
-    const {
-        mutate: mutatePosts,
-        isPending: isPending2,
-        isError: isError2,
-        isSuccess: isSuccess2,
-        data: posts,
-    } = useMutation({
-        mutationFn: (posts: PostsUpload) => uploadPosts(posts),
+    const uploadPost = useMutation({
+        mutationFn: (posts: PostsUpload) => uploadPostRequest(posts),
     })
-    const { mutate, isPending, isError, isSuccess } = useMutation({
+    const uploadImg = useMutation({
         onSuccess: (data) => {
             contents.push(data)
             if (contents.length === images.length) {
-                mutatePosts({
+                uploadPost.mutate({
                     title: description,
                     contents,
                 })
                 contents = []
             }
         },
-        mutationFn: (data: FormData) => uploadImg(data),
+        mutationFn: (data: FormData) => uploadImgRequest(data),
     })
     function formData(fileCrop: File, serverSize: CroppedRect) {
         const formData = new FormData()
@@ -58,17 +52,22 @@ export const CreatePosts = () => {
         setOverlay(true)
         images.forEach(async ({ serverSize, fileCrop }) => {
             const data = formData(fileCrop, serverSize)
-            mutate(data)
+            uploadImg.mutate(data)
         })
     }
-    useBlocker(() => isPending || isPending2)
+    useBlocker(() => uploadImg.isPending || uploadPost.isPending)
     return (
         <div>
             <HeaderMobile
                 title='Create posts'
                 contextNext={
                     step === 2 && (
-                        <Button loading={isPending || isPending2} onClick={apiCrop} size='custom' type='text'>
+                        <Button
+                            loading={uploadImg.isPending || uploadPost.isPending}
+                            onClick={apiCrop}
+                            size='custom'
+                            type='text'
+                        >
                             Share
                         </Button>
                     )
@@ -98,7 +97,7 @@ export const CreatePosts = () => {
             {overlay && (
                 <OverLay>
                     <div className='w-60 h-14 bg-white rounded-xl px-4'>
-                        {isSuccess && isSuccess2 && (
+                        {uploadImg.isSuccess && uploadPost.isSuccess && (
                             <div>
                                 <div className='pt-1 flex items-center text-green-800 justify-center h-full gap-2 text-lg'>
                                     <div>
@@ -107,14 +106,14 @@ export const CreatePosts = () => {
                                     <p>Upload success</p>
                                 </div>
                                 <Link
-                                    to={`/p/${posts._id}`}
+                                    to={`/p/${uploadPost.data._id}`}
                                     className='text-xs text-center block text-primary font-medium'
                                 >
                                     Go posts
                                 </Link>
                             </div>
                         )}
-                        {(isError2 || isError) && (
+                        {(uploadPost.isError || uploadImg.isError) && (
                             <div>
                                 <div className='pt-1 flex justify-center items-center gap-2 text-red-500 text-lg'>
                                     <div>
@@ -127,7 +126,7 @@ export const CreatePosts = () => {
                                 </Link>
                             </div>
                         )}
-                        {(isPending || isPending2) && (
+                        {(uploadImg.isPending || uploadPost.isPending) && (
                             <div className='flex justify-center items-center gap-3 h-full'>
                                 <div>
                                     <Icon icon='nonicons:loading-16' className='w-5 animate-spin' />

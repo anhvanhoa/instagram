@@ -3,7 +3,7 @@ import { ContentChat } from '~/types/chat'
 
 const getChat = async (idRoom: string) => {
     const { payload } = await http.get<ContentChat[]>(`/chat/${idRoom}`)
-    return payload
+    return payload.data
 }
 
 export default getChat
