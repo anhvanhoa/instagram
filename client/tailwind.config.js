@@ -8,10 +8,41 @@ export default {
                 xs: '480px',
             },
             keyframes: {
-                hidden: {
-                    '0%': { opacity: '0' },
-                    '50%': { opacity: '0.8' },
-                    '100%': { opacity: '0' },
+                'shake-glide': {
+                    '0%': {
+                        opacity: '0',
+                        transform: 'translate(-50%, -50%) rotate(10deg)',
+                    },
+                    '25%': {
+                        opacity: '1',
+                        transform: 'translate(-50%, -50%) rotate(-10deg)',
+                    },
+                    '50%': {
+                        opacity: '1',
+                        transform: 'translate(-50%, -50%) rotate(10deg)',
+                    },
+                    '75%': {
+                        opacity: '1',
+                        transform: 'translate(-50%, -50%) rotate(-10deg)',
+                    },
+                    '90%': {
+                        opacity: '1',
+                        transform: 'translate(150%, -500%) rotate(0deg)',
+                    },
+                    '100%': {
+                        opacity: '0',
+                        transform: 'translate(150%, -500%) rotate(0deg)',
+                    },
+                },
+                toastify: {
+                    '0%': { transform: 'translateY(100%)' },
+                    '20%': { transform: 'translateY(0)' },
+                    '80%': { transform: 'translateY(0)' },
+                    '100%': { transform: 'translateY(100%)' },
+                },
+                zoom: {
+                    '0%': { transform: 'scale(0.8)' },
+                    '100%': { transform: 'scale(1)' },
                 },
             },
             colors: {
@@ -27,13 +58,9 @@ export default {
                 sidebar: '0 0 10px rgba(0, 0, 0, 0.2)',
             },
             animation: {
-                show: 'hidden .8s ease-in-out forwards',
-            },
-            spacing: {
-                'notify-search': 'calc(100% + 67px)',
-            },
-            backgroundColor: {
-                'hover-sidebar': 'rgb(var(--hover-sidebar))',
+                'shake-glide': 'shake-glide .8s ease-in-out forwards',
+                toastify: 'toastify 3s ease-in-out forwards',
+                zoom: 'zoom 0.1s ease-in-out',
             },
         },
     },

@@ -93,7 +93,9 @@ class AuthController {
     async refreshJwt({ user }: Request, res: Response) {
         try {
             // Nếu user = undefined thì check trong middleware
-            const { accessToken, refreshToken } = await authProvider.refreshJwt(user!)
+            const { accessToken, refreshToken, counts } = await authProvider.refreshJwt(
+                user!,
+            )
             res.cookie('refreshToken', refreshToken, {
                 secure: true,
                 sameSite: 'none',
@@ -105,6 +107,7 @@ class AuthController {
                 message: 'Refresh success',
                 data: {
                     ...user,
+                    ...counts,
                     accessToken: accessToken,
                 },
             })

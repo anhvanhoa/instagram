@@ -13,7 +13,14 @@ interface Props {
 }
 
 const SliderPosts = memo(
-    ({ listImage, propsAvatarEditor, refAvatarEdit, net, getIndexImg = () => {}, indexImg = 0 }: Props) => {
+    ({
+        listImage,
+        propsAvatarEditor,
+        refAvatarEdit,
+        net,
+        getIndexImg = () => {},
+        indexImg = 0,
+    }: Props) => {
         const lengthListImg = listImage.length
         const [indexSlide, setIndexSlide] = useState(indexImg)
         const handleSlider = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
@@ -39,7 +46,10 @@ const SliderPosts = memo(
                             {net && (
                                 <div
                                     className={`pointer-events-none absolute before:absolute before:content-[''] before:w-full before:h-[1px] before:top-1/3 after:absolute after:content-[''] after:w-full after:h-[1px]  after:bottom-1/3 before:bg-white after:bg-white`}
-                                    style={{ width: propsAvatarEditor.width, height: propsAvatarEditor.height }}
+                                    style={{
+                                        width: propsAvatarEditor.width,
+                                        height: propsAvatarEditor.height,
+                                    }}
                                 >
                                     <div className="absolute inset-0 before:absolute before:content-[''] before:h-full before:w-[1px] before:bg-white before:left-1/3 after:absolute after:content-[''] after:h-full after:w-[1px] after:bg-white after:right-1/3"></div>
                                 </div>
@@ -53,7 +63,9 @@ const SliderPosts = memo(
                                     <div
                                         key={index}
                                         className={`w-[7px] h-[7px] rounded-[50%] transition-all ${
-                                            index === indexSlide ? 'bg-primary' : 'bg-white/70'
+                                            index === indexSlide
+                                                ? 'bg-primary'
+                                                : 'bg-white/70'
                                         }`}
                                     ></div>
                                 )

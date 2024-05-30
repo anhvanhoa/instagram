@@ -1,13 +1,14 @@
-import { User } from '~/types/auth'
 import { Icon } from '@iconify/react'
 import classNames from 'classnames'
 import UserName from './UserName'
 import Img from './Img'
 import { Link } from 'react-router-dom'
+import { UserBase } from '~/types/auth'
 
 type Size = 'small' | 'medium' | 'big'
+
 interface Props {
-    user: User
+    user: UserBase
     size?: Size
 }
 const AccountItem: React.FC<Props> = ({ user, size = 'medium' }) => {
@@ -48,7 +49,13 @@ const AccountItem: React.FC<Props> = ({ user, size = 'medium' }) => {
             <div className='flex items-center'>
                 <div className='relative flex justify-center items-center'>
                     <svg className={classNames('absolute hidden', storySize[size])}>
-                        <linearGradient id='my-gradient-avatar' x1='0%' y1='100%' x2='100%' y2='0%'>
+                        <linearGradient
+                            id='my-gradient-avatar'
+                            x1='0%'
+                            y1='100%'
+                            x2='100%'
+                            y2='0%'
+                        >
                             <stop offset='5%' stopColor='#F4A14B' />
                             <stop offset='50%' stopColor='#E1306C' />
                             <stop offset='100%' stopColor='#A233FA' />
@@ -66,10 +73,11 @@ const AccountItem: React.FC<Props> = ({ user, size = 'medium' }) => {
                     <Link to={`/${user.userName}`}>
                         <Img
                             className={classNames(
-                                'rounded-[50%] aspect-square object-cover relative z-10 mt-[2px]',
+                                'aspect-square object-cover relative z-10',
                                 avatarSize[size],
                             )}
-                            src={user.avatar}
+                            isCircle
+                            src={user.avatar || 'avatar-empty.png'}
                             alt={user.userName}
                         />
                     </Link>
@@ -84,7 +92,12 @@ const AccountItem: React.FC<Props> = ({ user, size = 'medium' }) => {
                     <div className='text-sm font-semibold flex items-center'>
                         <UserName user={user} dropDow />
                         <span className='ml-1'>
-                            {user.verify && <Icon className='text-primary' icon='ph:seal-check-fill' />}
+                            {user.verify && (
+                                <Icon
+                                    className='text-primary'
+                                    icon='ph:seal-check-fill'
+                                />
+                            )}
                         </span>
                     </div>
                     <div

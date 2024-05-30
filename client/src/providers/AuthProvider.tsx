@@ -1,24 +1,21 @@
-import React, { useEffect, useReducer } from 'react'
-import reducer from './reducer'
-import { initializeUser } from './constant'
-import { contextUser } from './context'
-import refreshToken from '~/apis/refreshToken'
 import { useMutation } from '@tanstack/react-query'
+import { ReactNode, useEffect, useState } from 'react'
+import refreshToken from '~/apis/refreshToken'
+import { ContextAuth, initializeAuth } from '~/hooks/useAuth'
 import manageToken from '~/utils/rfToken'
-
-const ProviderUser: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [user, dispatch] = useReducer(reducer, initializeUser)
+const Timer = 1000 * 30
+const ProviderAuth: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [user, setUser] = useState(initializeAuth)
     const { mutate } = useMutation({
         mutationKey: ['refreshToken'],
         mutationFn: (data: { signal?: AbortSignal }) => refreshToken(data.signal),
         onSuccess: (data) => {
-            Object.assign(user, data.payload.data)
-            // dispatch({ payload: data.payload, type: 'UPDATE' })
-            manageToken().crTokenEncode(data.payload.data.accessToken)
+            Object.assign(user, data)
+            manageToken().crTokenEncode(data.accessToken)
         },
         onError: () => {
             manageToken().crTokenRemove()
-            Object.assign(user, initializeUser)
+            Object.assign(user, initializeAuth)
         },
     })
     useEffect(() => {
@@ -28,13 +25,15 @@ const ProviderUser: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         crToken && mutate({ signal })
         const idTimer = setInterval(() => {
             crToken && mutate({ signal })
-        }, 1000 * 90)
+        }, Timer)
         return () => {
             controller.abort()
             clearInterval(idTimer)
         }
-    }, [mutate, user])
-    return <contextUser.Provider value={{ user, dispatch }}>{children}</contextUser.Provider>
+    }, [mutate])
+    return (
+        <ContextAuth.Provider value={{ user, setUser }}>{children}</ContextAuth.Provider>
+    )
 }
 
-export default ProviderUser
+export default ProviderAuth

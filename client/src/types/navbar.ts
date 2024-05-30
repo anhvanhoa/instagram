@@ -5,4 +5,5 @@ export interface NavbarItem {
     icon: NameIcon
     iconActive: NameIcon
     link: string
+    // class: string
 }

@@ -17,7 +17,14 @@ interface Props {
     time: string
     isDelete: boolean
 }
-const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idChat, time, isDelete }) => {
+const BoxMessage: React.FC<Props> = ({
+    message,
+    avatar,
+    position = 'left',
+    idChat,
+    time,
+    isDelete,
+}) => {
     const [option, setoption] = useState(true)
     const params = useParams()
     const positionType: Record<TypePosition, string> = {
@@ -50,7 +57,11 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
             })}
         >
             <div className='max-w-[70%] flex items-center gap-2 '>
-                {position === 'left' && <Img src={avatar} className='w-6 h-6 rounded-[50%] object-cover ' />}
+                {position === 'left' && (
+                    <div className='w-6 h-6'>
+                        <Img src={avatar} className='object-cover' isCircle />
+                    </div>
+                )}
                 {position === 'right' && (
                     <Tippy
                         className='rounded-xl'
@@ -60,7 +71,12 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
                         trigger='click'
                         arrow={false}
                         content={
-                            <SettingMessage onRecall={handleRecall} isRecall time={time} onClick={handleDeleteSend} />
+                            <SettingMessage
+                                onRecall={handleRecall}
+                                isRecall
+                                time={time}
+                                onClick={handleDeleteSend}
+                            />
                         }
                         onShow={() => setoption(false)}
                         onHide={() => setoption(true)}
@@ -70,7 +86,10 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
                                 hidden: option,
                             })}
                         >
-                            <Icon icon='charm:menu-kebab' className='size-3 cursor-pointer' />
+                            <Icon
+                                icon='charm:menu-kebab'
+                                className='size-3 cursor-pointer'
+                            />
                         </div>
                     </Tippy>
                 )}
@@ -92,7 +111,9 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
                         placement='top-start'
                         theme='light'
                         arrow={false}
-                        content={<SettingMessage time={time} onClick={handleDeleteReceive} />}
+                        content={
+                            <SettingMessage time={time} onClick={handleDeleteReceive} />
+                        }
                         onShow={() => setoption(false)}
                         onHide={() => setoption(true)}
                     >
@@ -101,7 +122,10 @@ const BoxMessage: React.FC<Props> = ({ message, avatar, position = 'left', idCha
                                 hidden: option,
                             })}
                         >
-                            <Icon icon='charm:menu-kebab' className='size-3 cursor-pointer' />
+                            <Icon
+                                icon='charm:menu-kebab'
+                                className='size-3 cursor-pointer'
+                            />
                         </div>
                     </Tippy>
                 )}

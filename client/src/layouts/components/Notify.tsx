@@ -7,8 +7,9 @@ import socket from '~/socketIo'
 import { Notification } from '~/types/chat'
 interface Props {
     handleClickOutside: (event: MouseEvent) => void
+    handleClose: () => void
 }
-const Notify: React.FC<Props> = ({ handleClickOutside }) => {
+const Notify: React.FC<Props> = ({ handleClickOutside, handleClose }) => {
     const [notification, setNotification] = useState<Notification[]>([])
     const { data } = useQuery({
         queryKey: ['notification'],
@@ -30,15 +31,28 @@ const Notify: React.FC<Props> = ({ handleClickOutside }) => {
             )}
         >
             <h2
-                className={classNames('py-4 px-5 border-b font-medium text-2xl', 'sticky top-0 z-20 border-gray-50/10')}
+                className={classNames(
+                    'py-4 px-5 border-b font-medium text-2xl',
+                    'sticky top-0 z-20 border-gray-50/10',
+                )}
             >
                 Notification
             </h2>
             <div className='px-5 overflow-auto h-full'>
                 {!data?.length && <p className='text-center mt-6'>No notification</p>}
                 <div className='py-2'>
-                    {data && data.map((item, index) => <ItemNotify key={index} notify={item} />)}
-                    {notification && notification.map((item, index) => <ItemNotify key={index} notify={item} />)}
+                    {data &&
+                        data.map((item, index) => (
+                            <div key={index} onClick={handleClose}>
+                                <ItemNotify notify={item} />
+                            </div>
+                        ))}
+                    {notification &&
+                        notification.map((item, index) => (
+                            <div key={index} onClick={handleClose}>
+                                <ItemNotify notify={item} />
+                            </div>
+                        ))}
                 </div>
             </div>
         </div>

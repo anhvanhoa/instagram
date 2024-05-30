@@ -10,7 +10,8 @@ interface Props {
 }
 const InputChat: React.FC<Props> = ({ value, setValue, onSend }) => {
     const refInput = useRef<HTMLInputElement>(null)
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+        setValue(e.target.value)
     const changeEmoij = (value: string) => setValue((prev) => `${prev}${value}`)
     return (
         <div className='m-2'>
@@ -30,6 +31,7 @@ const InputChat: React.FC<Props> = ({ value, setValue, onSend }) => {
                 </div>
                 <div className='flex-1 ml-3'>
                     <input
+                        onKeyDown={(e) => e.key === 'Enter' && onSend()}
                         ref={refInput}
                         autoFocus
                         value={value}

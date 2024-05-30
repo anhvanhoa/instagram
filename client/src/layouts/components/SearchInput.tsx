@@ -16,7 +16,8 @@ const SearchInput = ({ value, setValue, isLoading }: Props) => {
         setIconSearch(true)
     }
     // set value search
-    const handleValue = (event: React.ChangeEvent<HTMLInputElement>) => setValue(event.target.value)
+    const handleValue = (event: React.ChangeEvent<HTMLInputElement>) =>
+        setValue(event.target.value)
     return (
         <div className='mx-4'>
             <div className='mb-4 h-10 relative overflow-hidden rounded-md border border-second'>
@@ -44,7 +45,9 @@ const SearchInput = ({ value, setValue, isLoading }: Props) => {
                         <span className='mt-[2px] mr-[10px]'>
                             <Icon className='text-2xl' icon='basil:search-solid' />
                         </span>
-                        <span className='overflow-hidden w-28 text-ellipsis select-none '>{value || 'Tìm kiếm'}</span>
+                        <span className='overflow-hidden w-28 text-ellipsis select-none '>
+                            {value || 'Tìm kiếm'}
+                        </span>
                         <span className='w-8 flex-shrink'></span>
                     </div>
                 )}

@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose'
 import { User } from '~/types/user'
 
-const userSchema = new Schema<User>(
+export const userSchema = new Schema<User>(
     {
         userName: {
             type: String,
@@ -31,16 +31,12 @@ const userSchema = new Schema<User>(
             type: String,
             required: true,
         },
-        bio: { type: String },
-        birthday: { type: String },
-        gender: { type: String, enum: ['nam', 'nữ', 'khác'] },
-        notifications: { type: [{ ref: 'notification', type: Schema.Types.ObjectId }] },
-        posts: { type: [{ ref: 'post', type: Schema.Types.ObjectId }] },
-        stories: { type: [] },
-        verify: { type: Boolean },
-        followers: { type: [{ ref: 'user', type: Schema.Types.ObjectId }] },
-        following: { type: [{ ref: 'user', type: Schema.Types.ObjectId }] },
-        avatar: { type: String, default: '' },
+        bio: { type: String, default: '' },
+        birthday: { type: String, default: '' },
+        gender: { type: String, enum: ['male', 'female', 'other', ''], default: '' },
+        verify: { type: Boolean, default: false },
+        avatar: { type: String, default: 'avatar-empty.png' },
+        website: { type: String, default: '' },
     },
     {
         timestamps: true,
@@ -48,3 +44,12 @@ const userSchema = new Schema<User>(
 )
 userSchema.index({ userName: 'text', fullName: 'text' })
 export default model<User>('user', userSchema, 'user')
+
+export const selectUserBase = {
+    fullName: true,
+    userName: true,
+    avatar: true,
+    verify: true,
+}
+
+Object.freeze(selectUserBase)

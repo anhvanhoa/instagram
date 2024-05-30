@@ -7,8 +7,11 @@ export const pathPrivate = {
     createPosts: '/create-posts',
     chat: '/message/:username/t/:id',
     profile: '/:username',
-    editProfile: '/accounts/edit',
     posts: '/p/:id',
+    settings: {
+        path: '/accounts/',
+        accountEdit: 'edit',
+    },
 }
 export const pathPublic = {
     home: '/',

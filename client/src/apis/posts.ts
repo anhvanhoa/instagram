@@ -1,8 +1,8 @@
 import { http } from '~/config/httpAxios'
-import { Posts } from '~/types/posts'
+import { ResponsePost } from '~/types/posts'
 
 const getPosts = async () => {
-    const res = await http.get<Posts[]>('/posts')
+    const res = await http.get<ResponsePost[]>('/posts')
     return res.payload.data
 }
 

@@ -6,14 +6,14 @@ export const searchThin = (
             stroke='currentColor'
             strokeLinecap='round'
             strokeLinejoin='round'
-            strokeWidth='1.5'
+            strokeWidth='2'
         ></path>
         <line
             fill='none'
             stroke='currentColor'
             strokeLinecap='round'
             strokeLinejoin='round'
-            strokeWidth='1.5'
+            strokeWidth='2'
             x1='16.511'
             x2='22'
             y1='16.511'

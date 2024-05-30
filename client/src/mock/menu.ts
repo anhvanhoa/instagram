@@ -20,10 +20,10 @@ export const dataMenu: Menu[] = [
         icon: 'saved',
         to: 'anhvanhoa.it/saved',
     },
-    {
-        name: 'Switch apperance',
-        icon: 'mode',
-    },
+    // {
+    //     name: 'Switch apperance',
+    //     icon: 'mode',
+    // },
     {
         name: 'Help',
         icon: 'problem',

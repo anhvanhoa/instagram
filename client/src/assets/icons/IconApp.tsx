@@ -6,7 +6,11 @@ interface Props {
     className?: string
 }
 const IconApp: React.FC<Props> = memo(({ type, className }) => {
-    return <div className={classNames({ 'h-6 w-6': !className }, className)}>{icons[type]}</div>
+    return (
+        <div className={classNames({ 'h-6 w-6': !className }, className)}>
+            {icons[type]}
+        </div>
+    )
 })
 
 export default IconApp

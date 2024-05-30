@@ -1,10 +1,9 @@
 import { http } from '~/config/httpAxios'
-import { ResponseMessage } from '~/types/response'
-import { UserUpdate } from '~/types/auth'
+import { User, UserUpdate } from '~/types/auth'
 
 const updateUser = async (user: UserUpdate) => {
-    const { payload } = await http.patch<ResponseMessage>('/user/update', user)
-    return payload
+    const { payload } = await http.patch<User>('/user/update', user)
+    return payload.data
 }
 
 export default updateUser

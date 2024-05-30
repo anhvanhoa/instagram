@@ -20,7 +20,10 @@ const CropImage = memo(({ setImages, listImage, onStep }: Props) => {
     })
     const [indexSlide, setIndexSlide] = useState(0)
     const [sizeCrop, setSizeCrop] = useState({ height: 520, width: 520 })
-    const [positionClient, setPositionClient] = useState<{ x: number; y: number }>({ x: 0.5, y: 0.5 })
+    const [positionClient, setPositionClient] = useState<{ x: number; y: number }>({
+        x: 0.5,
+        y: 0.5,
+    })
     const refImg = useRef<AvatarEditor>(null)
     const handlePosition = (position: Position) => {
         setNet(true)
@@ -121,8 +124,16 @@ const CropImage = memo(({ setImages, listImage, onStep }: Props) => {
                     </div>
                 </div>
                 <div className='absolute w-full bottom-4 px-4 flex items-center justify-between'>
-                    <Tools onAspect={handleAspect} valueRange={valueRag} onRange={setValueRag} />
-                    <ManageImg listImage={listImage} onChooseImg={setIndexSlide} setImages={setImages} />
+                    <Tools
+                        onAspect={handleAspect}
+                        valueRange={valueRag}
+                        onRange={setValueRag}
+                    />
+                    <ManageImg
+                        listImage={listImage}
+                        onChooseImg={setIndexSlide}
+                        setImages={setImages}
+                    />
                 </div>
             </div>
         </div>

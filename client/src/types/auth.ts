@@ -1,4 +1,4 @@
-import { Posts } from './posts'
+// import { ResponsePost } from './posts'
 
 export interface DataRegister {
     email: string
@@ -29,7 +29,7 @@ export interface LoginData {
     userName: string | null
     password: string
 }
-type Gender = 'nam' | 'nữ' | 'khác'
+export type Gender = 'male' | 'female' | 'other'
 export interface User {
     _id: string
     gender: Gender
@@ -40,13 +40,24 @@ export interface User {
     numberPhone: string
     birthday: string
     bio: string
-    posts: Posts[]
-    followers: []
-    following: []
-    stories: []
     verify: boolean
-    notifications: []
     accessToken: string
+    website: string
+    totalFollowers: number
+    totalFollowing: number
+    totalPost: number
+}
+
+export type UserBase = {
+    avatar: string
+    userName: string
+    fullName: string
+    verify: boolean
+    _id: string
+}
+
+export type UserBaseFollow = UserBase & {
+    isFollowing: boolean
 }
 
 export interface UserUpdate {
@@ -55,4 +66,10 @@ export interface UserUpdate {
     avatar: string
     birthday: string
     bio: string
+    website: string
+}
+
+export type ResponseUsers = {
+    users: UserBaseFollow[]
+    count: number
 }

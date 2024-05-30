@@ -5,7 +5,10 @@ const AccountChatSkeleton = () => {
             <div role='status' className='py-2 space-y-4 rounded animate-pulse'>
                 <div className=''>
                     {data.map((_, i) => (
-                        <div key={i} className='flex items-center gap-6 mb-4 xs:flex-col lg:flex-row px-6 xs:px-0'>
+                        <div
+                            key={i}
+                            className='flex items-center gap-6 mb-4 xs:flex-col lg:flex-row px-6 xs:px-0'
+                        >
                             <div className='w-12 h-12 lg:w-14 lg:h-14 dark:bg-gray-50/10 bg-gray-100 rounded-[50%]'></div>
                             <div className='xs:hidden lg:block flex-1'>
                                 <div className='w-9/12 h-2.5 dark:bg-gray-50/10 bg-gray-100 rounded-full lg:w-40 mb-2.5'></div>

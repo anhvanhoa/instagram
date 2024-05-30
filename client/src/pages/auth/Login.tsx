@@ -10,7 +10,7 @@ import login from '~/apis/login'
 import isEmail from 'validator/lib/isEmail'
 import isMobilePhone from 'validator/lib/isMobilePhone'
 import { useNavigate } from 'react-router-dom'
-import useContextUser from '~/store/hook'
+import useAuth from '~/hooks/useAuth'
 import registerFacebook from '~/apis/registerFacebook'
 import socket from '~/socketIo'
 const initData: LoginData = {
@@ -22,35 +22,40 @@ const initData: LoginData = {
 }
 const Login = () => {
     const navigation = useNavigate()
-    const { dispatch } = useContextUser()
+    const { setUser } = useAuth()
     const [formData, setFormData] = useState<LoginData>(initData)
     // handle change input
-    const handleChange = (name: keyof LoginData) => (event: React.ChangeEvent<HTMLInputElement>) =>
-        setFormData((prev) => ({ ...prev, [name]: event.target.value }))
+    const handleChange =
+        (name: keyof LoginData) => (event: React.ChangeEvent<HTMLInputElement>) =>
+            setFormData((prev) => ({ ...prev, [name]: event.target.value }))
     // tanStack
     const requetLogin = useMutation({
         mutationFn: (body: LoginData) => login(body),
         onSuccess(user) {
-            dispatch({ payload: user, type: 'LOGIN' })
+            navigation('/')
+            setUser(user)
             socket.connect().auth = { token: user.accessToken }
-            setTimeout(() => navigation('/'), 400)
         },
     })
     // Handle login
     const handleLogin = () => {
         if (isEmail(formData.emailTellName)) formData.email = formData.emailTellName
-        if (isMobilePhone(formData.emailTellName)) formData.numberPhone = formData.emailTellName
+        if (isMobilePhone(formData.emailTellName))
+            formData.numberPhone = formData.emailTellName
         const regex = /^[^\s!@#$%^&*()_+{}[\]:;<>,.?~\\/-]+$/
         if (!isMobilePhone(formData.emailTellName) && regex.test(formData.emailTellName))
             formData.userName = formData.emailTellName
         requetLogin.mutate(formData)
-        setFormData((prev) => ({ ...initData, emailTellName: prev.emailTellName, password: prev.password }))
+        setFormData((prev) => ({
+            ...initData,
+            emailTellName: prev.emailTellName,
+            password: prev.password,
+        }))
     }
     // handle login facebook
     const handleLoginFB = async () => {
         try {
-            const user = await registerFacebook()
-            dispatch({ payload: user, type: 'LOGIN' })
+            await registerFacebook()
             setTimeout(() => navigation('/'), 400)
         } catch (error) {
             console.log(error)
@@ -59,11 +64,24 @@ const Login = () => {
     return (
         <WrapperAuth>
             <div id='verify'></div>
-            <form action='' className='mt-8'>
-                <InputAuth value={formData.emailTellName} onChange={handleChange('emailTellName')} type='text'>
+            <form
+                className='mt-8'
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleLogin()
+                }}
+            >
+                <InputAuth
+                    value={formData.emailTellName}
+                    onChange={handleChange('emailTellName')}
+                    type='text'
+                >
                     Mobile number, username or email
                 </InputAuth>
-                <InputAuth value={formData.password} onChange={handleChange('password')} type='password'>
+                <InputAuth
+                    value={formData.password}
+                    onChange={handleChange('password')}
+                    type='password'
+                >
                     Password
                 </InputAuth>
                 <Button
@@ -94,11 +112,15 @@ const Login = () => {
                 </div>
                 {requetLogin.isError && (
                     <p className='text-red-600 text-center text-sm px-10 pt-2'>
-                        Sorry, your password is incorrect. Please check your password again.
+                        Sorry, your password is incorrect. Please check your password
+                        again.
                     </p>
                 )}
                 <div className='cursor-pointer my-5'>
-                    <Link to='/account/forgot-password' className='text-xs text-center block'>
+                    <Link
+                        to='/account/forgot-password'
+                        className='text-xs text-center block'
+                    >
                         Forgot password?
                     </Link>
                 </div>

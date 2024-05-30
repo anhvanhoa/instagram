@@ -1,8 +1,13 @@
 import { http } from '~/config/httpAxios'
-import { User } from '~/types/auth'
+import { UserBase } from '~/types/auth'
+
+type ResponseUserSearch = {
+    users: UserBase[]
+    count_users: number
+}
 
 const serachUser = async (q: string) => {
-    const { payload } = await http.get<User[]>('/user/search', {
+    const { payload } = await http.get<ResponseUserSearch>('/user/search', {
         params: {
             q,
         },

@@ -1,24 +1,24 @@
 import { Icon } from '@iconify/react'
 import { useEffect, useState } from 'react'
-import { TypeImgCrop } from '~/types/posts'
+import { Media, TypeImgCrop } from '~/types/posts'
 import getSize from '~/utils/getSize'
 import HeadCreatePosts from './HeadCreatePosts'
 import SliderPosts from './SliderPosts'
 import UserName from './UserName'
-import useContextUser from '~/store/hook'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import uploadImgRequest from '~/apis/uploadImgRequest'
 import uploadPostRequest, { PostsUpload } from '~/apis/uploadPostRequest'
 import Img from './Img'
 import { CroppedRect } from 'react-avatar-editor'
+import useAuth from '~/hooks/useAuth'
 
 interface Props {
     listImage: TypeImgCrop[]
     onStep: (value: React.SetStateAction<number>) => void
 }
-let contents: string[] = []
+let media: Media[] = []
 const PreviewImg = ({ listImage, onStep }: Props) => {
-    const { user } = useContextUser()
+    const { user } = useAuth()
     const [description, setDescription] = useState<string>('')
     const [isUploadPosts, setIsUploadPosts] = useState<boolean>(false)
     const [indexSlide, setIndexSlide] = useState(0)
@@ -26,22 +26,32 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
     const uploadPost = useMutation({
         mutationFn: (posts: PostsUpload) => uploadPostRequest(posts),
     })
+    const queryClient = useQueryClient()
     const uploadImg = useMutation({
         onSuccess: (data) => {
-            contents.push(data)
-            if (contents.length === listImage.length) {
+            media.push({
+                content: data,
+                type_media: 'image',
+                ratio: listImage[indexSlide].aspect,
+            })
+            if (media.length === listImage.length) {
                 uploadPost.mutate(
                     {
                         title: description,
-                        contents,
+                        media,
                     },
                     {
-                        onSuccess: () => onStep(4),
+                        onSuccess: () => {
+                            queryClient.fetchQuery({
+                                queryKey: ['posts-user', user.userName],
+                            })
+                            onStep(4)
+                        },
                         onError: () => onStep(5),
                     },
                 )
                 setIsUploadPosts(false)
-                contents = []
+                media = []
             }
         },
         onError: () => onStep(5),
@@ -114,17 +124,23 @@ const PreviewImg = ({ listImage, onStep }: Props) => {
                             height: sizeCrop.height,
                             width: sizeCrop.width,
                             border: 0,
-                            position: { x: listImage[indexSlide].clientSize.x, y: listImage[indexSlide].clientSize.y },
+                            position: {
+                                x: listImage[indexSlide].clientSize.x,
+                                y: listImage[indexSlide].clientSize.y,
+                            },
                         }}
                     />
                 </div>
                 <div className='w-[340px] border-l border-gray-50/20'>
                     <div className='flex items-center p-4 gap-2'>
-                        <Img
-                            className='rounded-[50%] w-8 h-8 aspect-square object-cover relative z-10 p-px mt-[2px]'
-                            src={user.avatar}
-                            alt={user.userName}
-                        />
+                        <div className='w-8 h-8 aspect-square'>
+                            <Img
+                                className='object-cover relative z-10 p-px'
+                                src={user.avatar}
+                                alt={user.userName}
+                                isCircle
+                            />
+                        </div>
                         <UserName user={user} />
                     </div>
                     <div>

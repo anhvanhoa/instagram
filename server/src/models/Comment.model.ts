@@ -1,10 +1,13 @@
 import { model, Schema } from 'mongoose'
-import { Comment } from '~/types/comment'
+import { CommentSchema } from '~/types/comment'
 
-export const commentSchema = new Schema<Comment>(
+export const commentSchema = new Schema<CommentSchema>(
     {
         content: String,
-        userId: { ref: 'user', type: Schema.Types.ObjectId },
+        user: { ref: 'user', type: Schema.Types.ObjectId },
+        postId: { ref: 'post', type: Schema.Types.ObjectId },
+        parentId: { ref: 'comment', type: Schema.Types.ObjectId },
+        isDelete: { type: Boolean, default: false },
     },
     {
         timestamps: true,

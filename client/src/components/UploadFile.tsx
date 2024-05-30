@@ -56,9 +56,12 @@ const UploadFile = memo(({ setStep, setImages, hiddenHead }: Props) => {
         <div className='flex flex-col justify-center h-full'>
             <div className='flex flex-col justify-center h-full'>
                 <div
-                    className={classNames('flex justify-center items-center h-11 border-b border-second', {
-                        hidden: hiddenHead,
-                    })}
+                    className={classNames(
+                        'flex justify-center items-center h-11 border-b border-second',
+                        {
+                            hidden: hiddenHead,
+                        },
+                    )}
                 >
                     <h4 className='font-medium'>Create new post</h4>
                 </div>
@@ -86,7 +89,14 @@ const UploadFile = memo(({ setStep, setImages, hiddenHead }: Props) => {
                     <Button size='custom' onClick={handleClickInput}>
                         Select from computer
                     </Button>
-                    <input ref={inputFile} onChange={handleUploadFile} type='file' accept='image/*' hidden multiple />
+                    <input
+                        ref={inputFile}
+                        onChange={handleUploadFile}
+                        type='file'
+                        accept='image/*'
+                        hidden
+                        multiple
+                    />
                 </div>
             </div>
         </div>

@@ -19,7 +19,13 @@ interface Props {
     handleStep: (type: 'next' | 'prev') => () => void // currying
 }
 // const timerCallApi = 5 * 60 * 1000
-const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp, verificationId }) => {
+const Otp: React.FC<Props> = ({
+    dataForm,
+    handleStep,
+    setDataFrom,
+    sendOtp,
+    verificationId,
+}) => {
     const [btnDisable, setBtnDisable] = useState(true)
     const [error, setError] = useState(false)
     const navigate = useNavigate()
@@ -68,7 +74,9 @@ const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp, veri
                     </p>
                 </div>
                 <InputAuth
-                    onChange={(event) => setDataFrom((prev) => ({ ...prev, otp: event.target.value }))}
+                    onChange={(event) =>
+                        setDataFrom((prev) => ({ ...prev, otp: event.target.value }))
+                    }
                     value={dataForm.otp}
                     type='text'
                     maxLength={6}
@@ -87,8 +95,13 @@ const Otp: React.FC<Props> = ({ dataForm, handleStep, setDataFrom, sendOtp, veri
                     <Button onClick={handleStep('prev')} type='text' className='px-0'>
                         Back
                     </Button>
-                    |
-                    <Button onClick={sendOtp} type='text' disable={btnDisable} className='px-0'>
+                    <span className='px-1'>|</span>
+                    <Button
+                        onClick={sendOtp}
+                        type='text'
+                        disable={btnDisable}
+                        className='px-0'
+                    >
                         Request new code
                     </Button>
                 </div>

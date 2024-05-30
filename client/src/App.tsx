@@ -1,12 +1,14 @@
 import { RouterProvider } from 'react-router-dom'
 import { routersPrivate, routersPublic } from '~/router'
-import useContextUser from './store/hook'
 import LoadPage from '~/components/LoadPage'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
+import useAuth from './hooks/useAuth'
 
-function App() {
+const App = memo(function () {
     const [load, setLoad] = useState(true)
-    const { user } = useContextUser()
+    const { user } = useAuth()
+    console.log('render app')
+    const router = user.accessToken ? routersPrivate : routersPublic
     useEffect(() => {
         const id = setTimeout(() => setLoad(false), 2000)
         return () => {
@@ -15,12 +17,11 @@ function App() {
     }, [])
 
     return (
-        <div>
+        <>
             {load && <LoadPage />}
-            {user.accessToken && <RouterProvider router={routersPrivate} />}
-            {!user.accessToken && <RouterProvider router={routersPublic} />}
-        </div>
+            {!load && <RouterProvider router={router} />}
+        </>
     )
-}
+})
 
 export default App

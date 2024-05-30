@@ -3,15 +3,15 @@ import AccountChat from './AccountChat'
 import { NavLink } from 'react-router-dom'
 import classNames from 'classnames'
 import { UserChat } from '~/types/chat'
-import useContextUser from '~/store/hook'
 import socket from '~/socketIo'
+import useAuth from '~/hooks/useAuth'
 
 interface Props {
     dataUser: UserChat[]
 }
 const ListAccountChat: React.FC<Props> = memo(({ dataUser }) => {
     const [data, setData] = useState(dataUser)
-    const { user } = useContextUser()
+    const { user } = useAuth()
     useEffect(() => {
         socket.on('notifyMessage', (dataChat) => {
             setData((prev) => {

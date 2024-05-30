@@ -1,9 +1,7 @@
 function formatTimeAgo(isoDateString: string) {
     const currentDate = Date.now()
     const providedDate = Date.parse(isoDateString)
-
     const timeDifferenceInSeconds = Math.floor((currentDate - providedDate) / 1000)
-
     if (timeDifferenceInSeconds < 60) {
         return `${timeDifferenceInSeconds}s`
     } else if (timeDifferenceInSeconds < 3600) {
@@ -18,4 +16,12 @@ function formatTimeAgo(isoDateString: string) {
     }
 }
 
-export default formatTimeAgo
+function formatTime(isoDateString: string) {
+    const date = new Date(isoDateString)
+    return date.toLocaleString('en', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+    })
+}
+export { formatTime, formatTimeAgo }

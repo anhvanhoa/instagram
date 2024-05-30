@@ -11,9 +11,9 @@ const HeaderMobile: React.FC<Props> = ({ onNext, title, contextNext, className }
     const navifate = useNavigate()
     const handleBack = () => navifate(-1)
     return (
-        <div className='sticky top-0 z-50'>
+        <div className='sticky top-0 z-[100]'>
             <div className={className}>
-                <div className='flex justify-between items-center px-4 py-3 border-second border-b bg-[rgba(var(--background-third-rgb),0.7)] backdrop-blur-xl'>
+                <div className='flex justify-between items-center px-4 py-3 border-second border-b bg-[rgb(var(--background-third-rgb))]'>
                     <div onClick={handleBack}>
                         <Icon
                             icon='formkit:left'

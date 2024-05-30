@@ -1,32 +1,24 @@
-import { Icon } from '@iconify/react/dist/iconify.js'
 import SkeletonPosts from './SkeletonPosts'
 import EndPosts from './EndPosts'
-import Posts from './Posts'
+import Posts from './Post'
 import { useQuery } from '@tanstack/react-query'
 import getPosts from '~/apis/posts'
+
+const skeletons = [1, 2, 3, 4]
 const PostsHome = () => {
     const postsFollow = useQuery({
         queryKey: ['posts'],
         queryFn: () => getPosts(),
         refetchOnWindowFocus: false,
-        refetchOnMount: 'always',
     })
     return (
         <div>
-            <div className='p-2 hidden'>
-                <Icon className='mx-auto text-3xl text-gray-500 animate-spin' icon='lucide:loader' />
-            </div>
             <div className='mx-auto xs:max-w-[470px]'>
-                {postsFollow.isLoading && (
-                    <>
-                        <SkeletonPosts />
-                        <SkeletonPosts />
-                        <SkeletonPosts />
-                    </>
-                )}
+                {postsFollow.isLoading &&
+                    skeletons.map((_, index) => <SkeletonPosts key={index} />)}
                 {postsFollow.data &&
                     postsFollow.data.map((element) => (
-                        <Posts key={element._id} posts={element} author={element.author} />
+                        <Posts key={element._id} posts={element} />
                     ))}
                 <EndPosts />
             </div>

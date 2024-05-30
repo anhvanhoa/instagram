@@ -20,10 +20,15 @@ class HttpError extends Error {
         this.payload = payload
     }
 }
-const httpRequest = async <T = any>(method: MethodRequest = 'GET', url: string, options?: AxiosRequestConfig) => {
+const httpRequest = async <T = any>(
+    method: MethodRequest = 'GET',
+    url: string,
+    options?: AxiosRequestConfig,
+) => {
     try {
         const normalPath = url.startsWith('/') ? url : `/${url}`
         const crToken = manageToken().crTokenDecode()
+        const authorization = crToken ? `Bearer ${crToken}` : ''
         const response = await httpInstance.request<T>({
             method,
             url: normalPath,
@@ -32,7 +37,7 @@ const httpRequest = async <T = any>(method: MethodRequest = 'GET', url: string, 
             ...options,
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${crToken}`,
+                Authorization: authorization,
                 ...options?.headers,
             },
         })
@@ -74,7 +79,11 @@ const http = {
             data,
         })
     },
-    postForm<Response = undefined>(url: string, data: FormData, options?: AxiosRequestConfig) {
+    postForm<Response = undefined>(
+        url: string,
+        data: FormData,
+        options?: AxiosRequestConfig,
+    ) {
         return httpRequest<ResponseHttp<Response>>('POST', url, {
             ...options,
             data,

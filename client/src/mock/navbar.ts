@@ -7,6 +7,7 @@ export const navbarDesk: NavbarItem[] = [
         iconActive: 'home-solid',
         link: '/',
         name: 'Home',
+        // class: ''
     },
     {
         id: 2,
@@ -14,6 +15,7 @@ export const navbarDesk: NavbarItem[] = [
         iconActive: 'search-solid',
         link: '/#',
         name: 'Search',
+        // class: 'is-cllapse is-side'
     },
     {
         id: 3,
@@ -35,6 +37,7 @@ export const navbarDesk: NavbarItem[] = [
         iconActive: 'message-solid',
         link: '/message',
         name: 'Message',
+        // class: 'is-cllapse'
     },
     {
         id: 6,
@@ -42,6 +45,7 @@ export const navbarDesk: NavbarItem[] = [
         iconActive: 'heart-solid',
         link: '/#',
         name: 'Notification',
+        // class: 'is-cllapse'
     },
     {
         id: 7,

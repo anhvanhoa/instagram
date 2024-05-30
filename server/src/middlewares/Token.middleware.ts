@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
 import isJWT from 'validator/lib/isJWT'
-import { HttpStatus } from '~/http-status.enum'
 import { UserModel } from '~/models'
 import TokenModel from '~/models/Token.model'
 import { SocketIo } from '~/types/socket'
@@ -28,11 +27,6 @@ class TokenMiddleware {
             req.user = user
             next()
         } catch (error) {
-            if (isJsonWebTokenError(error))
-                return res.status(HttpStatus.UNAUTHORIZED).json({
-                    httpStatus: HttpStatus.UNAUTHORIZED,
-                    message: error.message,
-                })
             const err = isError(error)
             return res.status(err.httpStatus).json(err)
         }
@@ -54,15 +48,10 @@ class TokenMiddleware {
             await TokenModel.findOneAndDelete({ token: refreshToken })
             const {
                 _doc: { password, ...user },
-            } = (await UserModel.findOne({ userName }).populate('posts'))!
+            } = (await UserModel.findOne({ userName }))!
             req.user = user
             next()
         } catch (error) {
-            if (isJsonWebTokenError(error))
-                return res.status(HttpStatus.UNAUTHORIZED).json({
-                    httpStatus: HttpStatus.UNAUTHORIZED,
-                    message: error.message,
-                })
             const err = isError(error)
             return res.status(err.httpStatus).json(err)
         }

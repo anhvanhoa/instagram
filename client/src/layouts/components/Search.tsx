@@ -3,20 +3,15 @@ import SearchInput from './SearchInput'
 import AccountItem from '~/components/AccountItem'
 import { Link } from 'react-router-dom'
 import useDebounce from '~/hooks/useDebounce'
-import { useQuery } from '@tanstack/react-query'
-import serachUser from '~/apis/serachUser'
+import { useSearchUser } from '~/hooks/user.hook'
 interface Props {
     handleClickOutside: (event: MouseEvent) => void
+    handleClose: () => void
 }
-const Search: React.FC<Props> = ({ handleClickOutside }) => {
+const Search: React.FC<Props> = ({ handleClickOutside, handleClose }) => {
     const [value, setValue] = useState<string>('')
     const newValue = useDebounce(value, 500)
-    const { data, isLoading } = useQuery({
-        queryKey: ['search', newValue],
-        queryFn: () => serachUser(newValue),
-        initialData: [],
-        enabled: Boolean(newValue),
-    })
+    const { data, isLoading } = useSearchUser({ value: newValue })
     // handle click outside
     useEffect(() => {
         document.addEventListener('mousedown', handleClickOutside)
@@ -35,13 +30,22 @@ const Search: React.FC<Props> = ({ handleClickOutside }) => {
                             <div className='flex items-center justify-between my-[6px] px-6'>
                                 <h3 className='font-semibold'>Gần đây</h3>
                             </div>
-                            <div className='mt-4 overflow-auto flex-1 text-center h-6'>Không có dữ liệu</div>
+                            <div className='mt-4 overflow-auto flex-1 text-center h-6'>
+                                Không có dữ liệu
+                            </div>
                         </div>
                     )}
                     {data &&
-                        data.map((user) => (
-                            <div key={user._id} className='py-2 px-6 hover:bg-gray-50/5 relative'>
-                                <Link to={user.userName} className='absolute inset-0'></Link>
+                        data.users.map((user) => (
+                            <div
+                                key={user._id}
+                                className='py-2 px-6 hover:bg-gray-50/5 relative'
+                                onClick={handleClose}
+                            >
+                                <Link
+                                    to={user.userName}
+                                    className='absolute inset-0'
+                                ></Link>
                                 <AccountItem user={user} />
                             </div>
                         ))}

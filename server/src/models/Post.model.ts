@@ -1,13 +1,18 @@
 import { model, Schema } from 'mongoose'
-import { Post } from '~/types/post'
-const postSchema = new Schema<Post>(
+import { PostSchema } from '~/types/post'
+import { userSchema } from './User.model'
+
+const postSchema = new Schema<PostSchema>(
     {
-        author: { ref: 'user', type: Schema.Types.ObjectId },
-        likes: [{ ref: 'user', type: Schema.Types.ObjectId }],
-        comments: [{ ref: 'comment', type: Schema.Types.ObjectId }],
+        author: {
+            ref: 'user',
+            type: Schema.Types.ObjectId,
+            schema: userSchema,
+        },
         title: String,
-        contents: [{ type: String }],
-        isDelete: { type: Boolean, default: false },
+        media: [{ type_media: String, content: String }],
+        commentDisable: { type: Boolean, default: false },
+        countLikeDisable: { type: Boolean, default: false },
     },
     {
         timestamps: true,

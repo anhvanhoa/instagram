@@ -28,25 +28,39 @@ const AccountChat = ({ user }: Props) => {
             onClick={handleSeen}
         >
             <div className='flex items-center w-full relative'>
-                {user.message && !user.message.isSeen && user.message.idUser === user._id && (
-                    <Icon
-                        className='w-8 h-8 text-primary absolute -top-3 -right-2 lg:hidden xs:block hidden'
-                        icon='radix-icons:dot-filled'
+                {user.message &&
+                    !user.message.isSeen &&
+                    user.message.idUser === user._id && (
+                        <Icon
+                            className='w-8 h-8 text-primary absolute -top-3 -right-2 lg:hidden xs:block hidden'
+                            icon='radix-icons:dot-filled'
+                        />
+                    )}
+                <div className=' lg:w-14 lg:h-14 h-12 w-12 mx-auto lg:mx-0 xs:flex-shrink-0'>
+                    <Img
+                        className='w-full h-full object-cover'
+                        src={user.avatar}
+                        alt={user.fullName}
+                        isCircle
                     />
-                )}
-                <div className=' lg:w-14 lg:h-14 h-12 w-12 mx-auto lg:mx-0 overflow-hidden rounded-[50%] xs:flex-shrink-0'>
-                    <Img className='w-full h-full object-cover' src={user.avatar} alt='' />
                 </div>
                 <div className='xs:hidden ml-3 lg:flex flex-col gap-y-1 overflow-hidden flex-1'>
                     <div className='font-semibold flex items-center'>
                         <p className='text-sm'>{user.fullName}</p>
                         <span className='ml-1 mt-0.5'>
-                            {user.verify && <Icon className='text-primary text-sm' icon='ph:seal-check-fill' />}
+                            {user.verify && (
+                                <Icon
+                                    className='text-primary text-sm'
+                                    icon='ph:seal-check-fill'
+                                />
+                            )}
                         </span>
                     </div>
                     {user.message && (
                         <p className='text-xs text-[#737373] whitespace-nowrap text-ellipsis overflow-hidden'>
-                            <span className='font-medium'>{user.message.idUser !== user._id ? 'You:' : ''}</span>
+                            <span className='font-medium'>
+                                {user.message.idUser !== user._id ? 'You:' : ''}
+                            </span>
                             <span className='px-px'></span>
                             {user.message.message}
                         </p>
@@ -54,7 +68,10 @@ const AccountChat = ({ user }: Props) => {
                 </div>
             </div>
             {user.message && !user.message.isSeen && user.message.idUser === user._id && (
-                <Icon className='text-3xl text-primary block xs:hidden lg:block' icon='radix-icons:dot-filled' />
+                <Icon
+                    className='text-3xl text-primary block xs:hidden lg:block'
+                    icon='radix-icons:dot-filled'
+                />
             )}
         </div>
     )

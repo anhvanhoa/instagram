@@ -5,9 +5,8 @@
 :root {
     --background-rgb: 255, 255, 255;
     --text-rgb: 21, 23, 24;
-    --background-second-rgb: 209 213 219;
+    --background-second-rgb: 239, 239, 239;
     --background-third-rgb: 255, 255, 255;
-    --hover-sidebar: 50, 51, 55;
 }
 
 .dark:root {
@@ -15,7 +14,6 @@
     --text-rgb: 255, 255, 255;
     --background-second-rgb: 36, 37, 58;
     --background-third-rgb: 14, 16, 28;
-    --hover-sidebar: 50, 51, 55;
 }
 
 svg {
@@ -37,7 +35,6 @@ html::-webkit-scrollbar-track {
 }
 html::-webkit-scrollbar-thumb {
     background-color: rgb(var(--background-second-rgb));
-    border-radius: 50px;
 }
 
 @layer components {
@@ -56,7 +53,6 @@ html::-webkit-scrollbar-thumb {
     }
     .scrollbar::-webkit-scrollbar-thumb {
         background-color: rgb(var(--background-second-rgb));
-        border-radius: 50px;
     }
 }
 

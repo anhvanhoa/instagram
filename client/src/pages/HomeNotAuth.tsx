@@ -3,11 +3,18 @@ import images from '~/assets'
 import Login from './auth/Login'
 import { useState, useEffect } from 'react'
 import Register from './auth/Register'
-const listImage: string[] = [images.screenshot1, images.screenshot2, images.screenshot3, images.screenshot4]
+const listImage: string[] = [
+    images.screenshot1,
+    images.screenshot2,
+    images.screenshot3,
+    images.screenshot4,
+]
 const HomeNotAuth = () => {
     const [isActive, setActive] = useState(0)
     // true -> register | false -> login
-    const [loginOrRegister] = useState(() => Boolean(sessionStorage.getItem('loginOrRegister')))
+    const [loginOrRegister] = useState(() =>
+        Boolean(sessionStorage.getItem('loginOrRegister')),
+    )
     useEffect(() => {
         const timerId = setInterval(() => {
             setActive((prev) => (prev === listImage.length - 1 ? 0 : prev + 1))
@@ -27,10 +34,13 @@ const HomeNotAuth = () => {
                         >
                             {listImage.map((element, index) => (
                                 <img
-                                    className={classNames('absolute transition-all duration-[2000ms]', {
-                                        'z-10 opacity-100': isActive === index,
-                                        'opacity-5': isActive !== index,
-                                    })}
+                                    className={classNames(
+                                        'absolute transition-all duration-[2000ms]',
+                                        {
+                                            'z-10 opacity-100': isActive === index,
+                                            'opacity-5': isActive !== index,
+                                        },
+                                    )}
                                     key={index}
                                     src={element}
                                     alt={element}
@@ -39,7 +49,9 @@ const HomeNotAuth = () => {
                         </div>
                     </div>
                     <div
-                        className={'bg-cover h-[630px] w-[450px] bg-no-repeat relative z-10'}
+                        className={
+                            'bg-cover h-[630px] w-[450px] bg-no-repeat relative z-10'
+                        }
                         style={{ backgroundImage: `url(${images.homePhone})` }}
                     ></div>
                 </div>

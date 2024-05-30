@@ -19,11 +19,13 @@ class ImageController {
     }
     async handleImage(req: Request, res: Response) {
         try {
-            const path = req.path.slice(7)
-            await cloudinary.api.resource(path.split('.')[0])
-            return res.redirect(
-                `http://res.cloudinary.com/dlzbq5oho/image/upload/v1714437857${path}`,
-            )
+            // cut /images/
+            const path = req.path.slice(8)
+            const image = (await cloudinary.api.resource(path.split('.')[0])) as {
+                url?: string
+            }
+            if (!image.url) return res.status(404).send('Not found')
+            return res.redirect(image.url)
         } catch (_error: any) {
             return res.status(404).send('Not found')
         }

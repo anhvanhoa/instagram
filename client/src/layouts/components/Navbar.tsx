@@ -24,7 +24,8 @@ const Navbar: React.FC<Props> = memo(({ active }) => {
     })
     const navigate = useNavigate()
     const { id, handleId } = active
-    const handleNotify = (name: keyof Notify, value: boolean) => setNotifys((prev) => ({ ...prev, [name]: value }))
+    const handleNotify = (name: keyof Notify, value: boolean) =>
+        setNotifys((prev) => ({ ...prev, [name]: value }))
     useEffect(() => {
         if (id !== 5) {
             socket.on(`notifyMessage`, () => {
@@ -57,18 +58,28 @@ const Navbar: React.FC<Props> = memo(({ active }) => {
                     <li
                         onClick={handleActive(element.link, element.id)}
                         className={classNames(
-                            'list-none my-1.5 rounded-md transition-all hover:bg-gray-100/80 hover:dark:bg-second',
+                            'list-none my-1.5 rounded-xl transition-all hover:bg-gray-100/80 hover:dark:bg-second',
                         )}
                     >
-                        <NavLink to={element.link} onClick={(e) => e.preventDefault()} className='group/item'>
+                        <NavLink
+                            to={element.link}
+                            onClick={(e) => e.preventDefault()}
+                            className='group/item'
+                        >
                             <div
                                 className={classNames(
                                     'rounded-md flex items-center p-3 overflow-hidden border border-transparent',
-                                    { 'font-semibold text-pink-600': element.id === id },
+                                    { 'font-bold': element.id === id },
                                 )}
                             >
                                 <span className='group-hover/item:scale-105 transition-all flex-shrink-0 relative'>
-                                    <IconApp type={element.icon} />
+                                    <IconApp
+                                        type={
+                                            element.id === id
+                                                ? element.iconActive
+                                                : element.icon
+                                        }
+                                    />
                                     {notifys.message && element.id === 5 && (
                                         <div className='w-2 h-2 rounded-[50%] bg-red-600 absolute -top-2 -right-1'></div>
                                     )}

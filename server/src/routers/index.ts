@@ -26,6 +26,7 @@ function Routers(app: Express) {
     app.use('/api/image', imageRoute)
     app.use('/api/chat', chatRoute)
     app.use('/api/notify', notifyRoute)
+    app.use((_req, res) => res.status(404).send('Not found'))
 }
 
 export default Routers

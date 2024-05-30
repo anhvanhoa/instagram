@@ -9,7 +9,7 @@ import sendOtp, { SendOTP } from '~/apis/sendOtp'
 import isEmail from 'validator/lib/isEmail'
 import firebaseOtp from '~/apis/firebaseOtp'
 import registerFacebook from '~/apis/registerFacebook'
-import useContextUser from '~/store/hook'
+import useAuth from '~/hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 
 const initDataForm: DataRegister = {
@@ -28,7 +28,7 @@ const initBirthday: BirthdayType = {
     year: 2000,
 }
 const Register = () => {
-    const { dispatch } = useContextUser()
+    const { setUser } = useAuth()
     const navigation = useNavigate()
     const [dataForm, setDataFrom] = useState<DataRegister>(initDataForm)
     const [step, setStep] = useState(1)
@@ -62,7 +62,7 @@ const Register = () => {
     const handleLoginFB = async () => {
         try {
             const user = await registerFacebook()
-            dispatch({ payload: user, type: 'LOGIN' })
+            setUser(user)
             navigation('/')
         } catch (error) {
             console.log(error)

@@ -18,13 +18,18 @@ const ItemNotify: React.FC<Porps> = ({ notify }) => {
                 )}
             >
                 <div className='flex gap-3'>
-                    <Img
-                        src={notify.fromUser.avatar}
-                        alt=''
-                        className='w-10 h-10 object-cover rounded-[50%] flex-shrink-0'
-                    />
+                    <div className='w-10 h-10 flex-shrink-0'>
+                        <Img
+                            src={notify.fromUser.avatar}
+                            alt=''
+                            className='object-cover'
+                            isCircle
+                        />
+                    </div>
                     <div className='text-sm text-dot mt-1'>
-                        <p className='font-semibold inline-block pr-1'>{notify.fromUser.userName}</p>
+                        <p className='font-semibold inline-block pr-1'>
+                            {notify.fromUser.userName}
+                        </p>
                         {notify.content}
                     </div>
                 </div>

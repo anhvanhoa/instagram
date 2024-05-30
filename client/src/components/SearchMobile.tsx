@@ -1,64 +1,80 @@
-import React, { useState } from 'react'
-import OverLay from './OverLay'
+import React, { memo, useState } from 'react'
 import useDebounce from '~/hooks/useDebounce'
-import { useQuery } from '@tanstack/react-query'
-import serachUser from '~/apis/serachUser'
 import { Icon } from '@iconify/react/dist/iconify.js'
 import classNames from 'classnames'
 import { Link } from 'react-router-dom'
 import AccountItem from './AccountItem'
-interface Props {
-    handleOnOffSearch(): void
-}
-const SearchMobile: React.FC<Props> = ({ handleOnOffSearch }) => {
-    const [boxSearch, setBoxSearch] = useState(false)
+import { useSearchUser } from '~/hooks/user.hook'
+import Overlay from './Overlaying'
+import IconApp from '~/assets/icons/IconApp'
+import Wrapper from './Wrapper'
+
+interface Props {}
+const SearchMobile: React.FC<Props> = memo(() => {
     const [valueSearch, setValueSearch] = useState('')
-    const changeBoxSearch = (boxSearch: boolean) => () => setBoxSearch(boxSearch)
-    const changeValue = (e: React.ChangeEvent<HTMLInputElement>) => setValueSearch(e.target.value)
-    const newValue = useDebounce(valueSearch, 500)
-    const { data, isLoading } = useQuery({
-        queryKey: ['search', newValue],
-        queryFn: () => serachUser(newValue),
-        enabled: Boolean(newValue),
-    })
+    const value = useDebounce(valueSearch, 700)
+    const { data, isLoading } = useSearchUser({ value })
+    const changeValue = (e: React.ChangeEvent<HTMLInputElement>) =>
+        setValueSearch(e.target.value)
     return (
-        <div>
-            <OverLay onClose={handleOnOffSearch}>
-                <div className='bg-white rounded-lg'>
-                    <div className=' text-gray-400 px-5 max-w-72 py-2.5 border-b' onClick={changeBoxSearch(true)}>
-                        {!boxSearch && <p className='-mt-0.5 font-thin'>{valueSearch ? valueSearch : 'search'}</p>}
-                        {boxSearch && (
+        <div className='md:hidden'>
+            <Overlay
+                render={() => (
+                    <Wrapper classname='max-w-md'>
+                        <div className=' text-gray-800 px-6 py-3.5'>
                             <div className='flex'>
                                 <input
                                     value={valueSearch}
                                     onChange={changeValue}
                                     autoFocus
                                     type='text'
-                                    className='bg-transparent outline-none placeholder:font-light font-light flex-1'
+                                    className='bg-transparent outline-none flex-1 py-0.5 placeholder:text-gray-800'
                                     placeholder='Search'
                                 />
                                 {isLoading && (
-                                    <Icon className='w-4 flex-shrink-0 animate-spin' icon='system-uicons:loader' />
+                                    <Icon
+                                        className='w-4 flex-shrink-0 animate-spin'
+                                        icon='system-uicons:loader'
+                                    />
                                 )}
                             </div>
-                        )}
-                    </div>
-                    <div className={classNames('w-72 max-h-96 h-64', 'bg-white shadow-lg rounded-lg px-5 py-3 z-50')}>
-                        <p>Recent</p>
-                        <div className='mt-3'>
-                            {data &&
-                                data.map((user) => (
-                                    <div key={user._id} className='relative mb-2'>
-                                        <Link to={user.userName} className='absolute inset-0'></Link>
-                                        <AccountItem user={user} />
-                                    </div>
-                                ))}
                         </div>
-                    </div>
+                        <div
+                            className={classNames(
+                                'max-h-96 h-64 p-2 z-50',
+                                'overflow-y-auto  border-gray-300 border-t',
+                            )}
+                        >
+                            {data && !data?.count_users && (
+                                <p className='text-center mt-2 select-none text-gray-400'>
+                                    No matching results
+                                </p>
+                            )}
+                            <div className='hover:*:bg-gray-50'>
+                                {data?.users &&
+                                    data.users.map((user) => (
+                                        <div
+                                            key={user._id}
+                                            className='relative mt-0.5 px-3 py-2 rounded-xl'
+                                        >
+                                            <Link
+                                                to={user.userName}
+                                                className='absolute inset-0'
+                                            ></Link>
+                                            <AccountItem user={user} />
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                    </Wrapper>
+                )}
+            >
+                <div className='cursor-pointer p-1.5 rounded-[50%] flex items-center'>
+                    <IconApp type='search-thin' className='w-6' />
                 </div>
-            </OverLay>
+            </Overlay>
         </div>
     )
-}
+})
 
 export default SearchMobile

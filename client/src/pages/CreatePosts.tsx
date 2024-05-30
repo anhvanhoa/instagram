@@ -11,9 +11,9 @@ import Crop from '~/components/Crop'
 import HeaderMobile from '~/components/HeaderMobile'
 import OverLay from '~/components/OverLay'
 import UploadFile from '~/components/UploadFile'
-import { TypeImgCrop } from '~/types/posts'
+import { Media, TypeImgCrop } from '~/types/posts'
 
-let contents: string[] = []
+let media: Media[] = []
 export const CreatePosts = () => {
     const [images, setImages] = useState<TypeImgCrop[]>([])
     const [step, setStep] = useState<number>(1)
@@ -28,13 +28,17 @@ export const CreatePosts = () => {
     })
     const uploadImg = useMutation({
         onSuccess: (data) => {
-            contents.push(data)
-            if (contents.length === images.length) {
+            media.push({
+                content: data,
+                type_media: 'image',
+                ratio: '1',
+            })
+            if (media.length === images.length) {
                 uploadPost.mutate({
                     title: description,
-                    contents,
+                    media,
                 })
-                contents = []
+                media = []
             }
         },
         mutationFn: (data: FormData) => uploadImgRequest(data),
@@ -75,14 +79,19 @@ export const CreatePosts = () => {
             />
             <div className='lg:flex lg:justify-center mt-4 gap-4'>
                 <div className='mx-auto lg:mr-0 w-80 xs:w-[400px] lg:w-[520px] aspect-square rounded-md'>
-                    {step === 1 && <UploadFile hiddenHead setStep={setStep} setImages={setImages} />}
+                    {step === 1 && (
+                        <UploadFile hiddenHead setStep={setStep} setImages={setImages} />
+                    )}
                     {step === 2 && <Crop setImages={setImages} images={images} />}
                 </div>
                 <div className='border-l'></div>
                 <div
-                    className={classNames('mx-auto w-80 xs:w-[400px] lg:w-[250px] xl:w-80 lg:ml-0', {
-                        hidden: step !== 2,
-                    })}
+                    className={classNames(
+                        'mx-auto w-80 xs:w-[400px] lg:w-[250px] xl:w-80 lg:ml-0',
+                        {
+                            hidden: step !== 2,
+                        },
+                    )}
                 >
                     <div>
                         <textarea
@@ -101,7 +110,10 @@ export const CreatePosts = () => {
                             <div>
                                 <div className='pt-1 flex items-center text-green-800 justify-center h-full gap-2 text-lg'>
                                     <div>
-                                        <Icon icon='clarity:success-standard-line' className='w-7' />
+                                        <Icon
+                                            icon='clarity:success-standard-line'
+                                            className='w-7'
+                                        />
                                     </div>
                                     <p>Upload success</p>
                                 </div>
@@ -117,11 +129,17 @@ export const CreatePosts = () => {
                             <div>
                                 <div className='pt-1 flex justify-center items-center gap-2 text-red-500 text-lg'>
                                     <div>
-                                        <Icon icon='carbon:close-outline' className='w-6' />
+                                        <Icon
+                                            icon='carbon:close-outline'
+                                            className='w-6'
+                                        />
                                     </div>
                                     <p>Upload fail</p>
                                 </div>
-                                <Link to={'/'} className='text-xs text-center block text-primary font-medium'>
+                                <Link
+                                    to={'/'}
+                                    className='text-xs text-center block text-primary font-medium'
+                                >
                                     back home
                                 </Link>
                             </div>
@@ -129,7 +147,10 @@ export const CreatePosts = () => {
                         {(uploadImg.isPending || uploadPost.isPending) && (
                             <div className='flex justify-center items-center gap-3 h-full'>
                                 <div>
-                                    <Icon icon='nonicons:loading-16' className='w-5 animate-spin' />
+                                    <Icon
+                                        icon='nonicons:loading-16'
+                                        className='w-5 animate-spin'
+                                    />
                                 </div>
                                 <p>Uploading ....</p>
                             </div>

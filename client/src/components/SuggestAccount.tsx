@@ -2,47 +2,54 @@ import { useMutation } from '@tanstack/react-query'
 import AccountItem from './AccountItem'
 import Button from './Button'
 import follow from '~/apis/follow'
-import { User } from '~/types/auth'
+import { UserBase } from '~/types/auth'
 import React, { useState } from 'react'
-import unfollow from '~/apis/unfollow'
 import AlertUnfollow from './AlertUnfollow'
+import { useUnfollow } from '~/hooks/follow.hook'
 
 interface Props {
-    user: User
+    user: UserBase
+    isFollowing?: boolean
+    type?: 'primary' | 'text'
 }
-const SuggestAccount: React.FC<Props> = ({ user }) => {
-    const [stateFollow, setStateFollow] = useState(false)
-    const [stateAlert, setAlert] = useState(false)
+const SuggestAccount: React.FC<Props> = ({ user, isFollowing = false, type }) => {
+    const [stateFollow, setStateFollow] = useState(isFollowing)
+    const handleSuccess = () => {
+        setStateFollow(!stateFollow)
+    }
     const { mutate, isPending } = useMutation({
         mutationFn: (id: string) => follow(id),
-        onSuccess: () => setStateFollow(true),
+        onSuccess: handleSuccess,
     })
-    const { mutate: mutateUn, isPending: isPending2 } = useMutation({
-        mutationFn: (id: string) => unfollow(id),
-        onSuccess: () => setStateFollow(false),
-    })
-    const showUnfollow = () => setAlert(true)
-    const hiddenUnfollow = () => setAlert(false)
+    const unfollow = useUnfollow({ userName: user.userName })
     const apiFollow = (id: string) => () => mutate(id)
-    const apiUnFollow = (id: string) => () => {
-        mutateUn(id)
-        hiddenUnfollow()
-    }
     return (
         <div>
-            {stateAlert && (
-                <AlertUnfollow user={user} handleUnfollow={apiUnFollow(user._id)} handleClose={hiddenUnfollow} />
-            )}
             <div className='py-2 flex justify-between items-center'>
                 <AccountItem user={user} />
-                <Button
-                    loading={isPending || isPending2}
-                    onClick={stateFollow ? showUnfollow : apiFollow(user._id)}
-                    size='small'
-                    className='text-xs !w-20'
-                >
-                    {stateFollow ? 'Following' : 'Follow'}
-                </Button>
+                {!stateFollow && (
+                    <Button
+                        loading={isPending || unfollow.isPending}
+                        onClick={apiFollow(user._id)}
+                        size='small'
+                        className='px-2 max-w-20'
+                        type={type}
+                    >
+                        Follow
+                    </Button>
+                )}
+                {stateFollow && (
+                    <AlertUnfollow onSuccess={handleSuccess} user={user}>
+                        <Button
+                            loading={isPending || unfollow.isPending}
+                            size='small'
+                            className='px-2 max-w-20'
+                            type='second'
+                        >
+                            Following
+                        </Button>
+                    </AlertUnfollow>
+                )}
             </div>
         </div>
     )

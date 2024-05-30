@@ -1,9 +1,9 @@
 import { http } from '~/config/httpAxios'
-import { Posts } from '~/types/posts'
+import { Media, Posts } from '~/types/posts'
 
 export interface PostsUpload {
     title: string
-    contents: string[]
+    media: Media[]
 }
 
 const uploadPostRequest = async (posts: PostsUpload) => {

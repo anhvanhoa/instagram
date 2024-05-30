@@ -11,10 +11,13 @@ import EditProfile from '~/pages/EditProfile'
 import Explore from '~/pages/Explore'
 import Reels from '~/pages/Reels'
 import Message from '~/pages/Message'
-import Posts from '~/pages/Posts'
+import Post from '~/pages/Post'
 import NotFound from '~/pages/NotFound'
 import Notification from '~/pages/Notification'
 import { CreatePosts } from '~/pages/CreatePosts'
+import Settings from '~/layouts/Settings'
+import checkUserRequest from '~/apis/checkUserRequest'
+import manageToken from '~/utils/rfToken'
 const option = {
     basename: '/',
 }
@@ -45,7 +48,11 @@ export const routersPrivate = createBrowserRouter(
     [
         {
             element: <LayoutMain />,
-            errorElement: <NotFound />,
+            errorElement: (
+                <LayoutMain>
+                    <NotFound />
+                </LayoutMain>
+            ),
             children: [
                 {
                     element: <Home />,
@@ -68,16 +75,33 @@ export const routersPrivate = createBrowserRouter(
                     path: pathPrivate.chat,
                 },
                 {
-                    element: <Posts />,
+                    element: <Post />,
                     path: pathPrivate.posts,
                 },
                 {
                     element: <Profile />,
+                    id: 'root',
                     path: pathPrivate.profile,
+                    loader: async ({ params }) => {
+                        if (!manageToken().crTokenDecode()) return null
+                        const user = await checkUserRequest(params.username!)
+                        if (user.data.isAccount) return true
+                    },
                 },
                 {
-                    element: <EditProfile />,
-                    path: pathPrivate.editProfile,
+                    element: <Settings />,
+                    path: pathPrivate.settings.path,
+                    children: [
+                        {
+                            element: null,
+                            loader: async () => {},
+                            path: '',
+                        },
+                        {
+                            element: <EditProfile />,
+                            path: pathPrivate.settings.accountEdit,
+                        },
+                    ],
                 },
                 {
                     element: <Notification />,

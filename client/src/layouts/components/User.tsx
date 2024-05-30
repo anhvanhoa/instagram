@@ -3,17 +3,23 @@ import { NavLink } from 'react-router-dom'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/themes/light.css'
 import classNames from 'classnames'
-import useContextUser from '~/store/hook'
 import Img from '~/components/Img'
+import useAuth from '~/hooks/useAuth'
 
 interface Props {
     handleId: (id: number) => () => void
 }
 const User: React.FC<Props> = memo(({ handleId }) => {
-    const { user } = useContextUser()
+    const { user } = useAuth()
     return (
-        <Tippy content={`Profile`} placement='right' delay={[1000, 0]} theme='light' animation='scale'>
-            <div className='hover:bg-gray-100/80 hover:dark:bg-second rounded-md'>
+        <Tippy
+            content={`Profile`}
+            placement='right'
+            delay={[1000, 0]}
+            theme='light'
+            animation='scale'
+        >
+            <div className='hover:bg-gray-100/80 hover:dark:bg-second rounded-xl'>
                 <NavLink
                     to={user ? user.userName : ''}
                     className={({ isActive }) =>
@@ -27,23 +33,21 @@ const User: React.FC<Props> = memo(({ handleId }) => {
                 >
                     <div
                         className={classNames(
-                            'rounded-circle overflow-hidden h-6 w-6 flex-shrink-0',
-                            'group-hover:scale-105 transition-all',
+                            'h-6 w-6 flex-shrink-0 border-2 group-[.active-avatar]:border-black',
+                            'group-hover:scale-105 transition-all border-transparent rounded-full',
                         )}
                     >
                         <Img
                             src={user.avatar}
                             alt='Profile'
-                            className={classNames(
-                                'border-[2px] border-solid group-[.active-avatar]:border-pink-600',
-                                ' border-transparent rounded-[50%] object-cover h-full w-full',
-                            )}
+                            className={classNames('border-solid ', ' object-cover')}
+                            isCircle
                         />
                     </div>
                     <span
                         className={classNames(
-                            'pl-4 whitespace-nowrap group-[.active-avatar]:font-medium',
-                            'group-[.is-cllapse]:hidden hidden lg:block group-[.active-avatar]:text-pink-600',
+                            'pl-4 whitespace-nowrap group-[.active-avatar]:font-bold',
+                            'group-[.is-cllapse]:hidden hidden lg:block group-[.active-avatar]:text-black',
                         )}
                     >
                         Profile

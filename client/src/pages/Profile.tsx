@@ -1,230 +1,150 @@
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Icon } from '@iconify/react'
-import Button from '~/components/Button'
 import IconApp from '~/assets/icons/IconApp'
-import { useMutation, useQuery } from '@tanstack/react-query'
-import getUser from '~/apis/getUser'
 import Img from '~/components/Img'
-import useContextUser from '~/store/hook'
-import infoUser from '~/apis/infoUser'
-import { initializeUser } from '~/store/constant'
-import follow from '~/apis/follow'
-import unfollow from '~/apis/unfollow'
 import SkeletonExploreItem from '~/components/SkeletonExploreItem'
-import Tippy from '@tippyjs/react/headless'
-import BoxMenu from '~/layouts/components/BoxMenu'
 import HeaderMobile from '~/components/HeaderMobile'
-import roomRequest from '~/apis/roomRequest'
+import Avatar from '~/components/Avatar'
+import GroupButtonProfile from '~/components/GroupButtonProfile'
+import SkeletonProfile from '~/components/SkeletonProfile'
+import Statistical from '~/components/Statistical'
+import Information from '~/components/Information'
+import OptionProfile from '~/components/OptionProfile'
+import { useRemoveFollow } from '~/hooks/follow.hook'
+import { useProfile } from '~/hooks/user.hook'
+import { usePosts } from '~/hooks/post.hook'
 
 const Profile = () => {
     const navigate = useNavigate()
-    const { user } = useContextUser()
     const { username } = useParams<{ username: string }>()
-    const { data, isLoading } = useQuery({
-        queryKey: ['profile', username],
-        queryFn: () => getUser(username || ''),
+    const removeFollower = useRemoveFollow({
+        userName: username!,
     })
-    const {
-        data: { isFollowing },
-        refetch,
-    } = useQuery({
-        queryKey: ['check-info', username],
-        queryFn: () => infoUser(username || ''),
-        initialData: { ...initializeUser, isFollowing: false, isFollower: false },
+    const profile = useProfile({
+        username: username!,
     })
-    const handleApi = () => refetch()
-    const { mutate } = useMutation({
-        mutationFn: (id: string) => follow(id),
-        onSuccess: handleApi,
+    const posts = usePosts({
+        username: username!,
     })
-    const { mutate: mutateUn } = useMutation({
-        mutationFn: (id: string) => unfollow(id),
-        onSuccess: handleApi,
-    })
-    const room = useMutation({
-        mutationFn: (id: string) => roomRequest(id),
-        onSuccess: (idRoom) => {
-            navigate(`/message/${data?.userName}/t/${idRoom}`)
-        },
-    })
-    const apiFollow = (id: string) => () => mutate(id)
-    const apiUnFollow = (id: string) => () => mutateUn(id)
-    const viewPosts = (link: string) => async () =>
-        navigate('/p/' + link, {
-            preventScrollReset: true,
-        })
+    const handleRemoverFollower = () => removeFollower.mutate(profile.data.user._id)
+    const viewPosts = (link: string) => async () => navigate('/p/' + link)
     return (
         <div>
-            {data && (
-                <div className='max-w-[975px] mx-auto md:pt-[30px] flex flex-col h-screen'>
-                    <HeaderMobile
-                        className='md:hidden'
-                        title={data.fullName}
-                        contextNext={
-                            <Tippy trigger='click' interactive render={() => <BoxMenu />}>
-                                <div className='cursor-pointer'>
-                                    <IconApp type='setting' />
-                                </div>
-                            </Tippy>
-                        }
-                    />
-                    <div className='mb-6 bg-white flex justify-between px-4 md:hidden'></div>
-                    <div className='flex px-4 sm:px-8 mb-4 sm:mb-11'>
-                        <div className='mr-7 sm:mr-16 relative'>
-                            <div className='w-20 h-20 sm:w-[170px] sm:h-[170px] mx-auto'>
-                                <Img
-                                    src={data.avatar}
-                                    alt={data.userName}
-                                    className='w-full h-full object-cover rounded-[50%]'
-                                />
-                                <div className=' absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden'>
-                                    <svg width={165} height={165}>
-                                        <linearGradient id='my-gradient' x1='0%' y1='100%' x2='100%' y2='0%'>
-                                            <stop offset='5%' stopColor='#F4A14B' />
-                                            <stop offset='50%' stopColor='#E1306C' />
-                                            <stop offset='100%' stopColor='#A233FA' />
-                                        </linearGradient>
-                                        <circle
-                                            cx={82.5}
-                                            cy={82.8}
-                                            r={78}
-                                            stroke='url(#my-gradient)'
-                                            fill='transparent'
-                                            strokeWidth={3}
-                                        />
-                                    </svg>
-                                </div>
-                            </div>
+            <div className='md:hidden'>
+                <HeaderMobile
+                    title={profile.data.user.userName}
+                    contextNext={
+                        <OptionProfile
+                            viewer={profile.data.user}
+                            handleRemoveFollower={handleRemoverFollower}
+                            isFollower={profile.data.additional.isFollower}
+                            isBlock={profile.data.additional.isBlock}
+                        />
+                    }
+                />
+                <div className='mb-2 bg-white flex justify-between px-4'></div>
+            </div>
+            <div className='max-w-[975px] mx-auto mt-6 md:mt-8 flex flex-col h-screen px-4'>
+                {/* Desktop */}
+                {!profile.isPending && profile.data.user._id && (
+                    <div className='flex items-center mb-2 sm:mb-6'>
+                        <div className='mr-5'>
+                            <Avatar
+                                profile={{
+                                    avatar: profile.data.user.avatar,
+                                    userName: profile.data.user.userName,
+                                }}
+                            />
                         </div>
                         <div>
-                            <div className='flex-col flex sm:flex-row gap-3 items-start sm:items-center'>
-                                <div className='sm:font-semibold flex items-center pr-6'>
-                                    <h2 className='text-xl font-normal'>{data.userName}</h2>
-                                    <span className='ml-1 mt-0.5'>
-                                        {data.verify && (
-                                            <Icon className='text-primary text-lg' icon='ph:seal-check-fill' />
-                                        )}
-                                    </span>
-                                </div>
-                                <div className='flex gap-3'>
-                                    <div className='flex gap-3'>
-                                        {data.userName === user.userName && (
-                                            <Link to='/accounts/edit'>
-                                                <Button type='second'>Edit profile</Button>
-                                            </Link>
-                                        )}
-                                        {data.userName !== user.userName && (
-                                            <Button
-                                                onClick={() => room.mutate(data._id)}
-                                                type={isFollowing ? 'primary' : 'second'}
-                                                size='small'
-                                            >
-                                                Message
-                                            </Button>
-                                        )}
-                                        {!isFollowing && data.userName !== user.userName && (
-                                            <Button onClick={apiFollow(data._id)} size='small'>
-                                                Follow
-                                            </Button>
-                                        )}
+                            <div className='grid grid-cols-1 gap-3'>
+                                <div className='hidden xs:flex gap-3 items-center'>
+                                    <div className='hidden sm:flex items-center pr-2'>
+                                        <h2 className='text-xl font-normal'>
+                                            {profile.data.user.userName}
+                                        </h2>
+                                        <span className='ml-1 mt-0.5'>
+                                            {profile.data.user.verify && (
+                                                <Icon
+                                                    className='text-primary text-lg'
+                                                    icon='ph:seal-check-fill'
+                                                />
+                                            )}
+                                        </span>
                                     </div>
-                                    {isFollowing && (
-                                        <Button
-                                            onClick={apiUnFollow(data._id)}
-                                            className='text-red-500 bg-red-500/10'
-                                            size='small'
-                                            type='second'
-                                        >
-                                            Unfollow
-                                        </Button>
-                                    )}
-                                </div>
-                            </div>
-                            <div className='w-full mb-4'></div>
-                            <div>
-                                <div className='sm:flex items-center mb-3 hidden my-4'>
-                                    <p className='mr-10'>
-                                        <span className='pr-1 font-semibold'>{data.posts.length}</span>
-                                        posts
-                                    </p>
-                                    <p className='mr-10'>
-                                        <span className='pr-1 font-semibold'>{data.followers.length}</span>
-                                        followers
-                                    </p>
-                                    <p className='mr-10'>
-                                        <span className='pr-1 font-semibold'>{data.following.length}</span>
-                                        following
-                                    </p>
-                                </div>
-                                <div className='text-sm hidden sm:block'>
-                                    <p className='font-semibold'>{data.fullName}</p>
-                                    <div className='mt-2'>{data.bio}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='sm:hidden'>
-                        <div className='text-sm px-4 sm:px-8'>
-                            <p className='font-semibold'>{data.fullName}</p>
-                            <div className='mt-2'>{data.bio}</div>
-                        </div>
-                        <div className='grid grid-cols-3 text-sm border-t border-second mt-6 py-3'>
-                            <div>
-                                <p className='pr-1 text-center font-semibold'>{data.posts.length}</p>
-                                <p className='text-center text-gray-500'>posts</p>
-                            </div>
-                            <div>
-                                <p className='pr-1 text-center font-semibold'>{data.followers.length}</p>
-                                <p className='text-center text-gray-500'>followers</p>
-                            </div>
-                            <div>
-                                <p className='pr-1 text-center font-semibold'>{data.following.length}</p>
-                                <p className='text-center text-gray-500'>following</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='border-t border-second flex-1 flex flex-col pt-1 sm:pt-6 md:pt-8 px-1'>
-                        <div className='grid grid-cols-2 sm:grid-cols-3 gap-px sm:gap-1 sm:px-8'>
-                            {isLoading && (
-                                <>
-                                    <SkeletonExploreItem />
-                                    <SkeletonExploreItem />
-                                    <SkeletonExploreItem />
-                                </>
-                            )}
-                            {data.posts.map((post, index) => (
-                                <div
-                                    key={index}
-                                    className='relative group/posts cursor-pointer'
-                                    onClick={viewPosts(post._id)}
-                                >
-                                    <Img
-                                        src={post.contents[0]}
-                                        alt={post.title}
-                                        className='aspect-square object-cover rounded-sm'
+                                    <GroupButtonProfile
+                                        isFollowing={profile.data.additional.isFollowing}
+                                        isFollower={profile.data.additional.isFollower}
+                                        isBlock={profile.data.additional.isBlock}
+                                        blockByUser={profile.data.additional.blockByUser}
+                                        profile={profile.data.user}
                                     />
-                                    {post.contents.length > 1 && (
-                                        <Icon className='text-2xl text-white absolute top-3 right-3' icon='ion:copy' />
-                                    )}
-                                    <div className='bg-black/30 absolute inset-0 hidden group-hover/posts:flex justify-center items-center gap-8 text-white'>
-                                        <div className='flex items-center gap-1'>
-                                            <IconApp type='heart-posts' /> {post.likes.length}
-                                        </div>
-                                        <div className='flex items-center gap-1'>
-                                            <IconApp type='comment' />
-                                            {post.comments.length}
+                                </div>
+                                {profile.data.user._id && (
+                                    <Statistical profile={profile.data.user} />
+                                )}
+                            </div>
+                            <div className='hidden sm:block'>
+                                <Information profile={profile.data.user} />
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {/* Mobile-bio */}
+                <div className='sm:hidden'>
+                    <Information profile={profile.data.user} />
+                </div>
+                {profile.isFetching && <SkeletonProfile />}
+                {/* posts */}
+                {!profile.data.additional.isBlock &&
+                    !profile.data.additional.blockByUser && (
+                        <div className='border-t border-second  mt-8 pt-4 md:pt-8 px-1'>
+                            <div className='grid grid-cols-3 gap-px sm:gap-1 md:px-8'>
+                                {profile.isFetching && (
+                                    <>
+                                        <SkeletonExploreItem />
+                                        <SkeletonExploreItem />
+                                        <SkeletonExploreItem />
+                                    </>
+                                )}
+                                {posts.data.map((post, index) => (
+                                    <div
+                                        key={index}
+                                        className='relative group/posts cursor-pointer'
+                                        onClick={viewPosts(post._id)}
+                                    >
+                                        <Img
+                                            src={post.media[0].content}
+                                            alt={post.title}
+                                            className='aspect-square object-cover w-full'
+                                        />
+                                        {post.media.length > 1 && (
+                                            <Icon
+                                                className='text-2xl text-white absolute top-1 right-1 md:top-3 md:right-3'
+                                                icon='ion:copy'
+                                            />
+                                        )}
+                                        <div className='bg-black/30 absolute inset-0 hidden group-hover/posts:flex justify-center items-center gap-8 text-white'>
+                                            <div className='flex items-center gap-1'>
+                                                <IconApp type='heart-posts' />
+                                                <span>{post.likeTotal}</span>
+                                            </div>
+                                            <div className='flex items-center gap-1'>
+                                                <IconApp type='comment' />
+                                                <span>{post.commentTotal}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                            {!data.posts.length && (
-                                <p className='col-span-3 text-center mt-10 text-xl'>There are no posts</p>
-                            )}
+                                ))}
+                                {!profile.isFetching && !profile.data.user.totalPost && (
+                                    <p className='col-span-3 text-center mt-10 text-xl'>
+                                        There are no posts
+                                    </p>
+                                )}
+                            </div>
                         </div>
-                        <div className='flex-1'></div>
-                    </div>
-                </div>
-            )}
+                    )}
+            </div>
         </div>
     )
 }

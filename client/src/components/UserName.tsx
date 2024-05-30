@@ -1,23 +1,23 @@
 import TippyHeadless from '@tippyjs/react/headless'
-import { User } from '~/types/auth'
+import { UserBase } from '~/types/auth'
 import { Link } from 'react-router-dom'
 import TippyUser from './TippyUser'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import infoUser from '~/apis/infoUser'
 import React from 'react'
-import { initializeUser } from '~/store/constant'
 import follow from '~/apis/follow'
 import unfollow from '~/apis/unfollow'
+import { initUserFollow } from '~/constants/user'
+import getUser from '~/apis/getUser'
 interface Props {
     to?: string
     dropDow?: boolean
-    user: User
+    user: UserBase
 }
 const UserName: React.FC<Props> = ({ dropDow, user }) => {
     const { data, refetch } = useQuery({
         queryKey: ['info', user.userName],
-        queryFn: () => infoUser(user.userName),
-        initialData: { ...initializeUser, isFollowing: false, isFollower: false },
+        queryFn: () => getUser(user.userName),
+        initialData: initUserFollow,
         refetchOnWindowFocus: false,
         enabled: false,
     })
@@ -41,19 +41,22 @@ const UserName: React.FC<Props> = ({ dropDow, user }) => {
                 disabled={!dropDow}
                 delay={[800, 100]}
                 interactive
-                placement='bottom'
+                placement='bottom-start'
                 render={() => (
                     <TippyUser
-                        isFollow={data.isFollowing}
+                        isFollow={data.additional.isFollowing}
                         onFollow={apiFollow(user._id)}
                         onUnFollow={apiUnFollow(user._id)}
                         loading={isPending || isPending2}
-                        account={user}
+                        account={data.user}
                     />
                 )}
             >
                 <Link className='text-sm' to={`/${user.userName}`}>
-                    <h2 onMouseEnter={handleApi} className='flex items-center font-semibold'>
+                    <h2
+                        onMouseEnter={handleApi}
+                        className='flex items-center font-semibold'
+                    >
                         {user.userName}
                     </h2>
                 </Link>
