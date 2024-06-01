@@ -9,7 +9,9 @@ import Button from './Button'
 
 const Suggest = () => {
     const { user } = useAuth()
-    const usersSuggest = useSuggestUser({})
+    const usersSuggest = useSuggestUser({
+        limit: user.totalFollowing && 9,
+    })
     return (
         <div className='max-w-[300px] mx-8'>
             <div className='py-4 pb-6 flex flex-col justify-center border-b border-second'>

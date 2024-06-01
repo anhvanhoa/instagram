@@ -7,7 +7,6 @@ import useAuth from './hooks/useAuth'
 const App = memo(function () {
     const [load, setLoad] = useState(true)
     const { user } = useAuth()
-    console.log('render app')
     const router = user.accessToken ? routersPrivate : routersPublic
     useEffect(() => {
         const id = setTimeout(() => setLoad(false), 2000)
